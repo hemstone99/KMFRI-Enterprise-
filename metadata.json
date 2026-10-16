@@ -1,0 +1,6 @@
+{
+  "name": "KMFRI Commercial & Enterprise Services Hub",
+  "description": "Centralized Enterprise and Commercial Services Portal for the Kenya Marine and Fisheries Research Institute (KMFRI), featuring analytical lab testing, consultancy, aquaculture fingerlings, scientific marine datasets, research vessel charter, and educational tours.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
