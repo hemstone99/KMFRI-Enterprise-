@@ -8,7 +8,7 @@ import {
   X,
   FileText,
 } from 'lucide-react';
-import { useHubData } from '../data/HubData';
+import { SERVICE_CATALOGUE } from '../data/serviceCatalogue';
 import kmfriLogo from '../assets/images/kmfri_logo.png';
 import { KMFRI_MAIN_SITE, SOCIAL_LINKS } from './ui';
 
@@ -18,7 +18,6 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenInquiry }) => {
-  const { services } = useHubData();
   const [a11yOpen, setA11yOpen] = useState(false);
   const a11yRef = useRef<HTMLDivElement>(null);
 
@@ -37,7 +36,8 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenInquiry }) => 
   }, [a11yOpen]);
 
   const QUICK_LINKS: { label: string; href?: string; onClick?: () => void }[] = [
-    { label: 'Services Directory', onClick: () => onNavigate('services') },
+    { label: 'Service Catalogue', onClick: () => onNavigate('catalogue') },
+    { label: 'Laboratory Services', onClick: () => onNavigate('laboratories') },
     { label: 'Research Stations', onClick: () => onNavigate('stations') },
     { label: 'Tariffs & Service Charter', onClick: () => onNavigate('charter') },
     { label: 'Request a Quotation', onClick: () => onOpenInquiry() },
@@ -94,13 +94,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenInquiry }) => 
             </div>
           </div>
 
-          {/* 2. Enterprise services */}
+          {/* 2. Service catalogue divisions */}
           <nav aria-labelledby="footer-services">
-            <h3 id="footer-services">Enterprise Services</h3>
+            <h3 id="footer-services">Our Services</h3>
             <ul className="k-footer__list">
-              {services.map((s) => (
-                <li key={s.id}>
-                  <button type="button" onClick={() => onNavigate('service_detail', s.slug)}>{s.title}</button>
+              {SERVICE_CATALOGUE.map((d) => (
+                <li key={d.id}>
+                  <button type="button" onClick={() => onNavigate('catalogue', d.id)}>{d.title}</button>
                 </li>
               ))}
             </ul>

@@ -1,0 +1,74 @@
+{#
+/**
+ * @file
+ * One catalogue service group: optional photo + introduction, then its services.
+ *
+ * Variables:
+ * - s: section {node, url, is_selected, context, heading, items, visible}.
+ * - show_intro: show the group photo and introduction.
+ * - ecitizen_url: KMFRI eCitizen portal.
+ * - quote_query: optional extra quotation query parameters (station pages pass the station).
+ *
+ * Rows carry data-* attributes for the live filter (js/hub.js kmfriCatalogue);
+ * rows that do not match the server-side filter start hidden.
+ */
+#}
+{% set badges = {
+  online: {label: 'On eCitizen', cls: 'k-badge--teal'},
+  partial: {label: 'Being digitised', cls: 'k-badge--navy'},
+  office: {label: 'By quotation', cls: 'k-badge--navy'},
+  planned: {label: 'Coming soon', cls: 'k-badge--gold'},
+} %}
+{% set intro = show_intro ? (s.node.highlight ?: s.node.summary) : null %}
+{% set row_grid = 'lg:grid-cols-[minmax(0,1fr)_8.5rem_8.5rem_9.5rem]' %}
+<section class="k-panel overflow-hidden" aria-labelledby="sec-{{ s.node.id }}" data-kmfri-catalogue-section{% if not s.visible %} hidden{% endif %}>
+  <header class="border-b border-line{{ show_intro and s.node.image ? ' grid sm:grid-cols-[180px_minmax(0,1fr)]' : '' }}">
+    {% if show_intro and s.node.image %}
+      <img src="{{ kmfri_small(s.node.image) }}" alt="" class="hidden sm:block w-full h-full min-h-[132px] object-cover" loading="lazy">
+    {% endif %}
+    <div class="px-4 sm:px-5 py-4 flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
+      <div class="min-w-0 max-w-3xl">
+        {% if s.context %}<p class="k-tag">{{ s.context }}</p>{% endif %}
+        <h3 id="sec-{{ s.node.id }}" class="font-heading font-semibold text-lg text-navy-800">
+          {% if s.is_selected %}{{ s.heading }}{% else %}<a href="{{ s.url }}" class="hover:text-navy-500">{{ s.heading }}</a>{% endif %}
+        </h3>
+        {% if intro %}<p class="text-sm text-muted mt-1.5 leading-relaxed">{{ intro }}</p>{% endif %}
+      </div>
+      <span class="text-xs text-subtle shrink-0"><span data-kmfri-catalogue-section-count>{{ s.visible }} {{ s.visible == 1 ? 'service' : 'services' }}</span></span>
+    </div>
+  </header>
+  <div class="hidden lg:grid {{ row_grid }} gap-x-5 px-5 py-2 bg-canvas border-b border-line text-[0.72rem] font-semibold uppercase tracking-widest text-subtle">
+    <span>{{ 'Service'|t }}</span>
+    <span class="text-right">{{ 'Tariff'|t }}</span>
+    <span>{{ 'How to get it'|t }}</span>
+    <span class="sr-only">{{ 'Action'|t }}</span>
+  </div>
+  <ul class="divide-y divide-line">
+    {% for item in s.items %}
+      {% set badge = badges[item.availability] %}
+      <li class="grid gap-x-5 gap-y-2.5 px-4 sm:px-5 py-3.5 items-center {{ row_grid }}" data-kmfri-catalogue-item data-text="{{ item.search_text }}" data-online="{{ item.online ? '1' : '0' }}" data-priced="{{ item.priced ? '1' : '0' }}"{% if not item.visible %} hidden{% endif %}>
+        <div class="min-w-0">
+          <p class="font-semibold text-navy-800 leading-snug">{{ item.name }}</p>
+          {% if item.blurb %}<p class="text-sm text-muted mt-0.5 leading-snug">{{ item.blurb }}</p>{% endif %}
+          {% if item.note %}<p class="text-xs text-gold-700 mt-1">{{ item.note }}</p>{% endif %}
+        </div>
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 lg:contents">
+          <div class="lg:text-right">
+            {% if item.fee_kes is not null %}
+              <span class="flex flex-col lg:items-end leading-tight">
+                <span class="k-num">Ksh {{ item.fee_kes|kes }}</span>
+                <small class="text-xs text-muted">{{ item.fee_unit ?: 'per test'|t }}</small>
+              </span>
+            {% elseif item.fee_note %}
+              <span class="k-num">{{ item.fee_note }}</span>
+            {% else %}
+              <span class="text-sm text-subtle">{{ item.availability == 'planned' ? '—' : 'On quotation'|t }}</span>
+            {% endif %}
+          </div>
+          <div><span class="k-badge {{ badge.cls }}">{{ badge.label }}</span></div>
+          <div class="lg:text-right">{% include '@kmfri_enterprise/partials/item-action.html.twig' with {item: item, ecitizen_url: ecitizen_url, quote_query: quote_query|default({})} only %}</div>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+</section>

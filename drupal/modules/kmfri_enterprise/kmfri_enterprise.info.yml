@@ -1,0 +1,9 @@
+name: 'KMFRI Enterprise Services Hub'
+type: module
+description: 'Commercial & Enterprise Services Hub for KMFRI: service catalogue, tariffs, research stations, laboratory services and online quotation requests backed by kmfri_services_db.'
+package: KMFRI
+core_version_requirement: ^10.3 || ^11
+php: 8.1
+dependencies:
+  - drupal:inline_form_errors
+configure: kmfri_enterprise.settings

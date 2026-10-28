@@ -1,0 +1,107 @@
+/* =====================================================================
+   Drupal-specific additions to the hub design system (src/index.css).
+   Appended by drupal/build/build.mjs before compiling css/hub.css.
+   ===================================================================== */
+
+@layer components {
+  /* Inline SVG icons from images/icons.svg (kmfri_icon()) */
+  .k-ic { display: inline-block; flex: none; vertical-align: middle; }
+
+  /* Search dialog: the backdrop is shown/hidden with the hidden attribute */
+  .k-modal-backdrop[hidden] { display: none; }
+
+  /* ---------- Form API markup (stable9) inside hub forms ---------- */
+  .k-form .form-item,
+  .k-form .js-form-item { margin: 0; }
+  .k-form .form-item .description { margin-top: 0.35rem; font-size: 0.8125rem; color: var(--color-muted); }
+  .k-form .form-required::after { content: " *"; color: #b91c1c; }
+  .k-form .form-item--error-message {
+    margin-top: 0.4rem;
+    font-size: 0.875rem;
+    color: #b91c1c;
+  }
+  .k-form .k-input.error,
+  .k-form .k-input[aria-invalid="true"] { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12); }
+  .k-form select.k-input[disabled] { background: var(--color-canvas); color: var(--color-muted); }
+  .k-form .form-actions {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+    margin: 0;
+  }
+  .k-form .form-actions .btn[disabled] { opacity: 0.55; }
+  .k-form .ajax-progress { display: inline-flex; align-items: center; gap: 0.4rem; margin-left: 0.5rem; font-size: 0.8125rem; color: var(--color-muted); }
+  .k-form .ajax-progress-throbber .throbber {
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--color-line-strong);
+    border-top-color: var(--color-navy-600);
+    border-radius: 50%;
+    animation: kSpin 0.8s linear infinite;
+  }
+  @media (min-width: 640px) {
+    .k-form .form-actions { flex-direction: row-reverse; align-items: center; justify-content: flex-start; }
+  }
+
+  /* ---------- Status messages ---------- */
+  /* The region always holds Drupal's empty messages placeholder; only pad real notices. */
+  .k-page-notices:has(.messages, [role="contentinfo"], ul.tabs, h2.visually-hidden + ul) { padding-top: 1.25rem; }
+  .k-page-notices [role="contentinfo"],
+  .k-page-notices .messages {
+    margin-bottom: 1rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--color-line);
+    border-left-width: 4px;
+    border-radius: 12px;
+    background: #fff;
+    font-size: 0.95rem;
+  }
+  .k-page-notices .messages--status { border-left-color: var(--color-teal-600); }
+  .k-page-notices .messages--warning { border-left-color: var(--color-gold-500); }
+  .k-page-notices .messages--error { border-left-color: #dc2626; color: #991b1b; }
+  .k-page-notices .messages__list { margin: 0; padding-left: 1.1rem; list-style: disc; }
+
+  /* Local task tabs (admins) */
+  /* Local task tabs: stable9 prints a bare <ul> after a visually-hidden heading. */
+  .k-page-notices ul.tabs, .k-page-notices h2.visually-hidden + ul { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 1rem; padding: 0; list-style: none; }
+  .k-page-notices ul.tabs a, .k-page-notices h2.visually-hidden + ul a {
+    display: inline-flex;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-navy-800);
+  }
+  .k-page-notices ul.tabs a.is-active, .k-page-notices h2.visually-hidden + ul a.is-active { background: var(--color-navy-600); border-color: var(--color-navy-600); color: #fff; }
+
+  /* Non-hub pages (login, nodes, errors) */
+  .k-page-generic { padding-block: 2.5rem calc(var(--wave-h) + 3rem); }
+  .k-page-generic h1 { font-size: clamp(1.8rem, 1.2rem + 2vw, 2.6rem); font-weight: 700; margin-bottom: 1.5rem; }
+  .k-page-generic input:not([type="submit"]):not([type="checkbox"]):not([type="radio"]),
+  .k-page-generic select,
+  .k-page-generic textarea {
+    width: 100%;
+    max-width: 32rem;
+    min-height: 46px;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 12px;
+  }
+  .k-page-generic label { display: block; margin: 1rem 0 0.35rem; font-weight: 600; color: var(--color-navy-800); }
+  .k-page-generic input[type="submit"] {
+    margin-top: 1.25rem;
+    min-height: 46px;
+    padding: 0.7rem 1.4rem;
+    border-radius: 999px;
+    background: var(--color-navy-600);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+}
+
+@keyframes kSpin { to { transform: rotate(360deg); } }
+
+/* The search dialog has its own clear button; hide the browser's native one. */
+[data-kmfri-search-input]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }

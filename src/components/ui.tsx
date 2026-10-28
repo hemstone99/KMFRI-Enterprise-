@@ -10,6 +10,8 @@ import {
   Clock,
   Building2,
   GraduationCap,
+  Landmark,
+  Headset,
 } from 'lucide-react';
 import { ServiceItem } from '../types';
 
@@ -53,6 +55,18 @@ export const ServiceIcon: React.FC<{ category: ServiceItem['category']; classNam
 }) => {
   const Icon = SERVICE_ICONS[category] ?? FlaskConical;
   return <Icon className={className} aria-hidden="true" />;
+};
+
+/** Icons for the top-level divisions of the service catalogue (src/data/serviceCatalogue.ts). */
+export const DIVISION_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  laboratory: FlaskConical,
+  aquaculture: Fish,
+  visits: Landmark,
+  maritime: Ship,
+  research: Database,
+  conference: Building2,
+  attachment: GraduationCap,
+  customer: Headset,
 };
 
 /* ------------------------------------------------------------------

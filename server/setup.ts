@@ -103,7 +103,7 @@ async function main() {
   const [[ver]] = (await admin.query('SELECT VERSION() AS v')) as any;
   console.log(`Connected to ${config.host}:${config.port} as ${adminUser} (server ${ver.v})`);
 
-  const dir = path.resolve(import.meta.dirname, '..', 'db');
+  const dir = path.resolve(import.meta.dirname, '..', 'drupal/modules/kmfri_enterprise/sql');
   const files = fs.readdirSync(dir).filter((f) => /^\d+_.*\.sql$/.test(f)).sort();
   for (const file of files) {
     const statements = splitSql(fs.readFileSync(path.join(dir, file), 'utf8'));
@@ -129,6 +129,7 @@ async function main() {
     await admin.query(`GRANT SELECT ON \`${db}\`.* TO ${acct}`);
     await admin.query(`GRANT EXECUTE ON PROCEDURE \`${db}\`.sp_register_service_inquiry TO ${acct}`);
     await admin.query(`GRANT EXECUTE ON PROCEDURE \`${db}\`.sp_get_service_full_details TO ${acct}`);
+    await admin.query(`GRANT EXECUTE ON PROCEDURE \`${db}\`.sp_update_inquiry_status TO ${acct}`);
   }
   await admin.query('FLUSH PRIVILEGES');
   console.log(`  ✓ application account ${config.user} (SELECT + EXECUTE on ${db})`);

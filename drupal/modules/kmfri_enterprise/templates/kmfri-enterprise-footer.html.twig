@@ -1,0 +1,99 @@
+{#
+/**
+ * @file
+ * Hub footer: identity, catalogue divisions, quick links, contacts, legal bar and accessibility help.
+ */
+#}
+<footer class="k-footer relative z-1 -mt-(--wave-h)">
+  <div class="k-footer__wave" aria-hidden="true">
+    <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
+      <path d="M0 62 C 300 26 620 90 920 68 S 1300 30 1440 44 L 1440 100 L 0 100 Z" fill="url(#k-footer-accent)" />
+      <path d="M0 70 C 300 34 620 98 920 76 S 1300 38 1440 52 L 1440 100 L 0 100 Z" fill="#001D3D" />
+      <defs>
+        <linearGradient id="k-footer-accent" x1="0" x2="1">
+          <stop offset="0" stop-color="#0A8FC4" />
+          <stop offset="0.5" stop-color="#5BD1D7" />
+          <stop offset="1" stop-color="#0A8FC4" />
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <div class="k-footer__main">
+    <div class="k-container grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1.2fr_1fr_1.2fr] lg:gap-10">
+      <div class="space-y-5">
+        <span class="inline-block bg-white p-2.5 rounded-xl">
+          <img src="{{ kmfri_asset('images/brand/kmfri-logo.png') }}" alt="Kenya Marine &amp; Fisheries Research Institute" class="h-10 w-auto" loading="lazy">
+        </span>
+        <p class="text-[0.9375rem] text-white/75 max-w-xs">
+          <span class="font-semibold text-teal-400">Vision: </span>
+          <span class="italic">&ldquo;A Centre of Excellence in Aquatic Research and Blue Economy&rdquo;</span>
+        </p>
+        <div class="flex items-center gap-4">
+          <img src="{{ kmfri_asset('images/brand/kebs-iso-9001.png') }}" alt="KEBS ISO 9001 Registered Firm — Quality Management System" width="64" height="64" class="w-16 h-16 shrink-0 rounded-full ring-4 ring-white/10" loading="lazy">
+          <ul class="k-footer__social" aria-label="{{ 'KMFRI on social media'|t }}">
+            {% for s in social|filter(s => s.label != 'WhatsApp') %}
+              <li><a href="{{ s.href }}" target="_blank" rel="noopener noreferrer" aria-label="{{ s.label }} (opens in a new tab)" style="background: {{ s.color }}">{{ kmfri_icon(s.icon) }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <nav aria-labelledby="footer-services">
+        <h3 id="footer-services">{{ 'Our Services'|t }}</h3>
+        <ul class="k-footer__list">
+          {% for d in divisions %}
+            <li><a href="{{ d.url }}">{{ d.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+
+      <nav aria-labelledby="footer-quick">
+        <h3 id="footer-quick">{{ 'Quick Links'|t }}</h3>
+        <ul class="k-footer__list">
+          {% for l in quick_links %}
+            <li><a href="{{ l.url }}"{% if l.external %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ l.label }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+
+      <div>
+        <h3>{{ 'Contact Us'|t }}</h3>
+        <ul class="k-footer__contact">
+          <li>{{ kmfri_icon('map-pin') }}<span>{{ contact.postal }}</span></li>
+          <li>{{ kmfri_icon('phone') }}<span><a href="tel:{{ contact.phone_main_tel }}">{{ contact.phone_main }}</a> or <a href="tel:{{ contact.phone_mobile_tel }}">{{ contact.phone_mobile }}</a></span></li>
+          <li>{{ kmfri_icon('mail') }}<a href="mailto:{{ contact.email }}">{{ contact.email }}</a></li>
+        </ul>
+        <a href="{{ path('kmfri_enterprise.quote') }}" class="btn btn-teal btn-sm mt-5">{{ kmfri_icon('file-text') }} {{ 'Submit Service Request'|t }}</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="k-footer__bottom">
+    <div class="k-container py-5 flex flex-col md:flex-row md:items-center justify-between gap-3 text-center md:text-left">
+      <p>&copy; {{ year }} Kenya Marine and Fisheries Research Institute (KMFRI). All Rights Reserved.</p>
+      <ul class="flex flex-wrap justify-center gap-x-6 gap-y-2" aria-label="{{ 'Legal and institutional links'|t }}">
+        <li><a href="{{ main_site }}/privacy-notice" target="_blank" rel="noopener noreferrer">{{ 'Privacy Notice'|t }}</a></li>
+        <li><a href="{{ main_site }}/about" target="_blank" rel="noopener noreferrer">{{ 'About KMFRI'|t }}</a></li>
+        <li><a href="{{ path('kmfri_enterprise.quote') }}">{{ 'Feedback'|t }}</a></li>
+        <li><a href="{{ path('kmfri_enterprise.charter') }}" class="hover:text-teal-400!">Citizens&rsquo; Charter</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="fixed left-5 bottom-5 z-900" data-kmfri-a11y>
+    <div id="a11y-panel" role="dialog" aria-label="{{ 'Accessibility options'|t }}" class="absolute bottom-16 left-0 w-[min(320px,calc(100vw-2.5rem))] k-panel p-5 text-ink animate-[kRise_220ms_ease_both]" hidden>
+      <div class="flex items-center justify-between mb-3">
+        <p class="font-heading font-semibold text-navy-800">{{ 'Accessibility'|t }}</p>
+        <button type="button" data-kmfri-a11y-close class="k-icon-btn w-8! h-8!" aria-label="{{ 'Close accessibility options'|t }}">{{ kmfri_icon('x', 'w-4! h-4!') }}</button>
+      </div>
+      <ul class="space-y-2 text-sm text-muted">
+        <li class="k-check">{{ kmfri_icon('circle-check') }}Screen reader friendly semantic HTML</li>
+        <li class="k-check">{{ kmfri_icon('circle-check') }}High contrast institutional colours (WCAG AA)</li>
+        <li class="k-check">{{ kmfri_icon('circle-check') }}Keyboard shortcut: <kbd class="font-mono text-xs px-1.5 py-0.5 rounded border border-line bg-canvas">Ctrl / ⌘ + K</kbd> for real-time search</li>
+        <li class="k-check">{{ kmfri_icon('circle-check') }}Full responsive viewport scaling</li>
+      </ul>
+    </div>
+    <button type="button" data-kmfri-a11y-toggle class="k-a11y-fab static!" aria-label="{{ 'Accessibility options'|t }}" aria-expanded="false" aria-controls="a11y-panel">{{ kmfri_icon('accessibility') }}</button>
+  </div>
+</footer>

@@ -1,0 +1,230 @@
+{#
+/**
+ * @file
+ * Service Catalogue: overview, division, group or sub-group page.
+ *
+ * Every level has its own web address (/enterprise/catalogue/{division}/{group}/{subgroup}).
+ * Division pages also present the service portfolio: overview, benefits, photos, who it is
+ * for, how to get it, contacts, fleet/datasets and indicative packages.
+ *
+ * Variables:
+ * - divisions: catalogue tree (with url on every node), for the navigator.
+ * - trail: division → … → selected node (empty on the overview).
+ * - selected, division: current node and its division (NULL on the overview).
+ * - is_division: the selected node is a division.
+ * - portfolio: services-database record for the division (scope, contacts) or NULL.
+ * - packages: portfolio pricing tiers shown where the register lists no tariffs.
+ * - related: other divisions.
+ * - sections: groups in scope with their services (see partials/catalogue-section).
+ * - crumbs, filters {q, channel, active}, channels, shown, scope_count, total,
+ *   online_total, ecitizen_url, action_url.
+ */
+#}
+{% import '@kmfri_enterprise/partials/macros.html.twig' as k %}
+{% set quote_url = path('kmfri_enterprise.quote', {}, division and division.service_slug ? {'query': {'service': division.service_slug}} : {}) %}
+
+{# Navigator tree (recursive) #}
+{% macro tree(nodes, trail_ids, depth) %}
+  {% import _self as self %}
+  {% import '@kmfri_enterprise/partials/macros.html.twig' as k %}
+  <ul class="{{ depth ? 'mt-1 ml-3 pl-3 border-l border-line space-y-0.5' : 'space-y-1' }}">
+    {% for node in nodes %}
+      {% set on_path = node.id in trail_ids %}
+      {% set current = trail_ids|last == node.id %}
+      {% set icon_cls = current ? 'w-4 h-4 shrink-0 text-teal-300' : 'w-4 h-4 shrink-0 text-teal-700' %}
+      <li>
+        <a href="{{ node.url }}"{% if current %} aria-current="page"{% endif %} class="w-full flex items-center gap-2 rounded-lg px-2.5 py-2 text-left transition-colors {{ current ? 'bg-navy-600 text-white' : (on_path ? 'bg-navy-50 text-navy-800' : 'text-ink hover:bg-canvas') }} {{ depth ? 'text-[0.9rem]' : 'font-semibold' }}">
+          {% if not depth %}{{ k.division_icon(node.id, icon_cls) }}{% endif %}
+          <span class="flex-1 min-w-0 leading-snug">{{ node.title }}</span>
+          <span class="text-xs tabular-nums {{ current ? 'text-white/80' : 'text-subtle' }}">{{ node.count }}</span>
+        </a>
+        {% if node.children and on_path %}{{ self.tree(node.children, trail_ids, depth + 1) }}{% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endmacro %}
+{% import _self as cat %}
+
+{# Banner #}
+{% set banner_extra %}
+  {% if is_division and division.service_slug %}
+    <div class="mt-6 flex flex-wrap gap-3">
+      <a class="btn btn-teal" href="{{ quote_url }}">{{ 'Request a Quotation'|t }}</a>
+      {% if division.online %}<a class="btn btn-ghost-light" href="{{ ecitizen_url }}" target="_blank" rel="noopener noreferrer">{{ 'Apply on eCitizen'|t }} {{ kmfri_icon('external-link') }}</a>{% endif %}
+    </div>
+  {% endif %}
+{% endset %}
+{% if selected %}
+  {% set banner_title = selected.title %}
+  {% set banner_subtitle = is_division ? division.tagline : selected.summary %}
+{% else %}
+  {% set banner_title %}KMFRI Service <em>Catalogue</em>{% endset %}
+  {% set banner_subtitle = total ~ ' services from Kenya’s marine and freshwater research institute — laboratory testing, fish seed and feeds, vessel charter, visits, venues and more, with official tariffs and online applications.' %}
+{% endif %}
+{% include '@kmfri_enterprise/partials/banner.html.twig' with {
+  crumbs: crumbs,
+  title: banner_title,
+  subtitle: banner_subtitle,
+  image: (selected and selected.image) ? selected.image : (division ? division.image : 'images/kmfri/hq-harbour-view.webp'),
+  image_position: 'center 45%',
+  next: '#F7F9FC',
+  extra: banner_extra,
+} only %}
+
+<section class="band-mist k-section pt-8!" aria-label="{{ 'Service catalogue'|t }}" data-kmfri-catalogue>
+  <div class="k-container grid gap-8 lg:grid-cols-[290px_minmax(0,1fr)] items-start">
+
+    {# Category navigator #}
+    <aside class="lg:sticky lg:top-28 space-y-4">
+      <details class="lg:hidden k-panel p-4">
+        <summary class="k-label mb-0! cursor-pointer">{{ 'Browse by category'|t }}{% if selected %}: {{ selected.title }}{% endif %}</summary>
+        <div class="mt-3">
+          <a href="{{ kmfri_catalogue_url() }}" class="block px-2.5 py-2 font-semibold text-navy-800">{{ 'All services'|t }} ({{ total }})</a>
+          {{ cat.tree(divisions, trail|column('id'), 0) }}
+        </div>
+      </details>
+      <nav class="hidden lg:block k-panel p-3 max-h-[calc(100vh-15rem)] overflow-y-auto" aria-label="{{ 'Service categories'|t }}">
+        <a href="{{ kmfri_catalogue_url() }}"{% if not selected %} aria-current="page"{% endif %} class="w-full flex items-center gap-2 rounded-lg px-2.5 py-2 mb-1 text-left font-semibold transition-colors {{ selected ? 'text-navy-800 hover:bg-canvas' : 'bg-navy-600 text-white' }}">
+          {% set all_icon_cls = selected ? 'w-4 h-4 text-teal-700' : 'w-4 h-4 text-teal-300' %}
+          {{ kmfri_icon('layers', all_icon_cls) }}
+          <span class="flex-1">{{ 'All services'|t }}</span>
+          <span class="text-xs tabular-nums {{ selected ? 'text-subtle' : 'text-white/80' }}">{{ total }}</span>
+        </a>
+        {{ cat.tree(divisions, trail|column('id'), 0) }}
+      </nav>
+      <div class="hidden lg:block k-panel p-4 text-sm">
+        <p class="font-heading font-semibold text-navy-800">{{ 'Not sure what you need?'|t }}</p>
+        <p class="text-muted mt-1">{{ 'Describe your project and KMFRI will recommend the right services.'|t }}</p>
+        <a href="{{ quote_url }}" class="btn btn-primary btn-sm btn-block mt-3">{{ 'Ask for advice'|t }}</a>
+        <a href="tel:+25441475151" class="mt-2.5 flex items-center justify-center gap-1.5 font-semibold text-navy-800">{{ kmfri_icon('phone', 'w-3.5 h-3.5 text-teal-700') }} +254 (0) 41 475151</a>
+      </div>
+    </aside>
+
+    <div class="min-w-0 space-y-6">
+      {# Division introduction (scope, benefits, how to apply, contacts) #}
+      {% if is_division and not filters.active %}
+        {% include '@kmfri_enterprise/partials/division-intro.html.twig' with {division: division, service: portfolio, packages: packages, stations_here: stations_here, quote_url: quote_url, ecitizen_url: ecitizen_url} only %}
+        {% if division.id == 'laboratory' %}
+          <div class="k-alert k-alert--teal flex-wrap items-center justify-between">
+            <span>{{ 'Meet the laboratories behind these services — ocean & coastal, freshwater and aquaculture labs, equipment and FAQs.'|t }}</span>
+            <a class="k-link text-sm" href="{{ path('kmfri_enterprise.laboratories') }}">{{ 'Our laboratories'|t }} {{ kmfri_icon('arrow-right', 'w-4 h-4') }}</a>
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {# Search & filters (GET form; js/hub.js filters live) #}
+      <form class="k-panel p-4 sm:p-5" role="search" aria-label="{{ 'Search the service catalogue'|t }}" method="get" action="{{ action_url }}">
+        <label for="cat-search" class="k-label">
+          {% if is_division %}{{ 'Find a service in @name'|t({'@name': selected.title}) }}{% elseif selected %}{{ 'Search in @name'|t({'@name': selected.title}) }}{% else %}{{ 'What do you need?'|t }}{% endif %}
+        </label>
+        <div class="relative">
+          {{ kmfri_icon('search', 'w-4 h-4 text-subtle absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none') }}
+          <input id="cat-search" type="search" name="q" value="{{ filters.q }}" placeholder="e.g. heavy metals, monosex fingerlings, school visit, conference, tide tables…" class="k-input pl-10!" data-kmfri-catalogue-q>
+        </div>
+        {# Enter in the search box submits this (keeping the channel), not the first filter button. #}
+        <button type="submit" class="hidden" tabindex="-1" aria-hidden="true"></button>
+        <input type="hidden" name="channel" value="{{ filters.channel }}" data-kmfri-catalogue-channel>
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <div class="k-tabs gap-1.5!" role="group" aria-label="{{ 'Filter by availability'|t }}">
+            {% for id, label in channels %}
+              <button type="submit" name="channel" value="{{ id }}" class="k-tab min-h-8.5! py-1! px-3! text-[0.8125rem]!" aria-pressed="{{ filters.channel == id ? 'true' : 'false' }}" data-kmfri-catalogue-filter="{{ id }}">{{ label|t }}</button>
+            {% endfor %}
+          </div>
+          <p class="text-sm text-muted" aria-live="polite">
+            {{ 'Showing'|t }} <strong class="text-navy-800" data-kmfri-catalogue-count>{{ filters.active or selected ? shown : scope_count }}</strong> {{ 'of'|t }} {{ scope_count }}
+            <a href="{{ action_url }}" class="k-link text-sm ml-3" data-kmfri-catalogue-reset{% if not filters.active %} hidden{% endif %}>{{ kmfri_icon('rotate-ccw', 'w-3.5 h-3.5') }} {{ 'Reset'|t }}</a>
+          </p>
+        </div>
+      </form>
+
+      {# Overview: available online + divisions (hidden while filtering) #}
+      {% if not selected %}
+        <div class="space-y-6" data-kmfri-catalogue-overview{% if filters.active %} hidden{% endif %}>
+          <div class="k-panel p-5 sm:p-6 bg-teal-50! border-[#bfe8ec]!">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <div class="max-w-xl">
+                <span class="k-tag">{{ 'Available online now'|t }}</span>
+                <h2 class="k-h3 mt-1">{{ '@count services can be applied for on eCitizen'|t({'@count': online_total}) }}</h2>
+                <p class="text-sm text-muted mt-1.5">{{ 'Fingerlings and ornamental fish, laboratory analysis, educational visits, conference bookings, attachments and tide tables.'|t }}</p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <a href="{{ action_url }}?channel=online" class="btn btn-outline btn-sm" data-kmfri-catalogue-filter="online">{{ 'See the list'|t }}</a>
+                <a href="{{ ecitizen_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">{{ 'KMFRI eCitizen'|t }} {{ kmfri_icon('external-link') }}</a>
+              </div>
+            </div>
+          </div>
+          <ul class="grid gap-6 md:grid-cols-2">
+            {% for d in divisions %}
+              <li class="relative">{% include '@kmfri_enterprise/partials/division-card.html.twig' with {d: d, show_groups: true} only %}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      {# Group page: link back to the division #}
+      {% if selected and not is_division and not filters.active %}
+        <div class="k-panel p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
+          <p class="text-sm text-muted">{{ 'Part of'|t }} <strong class="text-navy-800">{{ division.title }}</strong> — {{ division.tagline }}</p>
+          <a class="k-link text-sm" href="{{ kmfri_catalogue_url(division.path) }}">{{ 'About this service'|t }} {{ kmfri_icon('arrow-right', 'w-4 h-4') }}</a>
+        </div>
+      {% endif %}
+
+      {# Services & tariffs #}
+      {% if is_division and not filters.active %}
+        <div class="flex flex-wrap items-end justify-between gap-3 pt-2">
+          <div>
+            <span class="k-eyebrow">{{ 'Services & Tariffs'|t }}</span>
+            <h2 class="k-h2">Choose your <em>service</em></h2>
+          </div>
+          {% if selected.children|length > 1 %}
+            <ul class="flex flex-wrap gap-2" aria-label="{{ 'Groups in @name'|t({'@name': selected.title}) }}">
+              {% for c in selected.children %}
+                <li><a href="{{ kmfri_catalogue_url(c.path) }}" class="k-tab min-h-8.5! py-1! px-3! text-[0.8125rem]!">{{ c.title }} <span class="text-subtle font-normal">{{ c.count }}</span></a></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="space-y-6" data-kmfri-catalogue-sections{% if not selected and not filters.active %} hidden{% endif %}>
+        {% for s in sections %}
+          {% include '@kmfri_enterprise/partials/catalogue-section.html.twig' with {s: s, show_intro: not filters.active, ecitizen_url: ecitizen_url} only %}
+        {% endfor %}
+        <div class="k-panel p-12 text-center" data-kmfri-catalogue-empty{% if shown > 0 or (not selected and not filters.active) %} hidden{% endif %}>
+          {{ kmfri_icon('filter', 'w-10 h-10 text-line-strong mx-auto mb-3') }}
+          <h2 class="k-h3">{{ 'No services match'|t }}</h2>
+          <p class="text-sm text-muted mt-2 max-w-md mx-auto">{{ 'Try a different keyword or filter, or ask KMFRI for advice.'|t }}</p>
+          <div class="mt-6 flex flex-wrap justify-center gap-2">
+            {% if selected %}<a href="{{ kmfri_catalogue_url() }}{{ filters.q ? '?q=' ~ filters.q|url_encode : '' }}" class="btn btn-primary">{{ 'Search all services'|t }}</a>{% endif %}
+            <a href="{{ action_url }}" class="btn btn-outline" data-kmfri-catalogue-reset>{{ 'Reset filters'|t }}</a>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-xs text-subtle">{{ 'Tariffs are as published in the KMFRI services register, in Kenya Shillings. Final charges are confirmed on the official quotation or eCitizen invoice.'|t }}</p>
+    </div>
+  </div>
+</section>
+
+{# Other divisions #}
+{% if related %}
+  <section class="bg-white k-section" aria-labelledby="more-heading">
+    <div class="k-container">
+      <span class="k-eyebrow">{{ 'Explore More'|t }}</span>
+      <h2 id="more-heading" class="k-h2 mb-8">Other KMFRI <em>services</em></h2>
+      <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {% for d in related %}
+          <li class="relative">{% include '@kmfri_enterprise/partials/division-card.html.twig' with {d: d, show_groups: false} only %}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+{% endif %}
+
+{% set title %}Need several tests <em>or a bulk order?</em>{% endset %}
+{% embed '@kmfri_enterprise/partials/cta.html.twig' with {eyebrow: 'Quotations'|t, title: title, text: 'Send your sample list, quantities, cruise plan or event dates and KMFRI will return an official quotation with terms of delivery.'} %}
+  {% block actions %}
+    <a class="btn btn-teal" href="{{ quote_url }}">{{ 'Request a Quotation'|t }}</a>
+    <a class="btn btn-ghost-light" href="{{ path('kmfri_enterprise.charter') }}">{{ 'Tariffs & Charter'|t }}</a>
+  {% endblock %}
+{% endembed %}

@@ -1,0 +1,22 @@
+{#
+/**
+ * @file
+ * Hub settings (SettingsForm) and related Drupal configuration shortcuts.
+ */
+#}
+<div class="kd-grid kd-grid--detail">
+  <section class="kd-card k-form kd-settings" aria-labelledby="kd-settings-heading">
+    <h2 id="kd-settings-heading" class="kd-card__title mb-4">{{ 'Services database & quotation limits'|t }}</h2>
+    {{ form }}
+  </section>
+  {% if links %}
+    <aside class="kd-card" aria-labelledby="kd-related-heading">
+      <h2 id="kd-related-heading" class="kd-card__title mb-3">{{ 'Related configuration'|t }}</h2>
+      <ul class="space-y-1">
+        {% for l in links %}
+          <li><a href="{{ l.url }}" class="kd-linkrow">{{ l.label }} {{ kmfri_icon('chevron-right', 'w-4 h-4') }}</a></li>
+        {% endfor %}
+      </ul>
+    </aside>
+  {% endif %}
+</div>

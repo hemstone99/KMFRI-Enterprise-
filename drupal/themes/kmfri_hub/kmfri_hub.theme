@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @file
+ * KMFRI Hub theme.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function kmfri_hub_preprocess_html(array &$variables): void {
+  $variables['attributes']['class'][] = 'antialiased';
+  $variables['#attached']['html_head'][] = [
+    ['#tag' => 'meta', '#attributes' => ['name' => 'theme-color', 'content' => '#002B57']],
+    'kmfri_hub_theme_color',
+  ];
+}
+
+/**
+ * Implements hook_preprocess_page().
+ *
+ * Hub pages render full-width bands and their own <h1>; every other page
+ * (user login, nodes, error pages) gets a padded container.
+ */
+function kmfri_hub_preprocess_page(array &$variables): void {
+  $route = (string) \Drupal::routeMatch()->getRouteName();
+  $variables['is_hub_page'] = str_starts_with($route, 'kmfri_enterprise.');
+  // The administration dashboard brings its own sidebar/top bar layout.
+  $variables['is_dashboard'] = str_starts_with($route, 'kmfri_enterprise.admin.');
+  $variables['#cache']['contexts'][] = 'route';
+}

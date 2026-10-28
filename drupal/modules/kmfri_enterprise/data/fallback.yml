@@ -1,0 +1,788 @@
+# Bundled catalogue used only when kmfri_services_db is unreachable (read-only mode; quotation requests are disabled).
+services:
+  -
+    id: srv-01
+    slug: laboratory-analytical-services
+    code: KMFRI-LAB-01
+    title: 'Laboratory Analytical Services'
+    category: analytical
+    category_label: 'Laboratory Analytics'
+    description: 'Water analysis, fish analysis, microbiology, chemical analysis, environmental analysis and other specialised laboratory tests.'
+    full_overview: 'KMFRI operates premier accredited marine and freshwater analytical laboratories equipped with state-of-the-art instrumentation including GC-MS, AAS, HPLC, and automated nutrient analyzers. We provide rigorous testing of aquatic chemistry, fish tissue safety, microbiology, effluent compliance, heavy metal toxicology, and ocean acidification parameters to support regulatory compliance, export clearance, and scientific investigations.'
+    remarks: 'Government, private sector, researchers, universities, individuals'
+    target_clients:
+      - 'Government agencies & state corporations'
+      - 'Private sector food & fish processing exporters'
+      - 'Water utility & sewerage service providers'
+      - 'Academic researchers & university postgraduates'
+      - 'Commercial mariculture & fish farm operators'
+      - 'Environmental consultants & individuals'
+    key_capabilities:
+      - 'Physico-chemical water quality profiling (pH, salinity, DO, turbidity, BOD, COD, TDS)'
+      - 'Heavy metals detection (Mercury, Lead, Cadmium, Arsenic, Copper, Zinc) via AAS'
+      - 'Microbiological assessment (Total Coliforms, E. coli, Vibrio spp., Salmonella) for EU/US export standards'
+      - 'Persistent Organic Pollutants (POPs), pesticide residues & microplastics analysis'
+      - 'Fish tissue proximate analysis (protein, crude fat, moisture, ash content)'
+      - 'Harmful Algal Bloom (HAB) toxins & cyanobacteria screening'
+    sample_requirements:
+      - 'Water samples: Minimum 1.5 Litres in pre-cleaned, amber borosilicate glass or sterilized HDPE bottles'
+      - 'Microbiology samples: Minimum 500ml collected in sterile containers, delivered at 4°C within 6 hours'
+      - 'Fish tissue samples: Minimum 250g whole or filleted flesh in sterile ziplock bags, packed on ice (-20°C preferred)'
+      - 'Completed Chain of Custody (CoC) and Sample Submission Form'
+    turnaround_time: '5 – 7 business days (Express 48h emergency testing available)'
+    pricing_tiers:
+      -
+        name: 'Standard Potability & Physico-Chemical Water Test'
+        unit: 'per sample'
+        cost_kes: 4500
+        cost_usd: 35
+        turnaround_time: '5 days'
+      -
+        name: 'Full Environmental Compliance Profile (BOD, COD, Heavy Metals)'
+        unit: 'per sample'
+        cost_kes: 12500
+        cost_usd: 95
+        turnaround_time: '7 days'
+      -
+        name: 'Export Fish Tissue Microbiology & Histamine Screening'
+        unit: 'per batch'
+        cost_kes: 16000
+        cost_usd: 125
+        turnaround_time: '4 days'
+      -
+        name: 'Heavy Metal Toxicological Profile (5 metals via AAS)'
+        unit: 'per sample'
+        cost_kes: 8000
+        cost_usd: 60
+        turnaround_time: '5 days'
+    available_stations:
+      - 'Mombasa Headquarters'
+      - 'Kisumu Centre'
+      - 'Naivasha Centre'
+      - 'Shimoni Mariculture Centre'
+    status: active
+    featured_image: /images/analytical-lab.webp
+    iso_standard: 'ISO/IEC 17025:2017 Accredited'
+    contact_officer:
+      title: 'Chief Principal Research Scientist - Laboratory Analytics'
+      email: labservices@kmfri.go.ke
+      phone: '+254 (0) 41 475151/4'
+  -
+    id: srv-02
+    slug: technical-consultancy-services
+    code: KMFRI-CNS-02
+    title: 'Technical Consultancy Services'
+    category: consultancy
+    category_label: 'Technical Consultancy'
+    description: 'Fisheries, aquaculture, marine science, environmental and blue economy consultancy.'
+    full_overview: 'Leveraging over four decades of premier marine research across the Western Indian Ocean and East African Great Lakes, KMFRI provides high-level advisory and technical consultancy. We assist County Governments, national ministries, bilateral development partners, and commercial enterprises with Marine Spatial Planning (MSP), fisheries stock assessments, Environmental Impact Assessments (EIA), and Blue Economy masterplans.'
+    remarks: 'Government, counties, private sector, development partners'
+    target_clients:
+      - 'National Government Ministries & Agencies'
+      - 'County Governments (Coastal & Lake Basin regions)'
+      - 'Bilateral & multilateral development partners (World Bank, FAO, UNEP)'
+      - 'Port authorities & maritime infrastructure developers'
+      - 'Commercial maritime operators & offshore renewable developers'
+    key_capabilities:
+      - 'Marine Spatial Planning (MSP) & coastal zoning frameworks'
+      - 'Environmental & Social Impact Assessments (ESIA) for port & marine infrastructure'
+      - 'Fisheries stock status evaluation & Total Allowable Catch (TAC) advisory'
+      - 'Blue Carbon accounting (mangrove restoration & seagrass sequestration)'
+      - 'Aquaculture feasibility studies, site selection & cage culture bathymetry'
+      - 'Ballast water management audits & invasive species risk mitigation'
+    sample_requirements:
+      - 'Project Terms of Reference (ToR) and project boundaries/geospatial coordinates'
+      - 'Scope of work baseline data and regulatory agency submission deadlines'
+    turnaround_time: 'Project-dependent (typically 14 – 60 working days per milestone)'
+    pricing_tiers:
+      -
+        name: 'Preliminary Marine Environmental Appraisal / Site Assessment'
+        unit: 'per site'
+        cost_kes: 180000
+        cost_usd: 1400
+        turnaround_time: '10 days'
+      -
+        name: 'Comprehensive ESIA / Marine Technical Advisory'
+        unit: 'per project milestone'
+        cost_kes: 650000
+        cost_usd: 5000
+        turnaround_time: '30 days'
+      -
+        name: 'County Fisheries & Blue Economy Masterplan Formulation'
+        unit: 'per county blueprint'
+        cost_kes: 1200000
+        cost_usd: 9200
+        turnaround_time: '60 days'
+    available_stations:
+      - 'Mombasa Headquarters'
+      - 'Kisumu Centre'
+      - 'Naivasha Centre'
+      - 'Baringo Station'
+    status: active
+    featured_image: /images/coral-reef-survey.webp
+    iso_standard: 'ISO 9001:2015 Certified'
+    contact_officer:
+      title: 'Director - Marine & Coastal Research Advisory'
+      email: consultancy@kmfri.go.ke
+      phone: '+254 20 8021560'
+  -
+    id: srv-03
+    slug: fish-and-aquaculture-services
+    code: KMFRI-AQU-03
+    title: 'Fish & Aquaculture Services'
+    category: aquaculture
+    category_label: 'Aquaculture & Seeds'
+    description: 'Fingerlings, broodstock, fish feed, Aquariums and related aquaculture services.'
+    full_overview: 'KMFRI is Kenya’s primary scientific authority in sustainable aquaculture development. Our specialized aquaculture hatcheries produce genetically certified, disease-free seed stock (Nile Tilapia, African Catfish, Milkfish, and Marine Crabs), optimized locally-sourced floating fish feeds, live feed cultures (Artemia and Spirulina), and turnkey aquarium design for institutional and private clients.'
+    remarks: 'Fish farmers, counties, NGOs, private sector'
+    target_clients:
+      - 'Smallholder & commercial fish farmers'
+      - 'County Government aquaculture stimulus initiatives'
+      - 'Agricultural NGOs & livelihood development projects'
+      - 'Aquaculture feed manufacturers & agro-dealers'
+      - 'Educational institutions, hotels & eco-tourism facilities'
+    key_capabilities:
+      - 'Certified high-growth monosex Nile Tilapia (Oreochromis niloticus) fingerlings'
+      - 'African Catfish (Clarias gariepinus) fingerlings & selectively bred broodstock'
+      - 'Marine mariculture seed (Milkfish - Chanos chanos, Mud Crab crablets - Scylla serrata)'
+      - 'High-protein floating feed formulations using local alternative protein sources'
+      - 'Recirculating Aquaculture System (RAS) and cage culture design & installation support'
+      - 'Custom institutional marine and freshwater aquarium setup & maintenance'
+    sample_requirements:
+      - 'Seed orders require 14 days advance notification for batch harvest conditioning'
+      - 'Oxygenated transport bags or aerated transport tanks required at collection'
+    turnaround_time: 'Immediate from nursery stock (or 14 days advance booking for bulk orders > 10,000 units)'
+    pricing_tiers:
+      -
+        name: 'Certified Monosex Nile Tilapia Fingerlings (Grade A, 5g)'
+        unit: 'per 1,000 pieces'
+        cost_kes: 7000
+        cost_usd: 55
+        turnaround_time: '3 - 7 days'
+      -
+        name: 'African Sharptooth Catfish Fingerlings (Grade A)'
+        unit: 'per 1,000 pieces'
+        cost_kes: 8500
+        cost_usd: 65
+        turnaround_time: '3 - 7 days'
+      -
+        name: 'KMFRI Formulated High-Protein Floating Feed (25kg Bag, 32% CP)'
+        unit: 'per 25kg bag'
+        cost_kes: 3400
+        cost_usd: 26
+        turnaround_time: 'In Stock'
+      -
+        name: 'Mariculture Mud Crab / Milkfish Seed Package'
+        unit: 'per 500 crablets'
+        cost_kes: 12000
+        cost_usd: 90
+        turnaround_time: '10 days'
+    available_stations:
+      - 'Kegati Aquaculture Centre'
+      - 'Sangoro Aquaculture Centre'
+      - 'Kisumu Centre'
+      - 'Shimoni Mariculture Centre'
+      - 'Naivasha Centre'
+    status: active
+    featured_image: /images/aquaculture-hatchery.webp
+    iso_standard: 'KEBS Tested & ISO 9001:2015'
+    contact_officer:
+      title: 'Head of Aquaculture & Seed Multiplication'
+      email: aquaculture@kmfri.go.ke
+      phone: '+254 722 000000'
+  -
+    id: srv-04
+    slug: scientific-data-and-information-services
+    code: KMFRI-DAT-04
+    title: 'Scientific Data & Information Services'
+    category: data
+    category_label: 'Data & Marine Informatics'
+    description: 'GIS, marine datasets, fisheries information, scientific reports and specialised data products, Tide tables and other marine information products.'
+    full_overview: 'The National Oceanographic Data Center (KeNODC) hosted at KMFRI curates an exhaustive scientific repository of bathymetric surveys, sea surface temperatures, acoustic fish biomass estimates, tidal harmonics, chlorophyll-a trends, and historical catch-effort statistics for Kenya’s Exclusive Economic Zone (EEZ) and inland lakes.'
+    remarks: 'Researchers, consultants, government, universities'
+    target_clients:
+      - 'Academic researchers & university faculties'
+      - 'Environmental & offshore engineering consultants'
+      - 'Shipping, port navigation & marine salvage companies'
+      - 'Government policy makers & regional maritime security bodies'
+      - 'Climate scientists and meteorologists'
+    key_capabilities:
+      - 'Official Kenya National Tide Tables (Hourly tidal elevations & lunar cycles)'
+      - 'Bathymetric digital terrain models (DTM) of coastal shelf & Lake Victoria'
+      - 'Long-term sea surface temperature (SST) & ocean current vector datasets'
+      - 'Marine and estuarine GIS shapefiles (mangrove extent, coral reef health, seagrass beds)'
+      - 'Fisheries catch per unit effort (CPUE) statistical records & species distribution models'
+      - 'Satellite remote sensing chlorophyll-a and ocean productivity composites'
+    sample_requirements:
+      - 'Data Use Agreement (DUA) form specifying academic, commercial, or governmental purpose'
+      - 'Specific spatial bounding coordinates (Bounding Box) and temporal range required'
+    turnaround_time: '1 – 3 business days for digital repository extraction'
+    pricing_tiers:
+      -
+        name: 'Annual Official Kenya Port Tide Tables (Digital / Printed)'
+        unit: 'per annual volume'
+        cost_kes: 2500
+        cost_usd: 20
+        turnaround_time: Immediate
+      -
+        name: 'Standard Spatial GIS Marine Dataset Pack (5km resolution)'
+        unit: 'per theme / region'
+        cost_kes: 25000
+        cost_usd: 195
+        turnaround_time: '2 days'
+      -
+        name: 'Specialized High-Resolution Bathymetry & Acoustic Biomass Data'
+        unit: 'per project survey extract'
+        cost_kes: 75000
+        cost_usd: 580
+        turnaround_time: '3 days'
+      -
+        name: 'Academic Student Research Dataset Voucher (Subsidized)'
+        unit: 'per verified student thesis'
+        cost_kes: 3500
+        cost_usd: 28
+        turnaround_time: '2 days'
+    available_stations:
+      - 'Mombasa Headquarters (KeNODC)'
+      - 'Kisumu Centre'
+    status: active
+    featured_image: /images/vessel-aerial.webp
+    iso_standard: 'IOC/IODE Quality Management Framework'
+    contact_officer:
+      title: 'National Oceanographic Data Coordinator (KeNODC)'
+      email: datarequest@kmfri.go.ke
+      phone: '+254 (0) 41 475151'
+  -
+    id: srv-05
+    slug: research-vessel-hire-services
+    code: KMFRI-VES-05
+    title: 'Research Vessel Hire Services'
+    category: vessel
+    category_label: 'Research Vessel Fleet'
+    description: 'Research vessel hire, marine surveys, scientific expeditions and related marine support.'
+    full_overview: 'KMFRI owns and operates flagship research vessels led by RV Mtafiti, a 53-meter state-of-the-art oceanographic vessel fitted with advanced seabed mapping multibeam echosounders, CTD rosettes, meteorological weather stations, wet and dry laboratories, and deep-water acoustic trawling gear. We provide vessel charter for scientific research cruises, environmental baselines, cable route surveys, and offshore marine observation across Kenya’s 200nm EEZ.'
+    remarks: 'Government, researchers, universities, private sector'
+    target_clients:
+      - 'International and regional marine research institutes'
+      - 'Offshore telecom cable and pipeline installation contractors'
+      - 'National security, coast guard and maritime regulatory authorities'
+      - 'Universities conducting multidisciplinary oceanographic expeditions'
+      - 'Private marine geophysical and geotechnical survey firms'
+    key_capabilities:
+      - 'RV Mtafiti: 53.2m LOA, 1,040 Gross Tonnage, 30-day endurance, accommodates 28 scientists'
+      - 'Kongsberg EM710 Multibeam Echosounder & Simrad EK80 Scientific Echosounders'
+      - 'Sea-Bird SBE 911plus CTD carousel with 24 x 10L Niskin water sampling bottles'
+      - 'Sub-bottom profiler, sidescan sonar and deep-sea benthic grab deployment A-frame'
+      - 'Freshwater research boats: RV Utafiti (Lake Victoria) and aluminum survey catamarans'
+      - 'Certified marine crew, certified navigation officers, and onboard scientific technical support'
+    sample_requirements:
+      - 'Cruise Plan & Scientific Expedition Protocol submitted 30 days prior to mobilization'
+      - 'Port clearance, environmental compliance certification, and onboard scientist manifest'
+    turnaround_time: 'Booking confirmation within 5 working days; mobilization per voyage schedule'
+    pricing_tiers:
+      -
+        name: 'RV Mtafiti Full Oceanographic Charter (Kenya EEZ, 24h operational day)'
+        unit: 'per day (sea time)'
+        cost_kes: 850000
+        cost_usd: 6500
+        turnaround_time: 'Scheduled cruise'
+      -
+        name: 'RV Mtafiti In-Port / Mobilization & Demobilization Day'
+        unit: 'per day (port standby)'
+        cost_kes: 350000
+        cost_usd: 2700
+        turnaround_time: Scheduled
+      -
+        name: 'Lake Victoria Research Survey Boat (RV Utafiti with skipper)'
+        unit: 'per day (inland lake)'
+        cost_kes: 95000
+        cost_usd: 730
+        turnaround_time: '2 days advance'
+      -
+        name: 'Coastal Inshore Rigid-Inflatable Survey Boat (RIB)'
+        unit: 'per day'
+        cost_kes: 45000
+        cost_usd: 350
+        turnaround_time: '1 day advance'
+    available_stations:
+      - 'Mombasa Headquarters (Kilindini Pier)'
+      - 'Kisumu Centre (Lake Victoria Pier)'
+    status: active
+    featured_image: /images/vessel-port.webp
+    iso_standard: 'IMO ISM Compliant & ISO 9001:2015'
+    contact_officer:
+      title: 'Chief Vessel Operations Superintendent'
+      email: vesselops@kmfri.go.ke
+      phone: '+254 711 999888'
+  -
+    id: srv-06
+    slug: fish-products-and-value-addition-services
+    code: KMFRI-VAL-06
+    title: 'Fish Products & Value-Addition Services'
+    category: value_addition
+    category_label: 'Post-Harvest & Value Addition'
+    description: 'Product development and post-harvest technology support.'
+    full_overview: 'Post-harvest losses in Kenya’s fisheries historically reach 20–30%. KMFRI’s Post-Harvest Fish Technology and Value-Addition Incubation Hub provides technical know-how, product formulation, cold chain protocols, smoking/drying innovations, and quality assurance for fish processors, artisanal fisher cooperatives, and agri-business enterprises looking to enter high-value domestic and export markets.'
+    remarks: 'Fish processors, SMEs, cooperatives'
+    target_clients:
+      - 'Beach Management Units (BMUs) and Fisher Cooperatives'
+      - 'Commercial fish processing factories and retail distributors'
+      - 'Agro-processing women & youth self-help groups and SMEs'
+      - 'Supermarket fresh-fish procurement managers'
+      - 'Animal feed millers utilizing fish processing by-products'
+    key_capabilities:
+      - 'Solar-biomass hybrid fish drying kilns & modern hygienic smoking ovens'
+      - 'Fish value-added product development (fish sausages, fish fillets, samosas, fish patties, fish meal)'
+      - 'Fish silage and organic bio-fertilizer technology using visceral processing waste'
+      - 'Modified Atmosphere Packaging (MAP) & vacuum packaging shelf-life optimization'
+      - 'HACCP system design, traceability auditing, and sanitary standard operating procedures (SSOP)'
+    sample_requirements:
+      - 'Client raw material samples (minimum 10kg) with recorded post-harvest handling history'
+      - 'Proposed recipe or target market technical specification'
+    turnaround_time: 'Product formulation trials: 7 – 14 business days'
+    pricing_tiers:
+      -
+        name: 'Fish Value-Addition Processing Incubation (Technical Protocol & Recipe Formulation)'
+        unit: 'per product line'
+        cost_kes: 45000
+        cost_usd: 350
+        turnaround_time: '10 days'
+      -
+        name: 'Hygienic Fish Smoking / Drying Kiln Construction Blueprint & Advisory'
+        unit: 'per design package'
+        cost_kes: 30000
+        cost_usd: 230
+        turnaround_time: '7 days'
+      -
+        name: 'HACCP & Post-Harvest Quality Audit for Cooperative / SME Processing Facility'
+        unit: 'per facility audit'
+        cost_kes: 60000
+        cost_usd: 460
+        turnaround_time: '5 days'
+    available_stations:
+      - 'Kisumu Centre (Fish Processing Lab)'
+      - 'Mombasa Headquarters'
+      - 'Naivasha Centre'
+      - 'Baringo Station'
+    status: active
+    featured_image: /images/aquaculture-hatchery.webp
+    iso_standard: 'KEBS Standards & ISO 9001:2015'
+    contact_officer:
+      title: 'Principal Post-Harvest Fish Technologist'
+      email: postharvest@kmfri.go.ke
+      phone: '+254 20 8021562'
+  -
+    id: srv-07
+    slug: educational-visits
+    code: KMFRI-EDU-07
+    title: 'Educational Visits & Marine Tours'
+    category: education
+    category_label: 'Educational Tours & Museum'
+    description: 'Museum visits and educational tours.'
+    full_overview: 'KMFRI opens its scientific laboratories, marine public aquariums, fish biology museum galleries, and research vessels to curious minds. Our guided educational tours offer students, scholars, international delegates, and the general public a front-row immersion into marine biodiversity, ocean science, fish anatomy, mangrove conservation, and blue economy careers.'
+    remarks: 'Schools, universities, tourists, general public'
+    target_clients:
+      - 'Primary, secondary and international schools'
+      - 'Tertiary colleges, polytechnics, and university departments'
+      - 'Local & international ecotourists and families'
+      - 'Civic and community environmental conservation clubs'
+      - 'Corporate CSR teams & professional science delegations'
+    key_capabilities:
+      - 'Curated tours of the KMFRI Marine Biology Museum and fish specimen archives'
+      - 'Live Marine and Freshwater Public Aquariums showcasing indigenous species'
+      - 'Interactive ocean literacy workshops led by practicing marine scientists'
+      - 'Guided walk through mangrove restoration nurseries and mariculture ponds'
+      - 'Observation deck access to view research vessel operations at Mombasa Kilindini pier'
+    sample_requirements:
+      - 'Advance reservation request submitted at least 48 hours prior to proposed visit date'
+      - 'Official school or institution delegation letter indicating total participant numbers'
+    turnaround_time: 'Immediate booking confirmation upon availability'
+    pricing_tiers:
+      -
+        name: 'Primary & Secondary School Students (Per Student)'
+        unit: 'per student'
+        cost_kes: 100
+        cost_usd: 1
+        turnaround_time: Instant
+      -
+        name: 'College & University Students (Per Student with Student ID)'
+        unit: 'per student'
+        cost_kes: 200
+        cost_usd: 2
+        turnaround_time: Instant
+      -
+        name: 'Kenyan Adult Citizens & Residents'
+        unit: 'per adult'
+        cost_kes: 300
+        cost_usd: 3
+        turnaround_time: Instant
+      -
+        name: 'Non-Resident International Tourists'
+        unit: 'per visitor'
+        cost_kes: 1000
+        cost_usd: 10
+        turnaround_time: Instant
+    available_stations:
+      - 'Mombasa Headquarters (Marine Museum)'
+      - 'Kisumu Centre (Freshwater Aquarium)'
+      - 'Naivasha Centre'
+      - 'Shimoni Mariculture Centre'
+    status: active
+    featured_image: /images/coral-reef-survey.webp
+    iso_standard: 'Public Service Customer Care Charter'
+    contact_officer:
+      title: 'Corporate Communications & Public Relations Officer'
+      email: visits@kmfri.go.ke
+      phone: '+254 20 8021560 Ext 104'
+  -
+    id: srv-08
+    slug: training-and-capacity-building
+    code: KMFRI-TRN-08
+    title: 'Training & Capacity Building'
+    category: training
+    category_label: 'Professional Training'
+    description: 'Technical training, fisheries, aquaculture, laboratory and marine science courses.'
+    full_overview: 'Designed to elevate professional competency across the maritime and fisheries sectors, KMFRI’s upcoming Technical Training Institute delivers certified executive and practitioner short courses. Curriculum modules span modern aquaculture management, microbiological laboratory techniques, GIS for marine conservation, and blue carbon project verification.'
+    remarks: 'Coming Soon'
+    target_clients:
+      - 'County Fisheries Officers & agricultural extension workers'
+      - 'Commercial fish farm managers & hatchery supervisors'
+      - 'Laboratory technicians in water & food testing facilities'
+      - 'Marine conservation practitioners & NGO project managers'
+      - 'Private sector maritime environmental compliance officers'
+    key_capabilities:
+      - 'Certificate in Commercial Tilapia & Catfish Hatchery Management (5-day intensive)'
+      - 'Practical Marine & Freshwater Laboratory Analytical Techniques (ISO 17025 compliance)'
+      - 'Marine Spatial Planning (MSP) & QGIS for coastal resource management'
+      - 'Blue Economy Entrepreneurship & Value Chain Financial Modeling'
+      - 'Benthic Habitat Surveying, SCUBA scientific diving & coral reef monitoring'
+    sample_requirements:
+      - 'Registration form and copy of relevant academic or vocational background'
+    turnaround_time: 'Enrolling cohort calendar launching Q3 2026 (Pre-registration now open)'
+    pricing_tiers:
+      -
+        name: '5-Day Intensive Hatchery & Aquaculture Management Masterclass'
+        unit: 'per participant'
+        cost_kes: 35000
+        cost_usd: 270
+        turnaround_time: 'Cohort intake'
+      -
+        name: '3-Day Water Quality & Lab Analytical Testing Workshop'
+        unit: 'per participant'
+        cost_kes: 25000
+        cost_usd: 190
+        turnaround_time: 'Cohort intake'
+      -
+        name: 'Executive Marine Spatial Planning (MSP) & GIS Masterclass'
+        unit: 'per participant'
+        cost_kes: 45000
+        cost_usd: 350
+        turnaround_time: 'Cohort intake'
+    available_stations:
+      - 'Mombasa Headquarters'
+      - 'Kisumu Centre'
+      - 'Naivasha Centre'
+    status: coming_soon
+    featured_image: /images/analytical-lab.webp
+    iso_standard: 'TVETA Accredited Curriculum (In Process)'
+    contact_officer:
+      title: 'Head of Capacity Development & Training'
+      email: training@kmfri.go.ke
+      phone: '+254 20 8021561'
+  -
+    id: srv-09
+    slug: conference-and-meeting-facilities
+    code: KMFRI-CNF-09
+    title: 'Conference & Meeting Facilities'
+    category: facilities
+    category_label: 'Conference Facilities'
+    description: 'Conference halls, meeting rooms and associated facilities.'
+    full_overview: 'Set in tranquil scientific campuses overlooking picturesque coastal bays and lakesides, KMFRI offers modern conference halls, executive boardrooms, and outdoor botanical grounds. Ideal for government retreats, international symposiums, stakeholder workshops, and corporate seminars, our facilities are equipped with high-speed fiber internet, audio-visual systems, and dedicated catering services.'
+    remarks: 'Government, NGOs, private sector, researchers'
+    target_clients:
+      - 'National & County Government departments and taskforces'
+      - 'Non-Governmental Organizations (NGOs) & development agencies'
+      - 'Corporate institutions seeking serene offsite meeting spaces'
+      - 'Academic and scientific research consortiums'
+      - 'Community Beach Management Unit (BMU) stakeholder assemblies'
+    key_capabilities:
+      - 'Main Conference Auditorium (Capacity: 250 seated, fully air-conditioned, 4K projection)'
+      - 'Executive Boardroom (Capacity: 30 pax, motorized video conferencing system & high-speed Wi-Fi)'
+      - 'Breakout Committee Seminar Rooms (Capacity: 15–40 pax per room)'
+      - 'Scenic Oceanfront & Lakefront Botanical Grounds for exhibitions and banquets'
+      - 'Onsite catering services offering authentic Kenyan coastal & lake cuisine'
+      - 'Dedicated backup generators, secure perimeter parking, and 24/7 security'
+    sample_requirements:
+      - 'Facility reservation form indicating event agenda, dates, and setup requirements'
+      - 'Booking secured upon 50% commitment deposit'
+    turnaround_time: 'Instant availability check; reservation confirmed within 24 hours'
+    pricing_tiers:
+      -
+        name: 'Full-Day Main Auditorium Hire (Up to 250 Pax, with AV & PA system)'
+        unit: 'per day'
+        cost_kes: 50000
+        cost_usd: 390
+        turnaround_time: Immediate
+      -
+        name: 'Half-Day Main Auditorium Hire'
+        unit: 'per half-day'
+        cost_kes: 30000
+        cost_usd: 230
+        turnaround_time: Immediate
+      -
+        name: 'Executive Boardroom Hire with Video Conferencing (Up to 30 Pax)'
+        unit: 'per day'
+        cost_kes: 25000
+        cost_usd: 195
+        turnaround_time: Immediate
+      -
+        name: 'Scenic Ocean / Lakeside Grounds Hire (Banquets / Exhibitions)'
+        unit: 'per event day'
+        cost_kes: 60000
+        cost_usd: 460
+        turnaround_time: Immediate
+    available_stations:
+      - 'Mombasa Headquarters (English Point Overlook)'
+      - 'Kisumu Centre (Lake Victoria Shoreline)'
+      - 'Naivasha Centre'
+    status: active
+    featured_image: /images/vessel-aerial.webp
+    iso_standard: 'ISO 9001:2015 Hospitality Service Standards'
+    contact_officer:
+      title: 'Facilities & Logistics Administrator'
+      email: facilities@kmfri.go.ke
+      phone: '+254 (0) 41 475151 Ext 220'
+  -
+    id: srv-10
+    slug: student-attachment-and-internship-services
+    code: KMFRI-ATT-10
+    title: 'Student Attachment & Internship Services'
+    category: internship
+    category_label: 'Internships & Attachments'
+    description: 'Industrial attachment, internship and practical research placements.'
+    full_overview: 'In alignment with the Public Service Commission (PSC) guidelines and our institutional mandate to mentor next-generation scientists, KMFRI offers structured 3-month industrial attachments and 1-year graduate internships. Placements are offered in Marine Biology, Limnology, Aquaculture, Chemical Oceanography, Marine Geology, GIS & Remote Sensing, Information Technology, and Procurement.'
+    remarks: 'Students and institutions'
+    target_clients:
+      - 'Undergraduate and diploma students in biological, physical & environmental sciences'
+      - 'Recent Kenyan university graduates seeking PSC-aligned internship experience'
+      - 'Universities seeking recognized research placement partnerships'
+      - 'International postgraduate exchange fellows'
+    key_capabilities:
+      - 'Direct mentorship by licensed Research Scientists and Laboratory Analysts'
+      - 'Hands-on field sampling on coastal creeks, reefs, open ocean, and freshwater lakes'
+      - 'Access to KMFRI specialized research libraries, data repositories, and equipment'
+      - 'Certificate of Industrial Attachment Completion upon successful defense of project report'
+      - 'Formal evaluation report issued directly to candidate university dean'
+    sample_requirements:
+      - 'Official introductory letter from registered University or College Dean'
+      - 'Curriculum Vitae (CV) & National Identity Card / Passport copy'
+      - 'Valid student personal accident insurance cover certificate'
+      - 'Police Clearance Certificate (for 1-year graduate internships)'
+    turnaround_time: 'Application review within 10 working days of cohort intake deadline'
+    pricing_tiers:
+      -
+        name: 'Standard 3-Month Undergraduate Industrial Attachment (Institutional Admin Fee)'
+        unit: 'per 3-month term'
+        cost_kes: 3000
+        cost_usd: 25
+        turnaround_time: 'Quarterly intake'
+      -
+        name: 'Postgraduate Practical Research Bench Placement (Laboratory Access Included)'
+        unit: 'per month'
+        cost_kes: 5000
+        cost_usd: 40
+        turnaround_time: 'Per semester'
+      -
+        name: 'International Visiting Student / Fellow Research Attachment'
+        unit: 'per month'
+        cost_kes: 15000
+        cost_usd: 120
+        turnaround_time: 'On application'
+    available_stations:
+      - 'All KMFRI Centres & Research Stations Nationwide'
+    status: active
+    featured_image: /images/analytical-lab.webp
+    iso_standard: 'Public Service Commission (PSC) Internship Policy'
+    contact_officer:
+      title: 'Human Resource Development & Student Attachment Coordinator'
+      email: attachments@kmfri.go.ke
+      phone: '+254 20 8021560 Ext 112'
+stations:
+  -
+    id: station-mombasa
+    name: 'Mombasa Headquarters & Marine Centre'
+    code: KMFRI-MBA
+    location: 'English Point, Mkomani, Mombasa'
+    county: 'Mombasa County'
+    description: 'The National Headquarters overseeing all marine science, oceanography, blue economy advisory, and flagship research vessels including RV Mtafiti.'
+    primary_focus:
+      - 'Oceanography & Hydrography'
+      - 'Marine Fisheries'
+      - 'Chemical & Environmental Laboratory'
+      - 'KeNODC Data Centre'
+      - 'Marine Museum & Public Aquarium'
+    services_offered:
+      - 'Laboratory Analytical Services'
+      - 'Research Vessel Hire Services'
+      - 'Technical Consultancy Services'
+      - 'Scientific Data & Information Services'
+      - 'Conference & Meeting Facilities'
+      - 'Educational Visits'
+    contact_email: director@kmfri.go.ke
+    phone: '+254 (0) 41 475151/4'
+    head_of_station: 'Prof. James Njiru, PhD (Director General)'
+    coordinates:
+      lat: -4.0531
+      lng: 39.6806
+  -
+    id: station-kisumu
+    name: 'Kisumu Centre (Freshwater Systems)'
+    code: KMFRI-KSM
+    location: 'Off Airport Road, Kisumu City'
+    county: 'Kisumu County'
+    description: 'Premier scientific hub for Lake Victoria research, post-harvest fish processing, water quality monitoring, and freshwater fisheries management.'
+    primary_focus:
+      - 'Lake Victoria Limnology'
+      - 'Fish Biology & Stock Assessment'
+      - 'Post-Harvest Value Addition Lab'
+      - 'Freshwater Aquaculture'
+    services_offered:
+      - 'Laboratory Analytical Services'
+      - 'Fish Products & Value-Addition Services'
+      - 'Fish & Aquaculture Services'
+      - 'Scientific Data & Information Services'
+      - 'Conference & Meeting Facilities'
+    contact_email: kisumu@kmfri.go.ke
+    phone: '+254 57 2021461'
+    head_of_station: 'Dr. Christopher Aura, PhD (Centre Director)'
+    coordinates:
+      lat: -0.1022
+      lng: 34.7617
+  -
+    id: station-naivasha
+    name: 'Naivasha Centre (Rift Valley Lakes)'
+    code: KMFRI-NVS
+    location: 'South Lake Road, Naivasha'
+    county: 'Nakuru County'
+    description: 'Conducts research on Lake Naivasha, Lake Nakuru, and Rift Valley water bodies focusing on ecology, pesticide impacts, and warm water fish hatcheries.'
+    primary_focus:
+      - 'Rift Valley Ecology'
+      - 'Wetland Conservation'
+      - 'Pesticide & Effluent Analytics'
+      - 'Aquaculture Demonstrations'
+    services_offered:
+      - 'Laboratory Analytical Services'
+      - 'Fish & Aquaculture Services'
+      - 'Technical Consultancy Services'
+      - 'Educational Visits'
+    contact_email: naivasha@kmfri.go.ke
+    phone: '+254 50 2020277'
+    head_of_station: 'Dr. Edna Waithaka (Centre Director)'
+    coordinates:
+      lat: -0.7172
+      lng: 36.431
+  -
+    id: station-shimoni
+    name: 'Shimoni Mariculture Centre'
+    code: KMFRI-SHM
+    location: 'Shimoni Peninsula, Kwale'
+    county: 'Kwale County'
+    description: 'Kenya’s flagship marine aquaculture and mariculture facility dedicated to crab seed multiplication, milkfish farming, seaweed development, and sea cucumber culture.'
+    primary_focus:
+      - 'Mud Crab Hatchery'
+      - 'Milkfish Fingerlings'
+      - 'Commercial Seaweed Farming'
+      - 'Coral Reef Restoration'
+    services_offered:
+      - 'Fish & Aquaculture Services'
+      - 'Technical Consultancy Services'
+      - 'Educational Visits'
+    contact_email: shimoni@kmfri.go.ke
+    phone: '+254 722 123456'
+    head_of_station: 'Dr. David Mirera, PhD (Mariculture Coordinator)'
+    coordinates:
+      lat: -4.6478
+      lng: 39.3822
+  -
+    id: station-kegati
+    name: 'Kegati Aquaculture Centre'
+    code: KMFRI-KGT
+    location: 'Kegati, Kisii County'
+    county: 'Kisii County'
+    description: 'Specialized national broodstock multiplication and training station for high-growth Nile Tilapia and African Catfish fingerlings serving Western Kenya.'
+    primary_focus:
+      - 'Selective Broodstock Breeding'
+      - 'Fingerling Hatchery Distribution'
+      - 'Farmer Capacity Building'
+    services_offered:
+      - 'Fish & Aquaculture Services'
+      - 'Technical Consultancy Services'
+      - 'Student Attachment & Internship Services'
+    contact_email: kegati@kmfri.go.ke
+    phone: '+254 58 30123'
+    head_of_station: 'Paul Orina, PhD (Senior Aquaculture Scientist)'
+    coordinates:
+      lat: -0.6817
+      lng: 34.7891
+  -
+    id: station-sangoro
+    name: 'Sangoro Aquaculture Research Station'
+    code: KMFRI-SNG
+    location: 'Pap-Onditi, Nyakach'
+    county: 'Kisumu County'
+    description: 'Research facility focusing on indigenous riverine fish breeding (Labeo victorianus, Schilbe mystus) and river catchment water monitoring.'
+    primary_focus:
+      - 'Indigenous Riverine Species Conservation'
+      - 'Fish Genetics'
+      - 'Hatchery Technology'
+    services_offered:
+      - 'Fish & Aquaculture Services'
+      - 'Student Attachment & Internship Services'
+    contact_email: sangoro@kmfri.go.ke
+    phone: '+254 57 2023900'
+    head_of_station: 'Kevin Obiero, PhD (Station Head)'
+    coordinates:
+      lat: -0.3475
+      lng: 34.9312
+  -
+    id: station-baringo
+    name: 'Baringo Station (Arid & Semi-Arid Lakes)'
+    code: KMFRI-BRG
+    location: 'Kampi ya Samaki, Lake Baringo'
+    county: 'Baringo County'
+    description: 'Monitors Lake Baringo and Lake Bogoria aquatic dynamics, siltation patterns, biodiversity, and post-harvest preservation in ASAL environments.'
+    primary_focus:
+      - 'Arid Lakes Limnology'
+      - 'Siltation & Water Balance'
+      - 'Fish Value Addition in ASALs'
+    services_offered:
+      - 'Laboratory Analytical Services'
+      - 'Fish Products & Value-Addition Services'
+      - 'Technical Consultancy Services'
+    contact_email: baringo@kmfri.go.ke
+    phone: '+254 53 2031122'
+    head_of_station: 'Cyrus Kilonzi (Station Coordinator)'
+    coordinates:
+      lat: 0.6225
+      lng: 36.0125
+  -
+    id: station-turkana
+    name: 'Turkana Station (Desert Lake Fisheries)'
+    code: KMFRI-TRK
+    location: 'Kalokol, Lake Turkana'
+    county: 'Turkana County'
+    description: 'Dedicated to studying the unique ecology and potential of the world’s largest permanent desert lake, supporting local indigenous fisherfolk.'
+    primary_focus:
+      - 'Lake Turkana Fisheries Dynamics'
+      - 'Acoustic Biomass Surveys'
+      - 'Solar Fish Drying Protocols'
+    services_offered:
+      - 'Scientific Data & Information Services'
+      - 'Fish Products & Value-Addition Services'
+      - 'Technical Consultancy Services'
+    contact_email: turkana@kmfri.go.ke
+    phone: '+254 54 21233'
+    head_of_station: 'James Last Keyombe (Station Head)'
+    coordinates:
+      lat: 3.5292
+      lng: 35.845

@@ -1,0 +1,95 @@
+{#
+/**
+ * @file
+ * Activity log: inquiry workflow audit trail (kmfri_services_db) and system events (dblog).
+ */
+#}
+{% import '@kmfri_enterprise/partials/admin.html.twig' as kd %}
+<div class="k-tabs mb-5" role="tablist" aria-label="{{ 'Log'|t }}">
+  <a href="{{ tabs.workflow }}" role="tab" class="k-tab" aria-selected="{{ tab == 'workflow' ? 'true' : 'false' }}">{{ kmfri_icon('git-branch') }} {{ 'Inquiry workflow'|t }}</a>
+  <a href="{{ tabs.system }}" role="tab" class="k-tab" aria-selected="{{ tab == 'system' ? 'true' : 'false' }}">{{ kmfri_icon('server') }} {{ 'System events'|t }}</a>
+</div>
+
+<section class="kd-card kd-card--flush" role="tabpanel">
+  <form class="kd-filters" method="get" action="{{ action_url }}" aria-label="{{ 'Filter log'|t }}">
+    {% if tab == 'system' %}<input type="hidden" name="log" value="system">{% endif %}
+    <div class="kd-filters__field kd-filters__field--grow">
+      <label for="a-q" class="kd-filters__label">{{ 'Search'|t }}</label>
+      <input id="a-q" type="search" name="q" value="{{ filters.q }}" class="k-input" placeholder="{{ tab == 'system' ? 'Message text'|t : 'Reference, client or officer'|t }}">
+    </div>
+    {% if tab == 'workflow' %}
+      <div class="kd-filters__field">
+        <label for="a-status" class="kd-filters__label">{{ 'New status'|t }}</label>
+        <select id="a-status" name="status" class="k-input">
+          <option value="">{{ 'Any'|t }}</option>
+          {% for key, label in statuses %}<option value="{{ key }}"{% if filters.status == key %} selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+    {% else %}
+      <div class="kd-filters__field">
+        <label for="a-sev" class="kd-filters__label">{{ 'Severity'|t }}</label>
+        <select id="a-sev" name="severity" class="k-input">
+          <option value="">{{ 'Any'|t }}</option>
+          {% for key, label in severities %}<option value="{{ key }}"{% if filters.severity == key %} selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+    {% endif %}
+    <div class="kd-filters__actions">
+      <button type="submit" class="btn btn-primary btn-sm">{{ kmfri_icon('funnel') }} {{ 'Apply'|t }}</button>
+      {% if filters.q or filters.status or filters.severity %}<a href="{{ tab == 'system' ? tabs.system : tabs.workflow }}" class="btn btn-outline btn-sm">{{ 'Reset'|t }}</a>{% endif %}
+    </div>
+  </form>
+  <div class="kd-tablebar"><p class="text-sm text-muted" aria-live="polite"><strong class="text-navy-800">{{ total }}</strong> {{ total == 1 ? 'entry'|t : 'entries'|t }}</p></div>
+
+  {% if tab == 'workflow' and not live %}
+    {{ kd.empty('Services database unreachable'|t, 'The workflow audit trail lives in kmfri_services_db.'|t, 'triangle-alert') }}
+  {% elseif tab == 'system' and not has_dblog %}
+    {{ kd.empty('Database logging is off'|t, 'Enable the core Database Logging (dblog) module to record system events here.'|t, 'server') }}
+  {% elseif rows %}
+    <div class="kd-table-wrap">
+      <table class="kd-table">
+        <thead>
+          {% if tab == 'workflow' %}
+            <tr>
+              <th scope="col">{{ 'When'|t }}</th>
+              <th scope="col">{{ 'Inquiry'|t }}</th>
+              <th scope="col">{{ 'Change'|t }}</th>
+              <th scope="col" class="hidden md:table-cell">{{ 'By'|t }}</th>
+              <th scope="col" class="hidden lg:table-cell">{{ 'Remarks'|t }}</th>
+            </tr>
+          {% else %}
+            <tr>
+              <th scope="col">{{ 'When'|t }}</th>
+              <th scope="col">{{ 'Severity'|t }}</th>
+              <th scope="col">{{ 'Event'|t }}</th>
+              <th scope="col" class="hidden md:table-cell">{{ 'User'|t }}</th>
+            </tr>
+          {% endif %}
+        </thead>
+        <tbody>
+          {% for r in rows %}
+            {% if tab == 'workflow' %}
+              <tr>
+                <td class="text-sm whitespace-nowrap"><time title="{{ r.time }}">{{ r.ago }} ago</time></td>
+                <td><a href="{{ r.url }}" class="kd-ref">{{ r.reference }}</a><span class="block text-xs text-muted truncate max-w-[14rem]">{{ r.client }}</span></td>
+                <td class="text-sm">{% if r.from %}<span class="text-muted">{{ r.from }}</span> → {% endif %}{{ kd.status(r.to_key, r.to) }}</td>
+                <td class="hidden md:table-cell text-sm text-ink">{{ r.by }}</td>
+                <td class="hidden lg:table-cell text-sm text-muted max-w-[22rem]">{{ r.remarks ?: '—' }}</td>
+              </tr>
+            {% else %}
+              <tr>
+                <td class="text-sm whitespace-nowrap"><time title="{{ r.time }}">{{ r.ago }} ago</time></td>
+                <td><span class="kd-sev kd-sev--{{ r.severity_key }}">{{ r.severity }}</span></td>
+                <td class="text-sm text-ink"><span class="text-xs font-semibold uppercase tracking-wide text-subtle mr-1.5">{{ r.type }}</span>{{ r.message }}</td>
+                <td class="hidden md:table-cell text-sm text-muted">{{ r.user }}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="kd-pager">{{ pager }}</div>
+  {% else %}
+    {{ kd.empty('No entries'|t, 'Nothing matches these filters.'|t, 'history') }}
+  {% endif %}
+</section>

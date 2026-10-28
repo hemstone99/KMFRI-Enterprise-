@@ -163,7 +163,7 @@ export const HeroIntegrationDemo: React.FC<HeroIntegrationDemoProps> = ({ onLaun
                         Launch Services Hub <ArrowRight aria-hidden="true" />
                       </button>
                       <button type="button" onClick={() => onLaunchSubsite('services')} className="btn btn-ghost-light btn-square">
-                        View All 10 Services
+                        View All External Services
                       </button>
                     </div>
                   </div>
@@ -308,7 +308,7 @@ export const HeroIntegrationDemo: React.FC<HeroIntegrationDemoProps> = ({ onLaun
           Launch Services Hub <ArrowRight aria-hidden="true" />
         </button>
         <button type="button" className="btn btn-ghost-light" onClick={() => onLaunchSubsite('services')}>
-          View All 10 Services
+          View All External Services
         </button>
       </CtaBand>
     </div>

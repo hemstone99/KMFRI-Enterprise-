@@ -18,7 +18,8 @@ import {
   FileSignature,
 } from 'lucide-react';
 import { useHubData } from '../data/HubData';
-import { KMFRI_MAIN_SITE, SOCIAL_LINKS, ServiceIcon } from './ui';
+import { KMFRI_MAIN_SITE, SOCIAL_LINKS, DIVISION_ICONS } from './ui';
+import { SERVICE_CATALOGUE, CATALOGUE_TOTAL, itemsUnder, servicesLabel } from '../data/serviceCatalogue';
 
 type Mode = 'subsite' | 'hero_preview' | 'architecture';
 
@@ -38,7 +39,7 @@ const TOPBAR_LINKS = [
   { label: 'eCitizen Services', href: 'https://kmfri.ecitizen.go.ke/', Icon: IdCard, show: 'hidden sm:inline-flex' },
 ];
 
-type MenuKey = 'services' | 'stations';
+type MenuKey = 'catalogue' | 'stations';
 
 export const Header: React.FC<HeaderProps> = ({
   currentView,
@@ -48,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenInquiry,
   onOpenSearch,
 }) => {
-  const { services, stations } = useHubData();
+  const { stations } = useHubData();
   const [scrolled, setScrolled] = useState(false);
   const [openMenu, setOpenMenu] = useState<MenuKey | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -61,8 +62,8 @@ export const Header: React.FC<HeaderProps> = ({
   const inSubsite = activeMode === 'subsite';
   const isCurrent = {
     home: inSubsite && currentView === 'home',
-    services: inSubsite && (currentView === 'services' || currentView === 'service_detail'),
-    stations: inSubsite && currentView === 'stations',
+    catalogue: inSubsite && currentView === 'catalogue',
+    stations: inSubsite && (currentView === 'stations' || currentView === 'station'),
     charter: inSubsite && currentView === 'charter',
   };
 
@@ -241,30 +242,33 @@ export const Header: React.FC<HeaderProps> = ({
                 </li>
 
                 <li
-                  className={`k-nav__item ${openMenu === 'services' ? 'is-open' : ''}`}
-                  onMouseEnter={() => hoverOpen('services')}
+                  className={`k-nav__item ${openMenu === 'catalogue' ? 'is-open' : ''}`}
+                  onMouseEnter={() => hoverOpen('catalogue')}
                   onMouseLeave={hoverClose}
-                  onKeyDown={onMenuKeyDown('services')}
+                  onKeyDown={onMenuKeyDown('catalogue')}
                   onBlur={onMenuBlur}
                 >
-                  <DropdownTrigger menu="services" label="Enterprise Services" view="services" current={isCurrent.services} />
-                  <div id="menu-services" className="k-dropdown" style={{ width: 'min(680px, calc(100vw - 2rem))' }}>
-                    <button type="button" className="k-dropdown__overview" onClick={() => go('services')}>
-                      <span>All {services.length} Enterprise Services</span>
-                      <small>Browse directory <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" /></small>
+                  <DropdownTrigger menu="catalogue" label="Service Catalogue" view="catalogue" current={isCurrent.catalogue} />
+                  <div id="menu-catalogue" className="k-dropdown" style={{ width: 'min(680px, calc(100vw - 2rem))' }}>
+                    <button type="button" className="k-dropdown__overview" onClick={() => go('catalogue')}>
+                      <span>All {CATALOGUE_TOTAL} Citizen Services</span>
+                      <small>Browse catalogue <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" /></small>
                     </button>
                     <ul className="k-dropdown__grid">
-                      {services.map((s) => (
-                        <li key={s.id}>
-                          <button type="button" className="k-dropdown__link" onClick={() => go('service_detail', s.slug)}>
-                            <span className="ico"><ServiceIcon category={s.category} /></span>
-                            <span className="min-w-0">
-                              {s.title}
-                              <small className="font-mono">{s.code}</small>
-                            </span>
-                          </button>
-                        </li>
-                      ))}
+                      {SERVICE_CATALOGUE.map((d) => {
+                        const Icon = DIVISION_ICONS[d.id];
+                        return (
+                          <li key={d.id}>
+                            <button type="button" className="k-dropdown__link" onClick={() => go('catalogue', d.id)}>
+                              <span className="ico"><Icon aria-hidden="true" /></span>
+                              <span className="min-w-0">
+                                {d.title}
+                                <small>{servicesLabel(itemsUnder(d).length)} · {d.children.length} {d.children.length === 1 ? 'group' : 'groups'}</small>
+                              </span>
+                            </button>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 </li>
@@ -380,7 +384,7 @@ export const Header: React.FC<HeaderProps> = ({
             </li>
 
             {([
-              { key: 'services' as const, label: 'Enterprise Services', view: 'services', current: isCurrent.services },
+              { key: 'catalogue' as const, label: 'Service Catalogue', view: 'catalogue', current: isCurrent.catalogue },
               { key: 'stations' as const, label: 'Research Stations', view: 'stations', current: isCurrent.stations },
             ]).map((sec) => (
               <li key={sec.key}>
@@ -401,10 +405,12 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
                 {drawerSection === sec.key && (
                   <ul id={`drawer-${sec.key}`} className="k-drawer__sub">
-                    {sec.key === 'services'
-                      ? services.map((s) => (
-                          <li key={s.id}>
-                            <button type="button" onClick={() => go('service_detail', s.slug)}>{s.title}</button>
+                    {sec.key === 'catalogue'
+                      ? SERVICE_CATALOGUE.map((d) => (
+                          <li key={d.id}>
+                            <button type="button" onClick={() => go('catalogue', d.id)}>
+                              {d.title} <span className="text-subtle text-xs">· {itemsUnder(d).length}</span>
+                            </button>
                           </li>
                         ))
                       : stations.map((st) => (

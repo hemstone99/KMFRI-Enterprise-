@@ -1,0 +1,38 @@
+/**
+ * @file
+ * Replaces core's system/base hidden.module.css in this theme.
+ *
+ * Core's unlayered `.hidden { display: none }` would beat the hub's layered
+ * Tailwind utilities, so responsive overrides such as `hidden xl:block` never
+ * showed the element. Here `.hidden` lives in the utilities layer; the layer
+ * order statement comes first so this file cannot reorder the cascade.
+ */
+@layer theme, base, components, utilities;
+
+@layer utilities {
+  .hidden {
+    display: none;
+  }
+}
+
+.visually-hidden {
+  position: absolute !important;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  width: 1px;
+  height: 1px;
+  word-wrap: normal;
+}
+
+.visually-hidden.focusable:active,
+.visually-hidden.focusable:focus-within {
+  position: static !important;
+  overflow: visible;
+  clip: auto;
+  width: auto;
+  height: auto;
+}
+
+.invisible {
+  visibility: hidden;
+}

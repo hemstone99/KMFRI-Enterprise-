@@ -1,0 +1,167 @@
+{#
+/**
+ * @file
+ * Dashboard overview: KPIs, inquiries per month, pipeline by status,
+ * most-requested services, latest inquiries and recent workflow activity.
+ */
+#}
+{% import '@kmfri_enterprise/partials/admin.html.twig' as kd %}
+{% set delta = kpis.this_month - kpis.last_month %}
+
+<section aria-labelledby="kd-kpis-heading">
+  <h2 id="kd-kpis-heading" class="sr-only">{{ 'Key figures'|t }}</h2>
+  <div class="kd-grid kd-grid--kpis">
+    {{ kd.kpi('Total inquiries'|t, kpis.total|kes, 'inbox',
+      kpis.this_month ~ ' this month · ' ~ (delta > 0 ? '+' ~ delta : delta) ~ ' vs last month', links.inquiries) }}
+    {{ kd.kpi('Awaiting review'|t, kpis.pending|kes, 'clock',
+      kpis.pending ? 'Pending inquiries need an officer' : 'Nothing waiting', links.pending, kpis.pending ? 'attention' : null) }}
+    {{ kd.kpi('Open pipeline'|t, 'KES ' ~ kpis.open_value|kes, 'trending-up',
+      kpis.open_count ~ ' open ' ~ (kpis.open_count == 1 ? 'request' : 'requests') ~ ' (indicative)', links.open) }}
+    {{ kd.kpi('Paid & fulfilled'|t, 'KES ' ~ kpis.realised_value|kes, 'badge-check',
+      kpis.realised_count ~ ' ' ~ (kpis.realised_count == 1 ? 'request' : 'requests') ~ ' completed') }}
+    {{ kd.kpi('Client satisfaction'|t, kpis.avg_rating is null ? '—' : kpis.avg_rating ~ ' / 5', 'star',
+      kpis.feedback_count ? kpis.feedback_count ~ ' feedback ' ~ (kpis.feedback_count == 1 ? 'response' : 'responses') : 'No feedback recorded yet') }}
+    {{ kd.kpi('Published catalogue'|t, catalogue.services ~ ' services', 'layers',
+      catalogue.tiers ~ ' tariffs · ' ~ catalogue.stations ~ ' stations', links.catalogue) }}
+  </div>
+</section>
+
+<div class="kd-grid kd-grid--charts mt-6">
+  {# Inquiries per month (single series, one hue) #}
+  <section class="kd-card" aria-labelledby="kd-monthly-heading">
+    <header class="kd-card__head">
+      <div>
+        <h2 id="kd-monthly-heading" class="kd-card__title">{{ 'Inquiries per month'|t }}</h2>
+        <p class="kd-card__sub">{{ 'Last 6 months · hover a bar for the indicative value'|t }}</p>
+      </div>
+    </header>
+    <div class="kd-columns" role="img" aria-label="{{ 'Inquiries per month for the last six months'|t }}">
+      {% for m in monthly %}
+        <div class="kd-columns__col">
+          <div class="kd-columns__track">
+            <div class="kd-columns__bar{{ m.count == 0 ? ' is-zero' : '' }}" style="--h: {{ (m.count / monthly_max * 100)|round }}%" tabindex="0" aria-hidden="true">
+              <span class="kd-tip"><strong>{{ m.long }}</strong>{{ m.count }} {{ m.count == 1 ? 'inquiry' : 'inquiries' }}<br>KES {{ m.value|kes }}</span>
+            </div>
+          </div>
+          <span class="kd-columns__label">{{ m.label }}</span>
+          {% if loop.last %}<span class="kd-columns__value">{{ m.count }}</span>{% endif %}
+        </div>
+      {% endfor %}
+    </div>
+    <table class="sr-only">
+      <caption>{{ 'Inquiries per month'|t }}</caption>
+      <thead><tr><th scope="col">{{ 'Month'|t }}</th><th scope="col">{{ 'Inquiries'|t }}</th><th scope="col">{{ 'Indicative value (KES)'|t }}</th></tr></thead>
+      <tbody>{% for m in monthly %}<tr><th scope="row">{{ m.long }}</th><td>{{ m.count }}</td><td>{{ m.value|kes }}</td></tr>{% endfor %}</tbody>
+    </table>
+  </section>
+
+  {# Pipeline by status #}
+  <section class="kd-card" aria-labelledby="kd-status-heading">
+    <header class="kd-card__head">
+      <div>
+        <h2 id="kd-status-heading" class="kd-card__title">{{ 'Pipeline by status'|t }}</h2>
+        <p class="kd-card__sub">{{ 'All inquiries, in workflow order'|t }}</p>
+      </div>
+      <a href="{{ links.inquiries }}" class="k-link text-sm">{{ 'Open list'|t }}</a>
+    </header>
+    <ul class="kd-bars">
+      {% for s in statuses %}
+        <li>
+          <a href="{{ links.inquiries }}?status={{ s.key }}" class="kd-bars__row">
+            <span class="kd-bars__label">{{ s.label }}</span>
+            <span class="kd-bars__track" aria-hidden="true"><span class="kd-bars__fill" style="--w: {{ (s.count / status_max * 100)|round }}%"></span></span>
+            <span class="kd-bars__value">{{ s.count }}</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+
+<div class="kd-grid kd-grid--split mt-6">
+  {# Latest inquiries #}
+  <section class="kd-card kd-card--flush" aria-labelledby="kd-recent-heading">
+    <header class="kd-card__head">
+      <div>
+        <h2 id="kd-recent-heading" class="kd-card__title">{{ 'Latest inquiries'|t }}</h2>
+        <p class="kd-card__sub">{{ 'Most recent quotation requests'|t }}</p>
+      </div>
+      <a href="{{ links.inquiries }}" class="k-link text-sm">{{ 'View all'|t }}</a>
+    </header>
+    {% if recent %}
+      <div class="kd-table-wrap">
+        <table class="kd-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'Reference'|t }}</th>
+              <th scope="col">{{ 'Client'|t }}</th>
+              <th scope="col" class="text-right">{{ 'Value (KES)'|t }}</th>
+              <th scope="col">{{ 'Status'|t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in recent %}
+              <tr>
+                <td><a href="{{ r.url }}" class="kd-ref">{{ r.reference }}</a><span class="block text-xs text-muted truncate max-w-[13rem]">{{ r.service }}</span></td>
+                <td><span class="block font-medium text-ink">{{ r.client }}</span><span class="block text-xs text-muted truncate max-w-[14rem]">{{ r.organization }}</span></td>
+                <td class="text-right k-num text-sm!">{{ r.value|kes }}</td>
+                <td>{{ kd.status(r.status, r.status_label) }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      {{ kd.empty('No inquiries yet'|t, 'Requests submitted on the public quotation form appear here.'|t) }}
+    {% endif %}
+  </section>
+
+  <div class="space-y-6">
+    {# Most requested services #}
+    <section class="kd-card" aria-labelledby="kd-top-heading">
+      <header class="kd-card__head">
+        <div>
+          <h2 id="kd-top-heading" class="kd-card__title">{{ 'Most requested services'|t }}</h2>
+          <p class="kd-card__sub">{{ 'By number of inquiries'|t }}</p>
+        </div>
+      </header>
+      {% if top_services %}
+        <ul class="kd-bars">
+          {% for s in top_services %}
+            <li class="kd-bars__row kd-bars__row--stack">
+              <span class="kd-bars__label"><span class="font-mono text-[0.7rem] text-subtle mr-1.5">{{ s.code }}</span>{{ s.title }}</span>
+              <span class="kd-bars__track" aria-hidden="true"><span class="kd-bars__fill" style="--w: {{ (s.n / top_max * 100)|round }}%"></span></span>
+              <span class="kd-bars__value">{{ s.n }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        {{ kd.empty('No requests yet'|t, null, 'layers') }}
+      {% endif %}
+    </section>
+
+    {# Recent activity #}
+    <section class="kd-card" aria-labelledby="kd-activity-heading">
+      <header class="kd-card__head">
+        <div>
+          <h2 id="kd-activity-heading" class="kd-card__title">{{ 'Recent activity'|t }}</h2>
+          <p class="kd-card__sub">{{ 'Inquiry workflow changes'|t }}</p>
+        </div>
+        <a href="{{ links.activity }}" class="k-link text-sm">{{ 'Full log'|t }}</a>
+      </header>
+      {% if activity %}
+        <ol class="kd-feed">
+          {% for a in activity %}
+            <li>
+              <span class="kd-feed__dot kd-status--{{ a.to_key }}" aria-hidden="true"></span>
+              <p class="text-sm text-ink"><a href="{{ a.url }}" class="kd-ref">{{ a.reference }}</a> → <strong class="font-semibold">{{ a.to }}</strong></p>
+              <p class="text-xs text-muted">{{ a.by }} · <time title="{{ a.time }}">{{ a.ago }} ago</time></p>
+            </li>
+          {% endfor %}
+        </ol>
+      {% else %}
+        {{ kd.empty('No activity yet'|t, null, 'history') }}
+      {% endif %}
+    </section>
+  </div>
+</div>

@@ -1,0 +1,69 @@
+# Main navigation, in order:
+#   Home · Service Catalogue · Laboratory Services · Research Stations · Tariffs & Charter
+# Catalogue child links come from data/catalogue.json; station links from kmfri_services_db.
+kmfri_enterprise.home:
+  title: 'Home'
+  route_name: kmfri_enterprise.home
+  menu_name: main
+  weight: -50
+
+kmfri_enterprise.catalogue:
+  title: 'Service Catalogue'
+  description: 'All citizen services, tariffs and online applications'
+  route_name: kmfri_enterprise.catalogue
+  menu_name: main
+  weight: -40
+  expanded: true
+
+kmfri_enterprise.catalogue.item:
+  class: Drupal\Core\Menu\MenuLinkDefault
+  deriver: Drupal\kmfri_enterprise\Plugin\Derivative\CatalogueMenuLinks
+  parent: kmfri_enterprise.catalogue
+  menu_name: main
+
+kmfri_enterprise.laboratories:
+  title: 'Laboratory Services'
+  description: 'KMFRI laboratory network, tests and sample submission'
+  route_name: kmfri_enterprise.laboratories
+  menu_name: main
+  weight: -30
+  expanded: true
+
+kmfri_enterprise.laboratories.item:
+  class: Drupal\Core\Menu\MenuLinkDefault
+  deriver: Drupal\kmfri_enterprise\Plugin\Derivative\LaboratoryMenuLinks
+  parent: kmfri_enterprise.laboratories
+  menu_name: main
+
+kmfri_enterprise.stations:
+  title: 'Research Stations'
+  description: 'Research centres and mariculture stations'
+  route_name: kmfri_enterprise.stations
+  menu_name: main
+  weight: -20
+  expanded: true
+
+kmfri_enterprise.stations.item:
+  class: Drupal\Core\Menu\MenuLinkDefault
+  deriver: Drupal\kmfri_enterprise\Plugin\Derivative\StationMenuLinks
+  parent: kmfri_enterprise.stations
+  menu_name: main
+
+kmfri_enterprise.charter:
+  title: 'Tariffs & Charter'
+  route_name: kmfri_enterprise.charter
+  menu_name: main
+  weight: -10
+
+kmfri_enterprise.settings:
+  title: 'KMFRI Enterprise Services Hub'
+  description: 'Services database connection and hub settings.'
+  route_name: kmfri_enterprise.settings
+  parent: system.admin_config_services
+
+kmfri_enterprise.admin.dashboard:
+  title: 'Enterprise Hub dashboard'
+  description: 'KPIs, quotation requests, catalogue, users and activity.'
+  route_name: kmfri_enterprise.admin.dashboard
+  parent: system.admin
+  weight: -20

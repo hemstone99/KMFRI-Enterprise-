@@ -1,0 +1,13 @@
+kmfri_enterprise.settings:
+  type: config_object
+  label: 'KMFRI Enterprise Services Hub settings'
+  mapping:
+    database_key:
+      type: string
+      label: 'Key of the settings.php $databases entry that points at kmfri_services_db'
+    flood_limit:
+      type: integer
+      label: 'Quotation requests allowed per client IP within the window'
+    flood_window:
+      type: integer
+      label: 'Flood window in seconds'

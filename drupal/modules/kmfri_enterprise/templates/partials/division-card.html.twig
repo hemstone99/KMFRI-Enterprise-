@@ -1,0 +1,42 @@
+{#
+/**
+ * @file
+ * Catalogue division card (home page, catalogue overview, "other services").
+ *
+ * Variables:
+ * - d: catalogue division (data/catalogue.json).
+ * - show_groups: list the division's service groups.
+ */
+#}
+{% import '@kmfri_enterprise/partials/macros.html.twig' as k %}
+{% set url = kmfri_catalogue_url(d.path) %}
+<article class="k-card k-card--hover h-full relative">
+  <div class="k-card__figure">
+    <div class="k-card__media">
+      <img src="{{ kmfri_small(d.image) }}" alt="" loading="lazy">
+      {% if d.online %}<span class="absolute top-3.5 left-3.5 k-badge k-badge--solid">{{ d.online }} online</span>{% endif %}
+    </div>
+    <span class="k-card__icon" aria-hidden="true">{{ k.division_icon(d.id) }}</span>
+  </div>
+  <div class="k-card__body">
+    <h3 class="k-h3"><a href="{{ url }}" class="hover:text-navy-500 after:absolute after:inset-0">{{ d.title }}</a></h3>
+    <p class="text-[0.95rem] text-muted mt-2 leading-relaxed">{{ d.tagline }}</p>
+    <p class="mt-3 text-sm font-semibold text-teal-800">
+      {{ d.count }} {{ d.count == 1 ? 'service' : 'services' }}{% if d.from_kes is not null %} · from Ksh {{ d.from_kes|kes }}{% endif %}
+    </p>
+    {% if show_groups %}
+      <ul class="relative z-1 mt-4 space-y-0.5 border-t border-line pt-3">
+        {% for g in d.children %}
+          <li>
+            <a href="{{ kmfri_catalogue_url(g.path) }}" class="w-full flex items-center gap-2 py-1 text-sm text-ink hover:text-navy-600">
+              {{ kmfri_icon('chevron-right', 'w-3.5 h-3.5 text-teal-700 shrink-0') }}
+              <span class="flex-1 min-w-0">{{ g.title }}</span>
+              <span class="text-xs text-subtle tabular-nums">{{ g.count }}</span>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <span class="mt-auto pt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-navy-600">{{ 'Explore'|t }} {{ kmfri_icon('arrow-right', 'w-4 h-4') }}</span>
+  </div>
+</article>

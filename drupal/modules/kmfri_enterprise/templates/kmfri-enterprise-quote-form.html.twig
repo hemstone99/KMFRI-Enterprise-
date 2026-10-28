@@ -1,0 +1,55 @@
+{#
+/**
+ * @file
+ * Layout of the quotation request form (Drupal\kmfri_enterprise\Form\QuoteRequestForm).
+ */
+#}
+{% set title %}Official Service &amp; <em>Quotation Request</em>{% endset %}
+{% include '@kmfri_enterprise/partials/banner.html.twig' with {
+  crumbs: [{label: 'Home'|t, url: path('kmfri_enterprise.home')}, {label: 'Request a Quotation'|t}],
+  title: title,
+  subtitle: 'Submit your project scope, sample volume, or vessel charter schedule to receive an official KMFRI reference quote and terms of delivery.',
+  image: 'images/analytical-lab.webp',
+  image_position: 'center 40%',
+  next: '#F7F9FC',
+} only %}
+
+<section class="band-mist k-section pt-8! pb-[calc(var(--wave-h)+3rem)]!">
+  <div class="k-container max-w-4xl!">
+    <div class="k-panel p-5 sm:p-8 space-y-6">
+      {% if not form['#live'] %}
+        <div class="k-alert k-alert--info" role="status">
+          {{ kmfri_icon('triangle-alert') }}
+          <span>Online quotation requests are temporarily unavailable. Please call the Client Inquiries Desk on <a href="tel:+25441475151" class="font-semibold underline">+254 (0) 41 475151</a>.</span>
+        </div>
+      {% endif %}
+
+      <fieldset class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 sm:p-5 rounded-xl bg-canvas border border-line">
+        <legend class="sr-only">{{ 'Service selection'|t }}</legend>
+        <div class="sm:col-span-2">{{ form.service }}</div>
+        {{ form.tariff }}
+        <div class="sm:col-span-2">{{ form.station }}</div>
+      </fieldset>
+
+      <fieldset class="space-y-4">
+        <legend class="k-tag pb-2 mb-1 w-full border-b border-line">Client &amp; Organization Particulars</legend>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {{ form.client_type }}
+          {{ form.full_name }}
+          {{ form.organization }}
+          {{ form.kra_pin }}
+          {{ form.email }}
+          {{ form.phone }}
+        </div>
+        {{ form.notes }}
+      </fieldset>
+
+      <p class="text-xs text-muted"><span class="text-[#b91c1c]">*</span> {{ 'Required field'|t }}</p>
+
+      <div class="pt-5 border-t border-line k-form-actions">
+        {{ form.actions }}
+      </div>
+      {{ form|without('service', 'tariff', 'station', 'client_type', 'full_name', 'organization', 'kra_pin', 'email', 'phone', 'notes', 'actions') }}
+    </div>
+  </div>
+</section>

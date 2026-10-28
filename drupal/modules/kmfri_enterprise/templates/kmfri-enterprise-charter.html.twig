@@ -1,0 +1,248 @@
+{#
+/**
+ * @file
+ * Tariffs & Charter: the complete tariff schedule and the citizens' service charter.
+ *
+ * Variables:
+ * - principles: service delivery commitments (hub.yml).
+ * - schedule: Catalogue::tariffSchedule() — divisions [{id, title, tagline, url, anchor,
+ *   portfolio, rows (catalogue services), priced, min, max, rates (portfolio rates)}],
+ *   other [{portfolio, anchor, rates}] (portfolios outside the catalogue), priced, rates.
+ *   Rows and rates carry search_text and visible (?q=).
+ * - charter: commitments [{service_code, service_name, turnaround_time, fee_summary,
+ *   responsible_officer, redress_channel, service_slug, anchor}].
+ * - q, shown: the schedule filter and the number of matching rows.
+ * - ecitizen_url.
+ *
+ * Rows carry data-kmfri-tariff-row for the live filter (js/hub.js kmfriTariffs).
+ */
+#}
+{% import '@kmfri_enterprise/partials/macros.html.twig' as k %}
+{% set badges = {
+  online: {label: 'On eCitizen', cls: 'k-badge--teal'},
+  partial: {label: 'Being digitised', cls: 'k-badge--navy'},
+  office: {label: 'By quotation', cls: 'k-badge--navy'},
+  planned: {label: 'Coming soon', cls: 'k-badge--gold'},
+} %}
+{% set total_rows = schedule.divisions|reduce((n, d) => n + d.rows|length + d.rates|length, 0) + schedule.other|reduce((n, o) => n + o.rates|length, 0) %}
+
+{% set title %}KMFRI Service Charter &amp; <em>Tariffs</em>{% endset %}
+{% set extra %}
+  <div class="mt-6 flex flex-wrap gap-3">
+    <a class="btn btn-teal" href="#tariff-schedule">{{ kmfri_icon('receipt') }} {{ 'View all tariffs'|t }}</a>
+    <a class="btn btn-ghost-light" href="#charter-commitments">{{ kmfri_icon('shield-check') }} {{ 'Service charter'|t }}</a>
+  </div>
+{% endset %}
+{% include '@kmfri_enterprise/partials/banner.html.twig' with {
+  crumbs: [{label: 'Home'|t, url: path('kmfri_enterprise.home')}, {label: 'Tariffs & Charter'|t}],
+  title: title,
+  subtitle: 'Every published KMFRI tariff in one schedule — ' ~ schedule.priced ~ ' catalogue services and ' ~ schedule.rates ~ ' standard rates — with the turnaround times and officers we commit to under the Government of Kenya service delivery standards.',
+  image: 'images/vessel-port.webp',
+  image_position: 'center 45%',
+  next: '#F7F9FC',
+  extra: extra,
+} only %}
+
+{# 1. Tariff schedule #}
+<section id="tariff-schedule" class="band-mist k-section pt-8! scroll-mt-28" aria-labelledby="schedule-heading" data-kmfri-tariffs>
+  <div class="k-container space-y-6">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div class="max-w-3xl">
+        <span class="k-eyebrow">{{ 'Official Tariffs'|t }}</span>
+        <h2 id="schedule-heading" class="k-h2">Tariff <em>schedule</em></h2>
+        <p class="text-muted mt-2">Prices in Kenya Shillings, as published in the KMFRI service catalogue. Laboratory tariffs are per test. Your official quotation confirms the final amount for your samples, quantities or dates.</p>
+      </div>
+      <dl class="grid grid-cols-3 gap-px bg-line rounded-xl overflow-hidden border border-line text-center shrink-0">
+        {% for f in [{label: 'Catalogue tariffs'|t, value: schedule.priced}, {label: 'Standard rates'|t, value: schedule.rates}, {label: 'Service areas'|t, value: schedule.divisions|length}] %}
+          <div class="bg-white px-4 py-3">
+            <dt class="text-[0.68rem] font-semibold uppercase tracking-widest text-subtle">{{ f.label }}</dt>
+            <dd class="k-num text-xl mt-0.5">{{ f.value }}</dd>
+          </div>
+        {% endfor %}
+      </dl>
+    </div>
+
+    {# Search (GET form = no-JS fallback) and jump links #}
+    <div class="k-panel p-4 sm:p-5 space-y-4">
+      <form method="get" action="#tariff-schedule" role="search" class="flex flex-wrap items-center gap-3" aria-label="{{ 'Search the tariff schedule'|t }}">
+        <label class="relative flex-1 min-w-[14rem]">
+          <span class="sr-only">{{ 'Search tariffs'|t }}</span>
+          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-subtle">{{ kmfri_icon('search', 'w-4 h-4') }}</span>
+          <input type="search" name="q" value="{{ q }}" data-kmfri-tariffs-q class="k-input pl-10!" placeholder="{{ 'Search a test, product or facility — e.g. heavy metals, tilapia, vessel'|t }}" autocomplete="off">
+        </label>
+        <button type="submit" class="btn btn-primary">{{ 'Search'|t }}</button>
+        <a href="{{ path('kmfri_enterprise.charter') }}#tariff-schedule" class="btn btn-outline" data-kmfri-tariffs-reset{% if not q %} hidden{% endif %}>{{ 'Clear'|t }}</a>
+        <p class="text-sm text-muted ml-auto" aria-live="polite"><strong class="text-navy-800" data-kmfri-tariffs-count>{{ q ? shown : total_rows }}</strong> {{ 'tariffs shown'|t }}</p>
+      </form>
+      <ul class="flex flex-wrap gap-1.5" aria-label="{{ 'Jump to a service area'|t }}">
+        {% for d in schedule.divisions %}
+          <li><a href="#{{ d.anchor }}" class="k-tab min-h-8! py-0.5! px-3! text-[0.8125rem]! bg-white!" data-kmfri-tariffs-jump="{{ d.anchor }}">{{ k.division_icon(d.id, 'w-4 h-4') }} {{ d.title }}</a></li>
+        {% endfor %}
+        {% if schedule.other %}
+          <li><a href="#tariffs-other" class="k-tab min-h-8! py-0.5! px-3! text-[0.8125rem]! bg-white!" data-kmfri-tariffs-jump="tariffs-other">{{ kmfri_icon('briefcase', 'w-4 h-4') }} {{ 'Other services'|t }}</a></li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <div class="k-panel p-8 text-center space-y-2" data-kmfri-tariffs-empty{% if not q or shown %} hidden{% endif %}>
+      {{ kmfri_icon('search', 'w-10 h-10 mx-auto text-line-strong') }}
+      <p class="font-heading font-semibold text-navy-800">{{ 'No tariff matches your search.'|t }}</p>
+      <p class="text-sm text-muted">{{ 'Try another word, or request a quotation and our officers will price it for you.'|t }}</p>
+      <a class="btn btn-primary btn-sm mt-2" href="{{ path('kmfri_enterprise.quote') }}">{{ 'Request a quotation'|t }}</a>
+    </div>
+
+    {% for d in schedule.divisions %}
+      {% set visible = d.rows|filter(r => r.visible)|length + d.rates|filter(r => r.visible)|length %}
+      <section id="{{ d.anchor }}" class="k-panel overflow-hidden scroll-mt-32" aria-labelledby="{{ d.anchor }}-title" data-kmfri-tariffs-section{% if not visible %} hidden{% endif %}>
+        <header class="flex flex-wrap items-center gap-4 px-4 sm:px-5 py-4 border-b border-line">
+          <span class="grid place-items-center w-11 h-11 shrink-0 rounded-xl bg-teal-50 text-teal-700 border border-[#bfe8ec]">{{ k.division_icon(d.id) }}</span>
+          <div class="flex-1 min-w-[12rem]">
+            <h3 id="{{ d.anchor }}-title" class="font-heading font-semibold text-lg text-navy-800"><a href="{{ d.url }}" class="hover:text-navy-500">{{ d.title }}</a></h3>
+            <p class="text-sm text-muted">{{ d.tagline }}</p>
+          </div>
+          <p class="text-sm font-semibold text-teal-800">
+            {% if d.priced %}{{ d.priced }} {{ d.priced == 1 ? 'tariff' : 'tariffs' }} · Ksh {{ d.min|kes }}{% if d.max > d.min %} – {{ d.max|kes }}{% endif %}{% elseif d.rates %}{{ d.rates|length }} standard {{ d.rates|length == 1 ? 'rate' : 'rates' }}{% else %}{{ 'On quotation'|t }}{% endif %}
+          </p>
+        </header>
+
+        {% if d.rows %}
+          <div class="k-table-wrap">
+            <table class="k-table sm:min-w-[760px]">
+              <caption class="sr-only">{{ d.title }}: services and tariffs</caption>
+              <thead>
+                <tr>
+                  <th scope="col" class="w-14 hidden sm:table-cell">{{ 'No.'|t }}</th>
+                  <th scope="col">{{ 'Service'|t }}</th>
+                  <th scope="col" class="text-right">{{ 'Tariff'|t }}</th>
+                  <th scope="col" class="hidden md:table-cell">{{ 'How to get it'|t }}</th>
+                  <th scope="col" class="text-right"><span class="sr-only">{{ 'Action'|t }}</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in d.rows %}
+                  <tr data-kmfri-tariff-row data-text="{{ r.search_text }}"{% if not r.visible %} hidden{% endif %}>
+                    <td class="font-mono text-[0.8125rem] font-semibold text-subtle hidden sm:table-cell">{{ r.no }}</td>
+                    <td class="max-w-[30rem]">
+                      <span class="block font-semibold text-navy-800 leading-snug">{{ r.name }}</span>
+                      {% if r.group %}<a href="{{ r.group_url }}" class="block text-xs font-semibold text-teal-800 mt-0.5 hover:underline">{{ r.group }}</a>{% endif %}
+                    </td>
+                    <td class="text-right whitespace-nowrap">
+                      {% if r.fee_kes is not null %}
+                        <span class="k-num">Ksh {{ r.fee_kes|kes }}</span>
+                        <small class="block text-xs text-muted">{{ r.unit_label }}</small>
+                      {% elseif r.fee_note %}
+                        <span class="k-num">{{ r.fee_note }}</span>
+                      {% else %}
+                        <span class="text-sm text-subtle">{{ r.availability == 'planned' ? '—' : 'On quotation'|t }}</span>
+                      {% endif %}
+                    </td>
+                    <td class="hidden md:table-cell"><span class="k-badge {{ badges[r.availability].cls }}">{{ badges[r.availability].label }}</span></td>
+                    <td class="text-right">{% include '@kmfri_enterprise/partials/item-action.html.twig' with {item: r, ecitizen_url: ecitizen_url} only %}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% endif %}
+
+        {% if d.rates %}
+          {% include '@kmfri_enterprise/partials/tariff-rates.html.twig' with {portfolio: d.portfolio, rates: d.rates, heading: 'Standard rates'|t} only %}
+        {% endif %}
+      </section>
+    {% endfor %}
+
+    {% if schedule.other %}
+      {% set visible = schedule.other|reduce((n, o) => n + o.rates|filter(r => r.visible)|length, 0) %}
+      <section id="tariffs-other" class="k-panel overflow-hidden scroll-mt-32" aria-labelledby="tariffs-other-title" data-kmfri-tariffs-section{% if not visible %} hidden{% endif %}>
+        <header class="flex flex-wrap items-center gap-4 px-4 sm:px-5 py-4 border-b border-line">
+          <span class="grid place-items-center w-11 h-11 shrink-0 rounded-xl bg-navy-50 text-navy-600 border border-[#cfdcef]">{{ kmfri_icon('briefcase') }}</span>
+          <div class="flex-1 min-w-[12rem]">
+            <h3 id="tariffs-other-title" class="font-heading font-semibold text-lg text-navy-800">{{ 'Consultancy, Value Addition & Training'|t }}</h3>
+            <p class="text-sm text-muted">{{ 'Enterprise services delivered on request, at standard rates.'|t }}</p>
+          </div>
+        </header>
+        {% for o in schedule.other %}
+          <div id="{{ o.anchor }}" class="scroll-mt-32">
+            {% include '@kmfri_enterprise/partials/tariff-rates.html.twig' with {portfolio: o.portfolio, rates: o.rates, heading: o.portfolio.title} only %}
+          </div>
+        {% endfor %}
+      </section>
+    {% endif %}
+  </div>
+</section>
+
+{# 2. Service delivery standards #}
+<section class="band-teal k-section" aria-labelledby="principles-heading">
+  <div class="k-container">
+    <span class="k-eyebrow">{{ 'Our Commitments'|t }}</span>
+    <h2 id="principles-heading" class="k-h2 mb-10">Service Delivery <em>Standards</em></h2>
+    <ul class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {% for p in principles %}
+        <li class="k-card p-7">
+          <span class="grid place-items-center w-14 h-14 rounded-full bg-navy-50 text-navy-600 ring-8 ring-navy-50/50">{{ kmfri_icon(p.icon, 'w-6 h-6') }}</span>
+          <h3 class="k-h3 mt-6">{{ p.title }}</h3>
+          <span class="k-rule my-4" aria-hidden="true"></span>
+          <p class="text-[0.95rem] text-muted leading-relaxed">{{ p.text }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# 3. Charter commitments per portfolio #}
+<section id="charter-commitments" class="band-mist k-section scroll-mt-28" aria-labelledby="matrix-heading">
+  <div class="k-container">
+    <div class="k-panel overflow-hidden">
+      <div class="flex flex-wrap items-center justify-between gap-3 px-5 sm:px-6 py-5 border-b border-line">
+        <div class="flex items-center gap-3">
+          <span class="grid place-items-center w-11 h-11 rounded-full bg-navy-600 text-white">{{ kmfri_icon('shield-check', 'w-5 h-5') }}</span>
+          <h2 id="matrix-heading" class="font-heading text-lg sm:text-xl font-semibold text-navy-800">Citizens' Service Charter</h2>
+        </div>
+        <span class="k-badge k-badge--teal">{{ charter|length }} {{ 'service portfolios'|t }}</span>
+      </div>
+      <div class="p-4 sm:p-6">
+        <div class="k-table-wrap">
+          <table class="k-table min-w-[900px]">
+            <caption class="sr-only">Citizens' service charter: statutory turnaround, official fees and responsible officers</caption>
+            <thead>
+              <tr>
+                <th scope="col">{{ 'Code'|t }}</th>
+                <th scope="col">{{ 'Service'|t }}</th>
+                <th scope="col">{{ 'Statutory Turnaround'|t }}</th>
+                <th scope="col">{{ 'Official Fee'|t }}</th>
+                <th scope="col">{{ 'Responsible Officer'|t }}</th>
+                <th scope="col" class="text-right">{{ 'Tariffs'|t }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for c in charter %}
+                <tr>
+                  <td class="font-mono text-[0.8125rem] font-semibold text-navy-600 whitespace-nowrap">{{ c.service_code }}</td>
+                  <td class="font-semibold text-navy-800 max-w-[260px]"><a href="{{ kmfri_service_url(c.service_slug) }}" class="hover:text-navy-500">{{ c.service_name }}</a></td>
+                  <td class="text-ink font-medium">{{ c.turnaround_time }}</td>
+                  <td><span class="k-num whitespace-normal!">{{ c.fee_summary }}</span></td>
+                  <td class="text-muted text-[0.8125rem]">{{ c.responsible_officer }}</td>
+                  <td class="text-right">
+                    {% if c.anchor %}
+                      <a href="#{{ c.anchor }}" class="k-link text-sm whitespace-nowrap" aria-label="Tariffs for {{ c.service_name }}">{{ 'See tariffs'|t }} <span class="k-link__arrow w-7! h-7!">{{ kmfri_icon('arrow-right', 'w-3.5 h-3.5') }}</span></a>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-4 text-sm text-muted"><strong class="text-navy-800">Complaints &amp; redress:</strong> {{ charter[0].redress_channel ?? 'director@kmfri.go.ke / Commission on Administrative Justice (Ombudsman)' }}</p>
+        <p class="mt-3 text-xs text-subtle md:hidden">Scroll the table horizontally to see all columns.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% set title %}Get an official <em>fee quotation</em>{% endset %}
+{% embed '@kmfri_enterprise/partials/cta.html.twig' with {eyebrow: 'Quotations'|t, title: title, text: 'Submit your project scope, sample volume, or vessel charter schedule to receive an official KMFRI reference quote and terms of delivery.'} %}
+  {% block actions %}
+    <a class="btn btn-teal" href="{{ path('kmfri_enterprise.quote') }}">{{ 'Submit Service Request'|t }}</a>
+    <a class="btn btn-ghost-light" href="{{ kmfri_catalogue_url() }}">{{ 'Browse Services'|t }}</a>
+  {% endblock %}
+{% endembed %}

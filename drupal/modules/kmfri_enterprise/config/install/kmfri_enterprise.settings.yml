@@ -1,0 +1,3 @@
+database_key: kmfri_services
+flood_limit: 10
+flood_window: 600

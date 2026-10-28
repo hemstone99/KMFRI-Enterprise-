@@ -1,0 +1,14 @@
+submit kmfri quotation requests:
+  title: 'Submit quotation requests'
+  description: 'Use the online service and quotation request form.'
+administer kmfri enterprise hub:
+  title: 'Administer the Enterprise Services Hub'
+  description: 'Configure the services database connection and hub settings.'
+  restrict access: true
+access kmfri dashboard:
+  title: 'Access the hub administration dashboard'
+  description: 'View KPIs, inquiries, the catalogue overview and the activity log.'
+manage kmfri inquiries:
+  title: 'Manage quotation requests'
+  description: 'Move inquiries through the workflow and export inquiry data (contains client contact details).'
+  restrict access: true

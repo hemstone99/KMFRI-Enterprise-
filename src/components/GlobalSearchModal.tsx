@@ -1,27 +1,77 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { Search, X, MapPin, ArrowRight, Clock, CornerDownLeft } from 'lucide-react';
+import {
+  Search, X, MapPin, ArrowRight, CornerDownLeft, ListTree, Layers, Receipt, Microscope, FlaskConical,
+  FilePenLine, Building2, ExternalLink,
+} from 'lucide-react';
 import { useHubData } from '../data/HubData';
-import { ServiceIcon } from './ui';
+import { DIVISION_ICONS } from './ui';
+import {
+  SERVICE_CATALOGUE,
+  CATALOGUE_INDEX,
+  CATALOGUE_TOTAL,
+  ECITIZEN_URL,
+  availabilityOf,
+  divisionForService,
+  formatFee,
+  formatKES,
+  itemsUnder,
+  lowestFee,
+  servicesLabel,
+  type CatalogueNode,
+} from '../data/serviceCatalogue';
+import { LAB_GROUPS } from '../data/laboratoriesData';
+import { searchScore, searchTokens, standardRates, tariffAnchor } from '../data/tariffs';
 
 interface GlobalSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
   onNavigate: (view: string, slug?: string) => void;
+  onOpenInquiry?: (slug?: string) => void;
 }
 
-type Filter = 'all' | 'services' | 'stations' | 'education';
+type Filter = 'all' | 'services' | 'labs' | 'stations' | 'education';
+type ResultType = 'services' | 'labs' | 'stations' | 'pages';
 
-const FILTERS: { id: Filter; label: string }[] = [
-  { id: 'all', label: 'All Hub Results' },
-  { id: 'services', label: 'Commercial Services (10)' },
-  { id: 'stations', label: 'Research Stations (8)' },
-  { id: 'education', label: 'Education & Tours' },
-];
+/** One search result (the same shape as the Drupal search dialog's). */
+interface Result {
+  key: string;
+  type: ResultType;
+  education?: boolean;
+  /** Shown before anything is typed */
+  isDefault?: boolean;
+  title: string;
+  kicker?: string;
+  sub?: string;
+  meta?: string;
+  Icon: React.ComponentType<{ className?: string }>;
+  tone: 'teal' | 'navy' | 'solid';
+  /** Search text (title, kicker, sub, meta and keywords) */
+  text: string;
+  run: () => void;
+}
+
+interface Group {
+  key: string;
+  label: string;
+  unit: string;
+  /** Matches shown at most (the full list is a click away) */
+  limit?: number;
+  items: Result[];
+}
+
+const TONES = {
+  teal: 'bg-teal-50 text-teal-700 border border-[#bfe8ec] rounded-xl',
+  navy: 'bg-navy-50 text-navy-600 border border-[#cfdcef] rounded-xl',
+  solid: 'bg-navy-600 text-white rounded-full',
+};
+
+const EDUCATION = ['visits', 'attachment'];
 
 export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   isOpen,
   onClose,
-  onNavigate
+  onNavigate,
+  onOpenInquiry,
 }) => {
   const { services, stations } = useHubData();
   const [query, setQuery] = useState('');
@@ -56,63 +106,155 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
     };
   }, [isOpen]);
 
-  const searchResults = useMemo(() => {
-    const q = query.toLowerCase().trim();
-    if (!q) {
-      return {
-        services: services.slice(0, 4),
-        stations: stations.slice(0, 3),
-        total: 7,
-        isDefault: true
-      };
-    }
-
-    const matchedServices = services.filter(srv =>
-      srv.title.toLowerCase().includes(q) ||
-      srv.code.toLowerCase().includes(q) ||
-      srv.description.toLowerCase().includes(q) ||
-      srv.remarks.toLowerCase().includes(q) ||
-      srv.keyCapabilities.some(c => c.toLowerCase().includes(q))
-    );
-
-    const matchedStations = stations.filter(st =>
-      st.name.toLowerCase().includes(q) ||
-      st.location.toLowerCase().includes(q) ||
-      st.county.toLowerCase().includes(q) ||
-      st.description.toLowerCase().includes(q) ||
-      st.primaryFocus.some(f => f.toLowerCase().includes(q))
-    );
-
-    let filteredServices = matchedServices;
-    let filteredStations = matchedStations;
-
-    if (activeFilter === 'services') {
-      filteredStations = [];
-    } else if (activeFilter === 'stations') {
-      filteredServices = [];
-    } else if (activeFilter === 'education') {
-      filteredServices = matchedServices.filter(s =>
-        s.category === 'education' || s.category === 'training' || s.category === 'internship'
-      );
-      filteredStations = [];
-    }
-
-    return {
-      services: filteredServices,
-      stations: filteredStations,
-      total: filteredServices.length + filteredStations.length,
-      isDefault: false
+  // Everything the dialog can find: pages, service areas, groups, services, rates, labs, stations.
+  const groups = useMemo<Group[]>(() => {
+    const text = (...parts: (string | undefined | null)[]) => parts.filter(Boolean).join(' ').toLowerCase();
+    const count = (n: CatalogueNode) => {
+      const from = lowestFee(n);
+      return `${servicesLabel(itemsUnder(n).length)}${from != null ? ` · from ${formatKES(from)}` : ''}`;
     };
-  }, [services, stations, query, activeFilter]);
+    const toCharter = (anchor?: string) => () => {
+      onNavigate('charter');
+      if (anchor) setTimeout(() => document.getElementById(anchor)?.scrollIntoView({ block: 'start' }), 150);
+    };
 
-  // Flat list of actions for keyboard navigation
-  const actions = useMemo(
-    () => [
-      ...searchResults.services.map((srv) => () => onNavigate('service_detail', srv.slug)),
-      ...searchResults.stations.map((st) => () => onNavigate('stations', st.id)),
-    ],
-    [searchResults, onNavigate]
-  );
+    const pages: Result[] = [
+      { key: 'p-charter', type: 'pages', title: 'Tariffs & Charter', sub: 'Every published price, standard rates and service charter commitments.', Icon: Receipt, tone: 'teal', text: text('tariffs & charter prices price list fees charges cost how much turnaround complaints redress'), run: toCharter() },
+      { key: 'p-quote', type: 'pages', title: 'Request a quotation', sub: 'Send your sample list, quantities or dates for an official KMFRI quotation.', Icon: FilePenLine, tone: 'teal', text: text('request a quotation quote order book booking buy purchase invoice estimate'), run: () => onOpenInquiry?.() },
+      { key: 'p-catalogue', type: 'pages', title: 'Service Catalogue', sub: `All ${CATALOGUE_TOTAL} KMFRI services by area, group and sub-group.`, Icon: Building2, tone: 'teal', text: text('service catalogue directory all services list'), run: () => onNavigate('catalogue') },
+      { key: 'p-ecitizen', type: 'pages', title: 'Apply online on eCitizen', sub: 'Apply for and pay for services online.', Icon: ExternalLink, tone: 'teal', text: text('apply online on ecitizen pay payment mpesa account'), run: () => window.open(ECITIZEN_URL, '_blank', 'noopener') },
+    ];
+
+    const divisions: Result[] = SERVICE_CATALOGUE.map((d, i) => ({
+      key: `d-${d.id}`,
+      type: 'services',
+      education: EDUCATION.includes(d.id),
+      isDefault: i < 4,
+      title: d.title,
+      sub: d.tagline,
+      meta: count(d),
+      Icon: DIVISION_ICONS[d.id],
+      tone: 'teal',
+      text: text(d.title, d.tagline, d.highlight, d.registerLabel, ...d.children.map((c) => c.title)),
+      run: () => onNavigate('catalogue', d.id),
+    }));
+
+    const nodes: Result[] = [];
+    const walk = (node: CatalogueNode, trail: CatalogueNode[]) =>
+      node.children?.forEach((child) => {
+        const kicker = [...trail, node].map((n) => n.title).join(' › ');
+        nodes.push({
+          key: `g-${child.id}`,
+          type: 'services',
+          education: EDUCATION.includes((trail[0] ?? node).id),
+          title: child.title,
+          kicker,
+          sub: child.summary,
+          meta: count(child),
+          Icon: Layers,
+          tone: 'navy',
+          text: text(child.title, kicker, child.summary, child.registerLabel),
+          run: () => onNavigate('catalogue', child.id),
+        });
+        walk(child, [...trail, node]);
+      });
+    SERVICE_CATALOGUE.forEach((d) => walk(d, []));
+
+    const catalogue: Result[] = CATALOGUE_INDEX.map(({ item, path }) => {
+      const kicker = path.map((n) => n.title).join(' › ');
+      const meta = `${formatFee(item)}${availabilityOf(item) === 'online' ? ' · Apply online on eCitizen' : ''}`;
+      return {
+        key: `i-${item.no}`,
+        type: 'services',
+        education: EDUCATION.includes(path[0].id),
+        title: item.name,
+        kicker,
+        meta,
+        Icon: ListTree,
+        tone: 'navy',
+        text: text(item.name, kicker, meta, item.blurb, item.note, `register ${item.no}`),
+        run: () => onNavigate('catalogue', path[path.length - 1].id),
+      };
+    });
+
+    const rates: Result[] = services.flatMap((s) => {
+      const division = divisionForService(s.slug);
+      return standardRates(s).map((t) => ({
+        key: `r-${s.slug}-${t.id ?? t.name}`,
+        type: 'services' as const,
+        education: EDUCATION.includes(division?.id ?? ''),
+        title: t.name,
+        kicker: s.title,
+        meta: `${formatKES(t.costKES)} ${t.unit}`,
+        Icon: Receipt,
+        tone: 'teal' as const,
+        text: text(t.name, s.title, t.unit, s.categoryLabel),
+        run: toCharter(tariffAnchor(division?.id ?? s.slug)),
+      }));
+    });
+
+    const labs: Result[] = LAB_GROUPS.flatMap((g) => [
+      { key: `l-${g.id}`, type: 'labs' as const, title: g.name, kicker: 'Laboratory Services', sub: g.summary, Icon: Microscope, tone: 'teal' as const, text: text(g.name, g.summary, g.intro), run: () => onNavigate('laboratories') },
+      ...g.units.map((u) => ({
+        key: `l-${g.id}-${u.name}`,
+        type: 'labs' as const,
+        title: u.name,
+        kicker: g.shortName,
+        sub: u.services.join(' · '),
+        Icon: FlaskConical,
+        tone: 'navy' as const,
+        text: text(u.name, g.shortName, ...u.services),
+        run: () => onNavigate('laboratories'),
+      })),
+    ]);
+
+    const stationResults: Result[] = stations.map((st, i) => ({
+      key: `s-${st.id}`,
+      type: 'stations',
+      isDefault: i < 3,
+      title: st.name,
+      kicker: `${st.code} · ${st.county}`,
+      sub: st.description,
+      Icon: MapPin,
+      tone: 'solid',
+      text: text(st.name, st.code, st.location, st.county, st.description, ...st.primaryFocus),
+      run: () => onNavigate('stations', st.id),
+    }));
+
+    return [
+      { key: 'pages', label: 'Pages', unit: 'pages', limit: 3, items: pages },
+      { key: 'divisions', label: 'Service Areas', unit: 'areas', items: divisions },
+      { key: 'groups', label: 'Service Groups', unit: 'groups', limit: 4, items: nodes },
+      { key: 'catalogue', label: 'Tests, Products & Applications', unit: 'services', limit: 8, items: catalogue },
+      { key: 'rates', label: 'Standard Rates', unit: 'rates', limit: 5, items: rates },
+      { key: 'labs', label: 'Laboratory Services', unit: 'results', limit: 5, items: labs },
+      { key: 'stations', label: 'Research Stations & Centres', unit: 'stations', items: stationResults },
+    ];
+  }, [services, stations, onNavigate, onOpenInquiry]);
+
+  const searchResults = useMemo(() => {
+    const q = query.trim();
+    const tokens = searchTokens(q);
+    const keep = (r: Result) =>
+      activeFilter === 'all' ||
+      (activeFilter === 'education' ? !!r.education : r.type === activeFilter);
+    const shown = groups
+      .map((g) => {
+        const matches = q
+          ? g.items
+              .map((r) => ({ r, score: keep(r) ? searchScore(r.title, r.text, tokens) : 0 }))
+              .filter((x) => x.score > 0)
+              .sort((a, b) => b.score - a.score)
+              .map((x) => x.r)
+          : g.items.filter((r) => r.isDefault);
+        return { ...g, total: matches.length, items: matches.slice(0, g.limit ?? Infinity) };
+      })
+      .filter((g) => g.items.length);
+    return { groups: shown, total: shown.reduce((n, g) => n + g.total, 0), isDefault: !q };
+  }, [groups, query, activeFilter]);
+
+  // Flat list of results for keyboard navigation
+  const flat = useMemo(() => searchResults.groups.flatMap((g) => g.items), [searchResults]);
 
   useEffect(() => setHighlight(0), [query, activeFilter]);
 
@@ -123,18 +265,18 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   if (!isOpen) return null;
 
   const run = (i: number) => {
-    actions[i]?.();
     onClose();
+    flat[i]?.run();
   };
 
   const onInputKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!actions.length) return;
+    if (!flat.length) return;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setHighlight((h) => (h + 1) % actions.length);
+      setHighlight((h) => (h + 1) % flat.length);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setHighlight((h) => (h - 1 + actions.length) % actions.length);
+      setHighlight((h) => (h - 1 + flat.length) % flat.length);
     } else if (e.key === 'Enter') {
       e.preventDefault();
       run(highlight);
@@ -145,6 +287,16 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
     `group w-full flex items-start gap-3.5 p-3.5 rounded-xl border text-left transition-colors ${
       idx === highlight ? 'bg-navy-50 border-[#cfdcef]' : 'border-transparent hover:bg-canvas hover:border-line'
     }`;
+
+  const filters: { id: Filter; label: string }[] = [
+    { id: 'all', label: 'All Hub Results' },
+    { id: 'services', label: `Services & Tariffs (${CATALOGUE_TOTAL})` },
+    { id: 'labs', label: 'Laboratories' },
+    { id: 'stations', label: `Research Stations (${stations.length})` },
+    { id: 'education', label: 'Education & Tours' },
+  ];
+
+  let idx = 0;
 
   return (
     <div className="k-modal-backdrop items-start!" onClick={onClose}>
@@ -182,7 +334,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
         {/* Filter Category Pills */}
         <div className="px-4 sm:px-5 py-3 bg-canvas border-b border-line flex flex-wrap items-center justify-between gap-3">
           <div className="k-tabs gap-1.5!" role="group" aria-label="Filter results">
-            {FILTERS.map((f) => (
+            {filters.map((f) => (
               <button
                 key={f.id}
                 type="button"
@@ -201,7 +353,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
 
         {/* Results List */}
         <div id="search-results" ref={listRef} className="max-h-[58vh] overflow-y-auto p-3 sm:p-4">
-          {searchResults.total === 0 ? (
+          {searchResults.total === 0 && !searchResults.isDefault ? (
             <div className="py-12 text-center space-y-2">
               <Search className="w-10 h-10 mx-auto text-line-strong" aria-hidden="true" />
               <p className="font-heading font-semibold text-navy-800">No matches found for "{query}"</p>
@@ -210,76 +362,37 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
               </p>
             </div>
           ) : (
-            <>
-              {/* Services matches */}
-              {searchResults.services.length > 0 && (
-                <div>
-                  <p className="flex items-center justify-between px-2 mb-2 k-tag">
-                    <span>Enterprise &amp; Commercial Services</span>
-                    <span className="text-subtle">{searchResults.services.length} items</span>
-                  </p>
-                  <ul className="space-y-1">
-                    {searchResults.services.map((srv, i) => (
-                      <li key={srv.id}>
+            searchResults.groups.map((g, gi) => (
+              <div key={g.key} className={gi ? 'mt-4 pt-4 border-t border-line' : ''}>
+                <p className="flex items-center justify-between px-2 mb-2 k-tag">
+                  <span>{g.label}</span>
+                  <span className="text-subtle">
+                    {g.total > g.items.length ? `${g.items.length} of ${g.total}` : g.total} {g.unit}
+                  </span>
+                </p>
+                <ul className="space-y-1">
+                  {g.items.map((r) => {
+                    const i = idx++;
+                    return (
+                      <li key={r.key}>
                         <button type="button" data-idx={i} onClick={() => run(i)} onMouseEnter={() => setHighlight(i)} className={resultCls(i)}>
-                          <span className="grid place-items-center w-10 h-10 shrink-0 rounded-xl bg-teal-50 text-teal-700 border border-[#bfe8ec]">
-                            <ServiceIcon category={srv.category} className="w-4.5 h-4.5" />
+                          <span className={`grid place-items-center w-10 h-10 shrink-0 ${TONES[r.tone]}`}>
+                            <r.Icon className="w-4.5 h-4.5" />
                           </span>
                           <span className="flex-1 min-w-0">
-                            <span className="flex flex-wrap items-center gap-2">
-                              <span className="font-mono text-[0.72rem] font-semibold text-subtle">{srv.code}</span>
-                              <span className="text-xs font-semibold text-teal-800">{srv.categoryLabel}</span>
-                            </span>
-                            <span className="block font-heading font-semibold text-navy-800 truncate">{srv.title}</span>
-                            <span className="block text-sm text-muted line-clamp-1">{srv.description}</span>
-                            <span className="flex items-center gap-2 mt-1 text-xs text-subtle min-w-0">
-                              <Clock className="w-3 h-3 shrink-0" aria-hidden="true" />
-                              <span className="shrink-0">TAT: {srv.turnaroundTime.split('(')[0]}</span>
-                              <span aria-hidden="true">&bull;</span>
-                              <span className="truncate">Client: {srv.remarks}</span>
-                            </span>
+                            {r.kicker && <span className="block text-xs font-semibold text-teal-800 truncate">{r.kicker}</span>}
+                            <span className="block font-heading font-semibold text-navy-800 truncate">{r.title}</span>
+                            {r.sub && <span className="block text-sm text-muted line-clamp-1">{r.sub}</span>}
+                            {r.meta && <span className="block mt-0.5 text-xs text-subtle">{r.meta}</span>}
                           </span>
                           <ArrowRight className="w-4 h-4 shrink-0 self-center text-subtle group-hover:text-navy-600" aria-hidden="true" />
                         </button>
                       </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Research Stations matches */}
-              {searchResults.stations.length > 0 && (
-                <div className={searchResults.services.length ? 'mt-4 pt-4 border-t border-line' : ''}>
-                  <p className="flex items-center justify-between px-2 mb-2 k-tag">
-                    <span>Research Stations &amp; Centres</span>
-                    <span className="text-subtle">{searchResults.stations.length} stations</span>
-                  </p>
-                  <ul className="space-y-1">
-                    {searchResults.stations.map((st, j) => {
-                      const i = searchResults.services.length + j;
-                      return (
-                        <li key={st.id}>
-                          <button type="button" data-idx={i} onClick={() => run(i)} onMouseEnter={() => setHighlight(i)} className={resultCls(i)}>
-                            <span className="grid place-items-center w-10 h-10 shrink-0 rounded-full bg-navy-600 text-white">
-                              <MapPin className="w-4 h-4" aria-hidden="true" />
-                            </span>
-                            <span className="flex-1 min-w-0">
-                              <span className="flex flex-wrap items-center gap-2">
-                                <span className="font-mono text-[0.72rem] font-semibold text-subtle">{st.code}</span>
-                                <span className="text-xs font-semibold text-teal-800">{st.county}</span>
-                              </span>
-                              <span className="block font-heading font-semibold text-navy-800 truncate">{st.name}</span>
-                              <span className="block text-sm text-muted line-clamp-1">{st.description}</span>
-                            </span>
-                            <ArrowRight className="w-4 h-4 shrink-0 self-center text-subtle group-hover:text-navy-600" aria-hidden="true" />
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-            </>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))
           )}
         </div>
 
@@ -296,7 +409,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
               <kbd className="px-1.5 py-0.5 rounded border border-line-strong bg-white font-mono text-[0.68rem]">ESC</kbd> to exit
             </span>
             <span aria-hidden="true">&bull;</span>
-            <span>Search live across all 10 services and 8 stations</span>
+            <span>Search every KMFRI service, price, laboratory and station</span>
           </div>
 
           <button
@@ -307,7 +420,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
             }}
             className="k-link text-sm"
           >
-            View All Services Directory
+            Open Service Catalogue
             <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>

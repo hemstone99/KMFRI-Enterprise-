@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Call to action for one catalogue service: apply on eCitizen, or request a quotation
+ * (?item= preselects the service's tariff on the quotation form).
+ *
+ * Variables:
+ * - item: catalogue item.
+ * - ecitizen_url: KMFRI eCitizen portal.
+ * - quote_query: extra quotation query parameters, e.g. {station: 3} from a station page.
+ */
+#}
+{% if item.availability == 'online' %}
+  <a href="{{ ecitizen_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+    {{ 'Apply'|t }} {{ kmfri_icon('external-link') }}<span class="sr-only"> for {{ item.name }} on eCitizen (opens in a new tab)</span>
+  </a>
+{% elseif item.availability != 'planned' and item.service_slug %}
+  <a href="{{ path('kmfri_enterprise.quote', {}, {'query': {'service': item.service_slug, 'item': item.no}|merge(quote_query|default({}))}) }}" class="btn btn-outline btn-sm">
+    {{ 'Get a quote'|t }}<span class="sr-only"> for {{ item.name }}</span>
+  </a>
+{% endif %}

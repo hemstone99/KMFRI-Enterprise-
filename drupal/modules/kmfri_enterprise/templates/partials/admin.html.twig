@@ -1,0 +1,41 @@
+{#
+/**
+ * @file
+ * Dashboard macros. Usage: {% import '@kmfri_enterprise/partials/admin.html.twig' as kd %}
+ */
+#}
+
+{# Workflow status chip: dot + label (never colour alone). #}
+{% macro status(key, label) %}
+  <span class="kd-status kd-status--{{ key }}">{{ label }}</span>
+{%- endmacro %}
+
+{# KPI card. #}
+{% macro kpi(label, value, icon, note, url, tone) %}
+  <article class="kd-kpi{{ tone ? ' kd-kpi--' ~ tone : '' }}">
+    <div class="flex items-start justify-between gap-3">
+      <p class="kd-kpi__label">{{ label }}</p>
+      <span class="kd-kpi__icon" aria-hidden="true">{{ kmfri_icon(icon, 'w-5 h-5') }}</span>
+    </div>
+    <p class="kd-kpi__value">{{ value }}</p>
+    {% if note %}<p class="kd-kpi__note">{{ note }}</p>{% endif %}
+    {% if url %}<a href="{{ url }}" class="kd-kpi__link"><span class="sr-only">{{ label }}: </span>{{ 'View'|t }} {{ kmfri_icon('arrow-right', 'w-3.5 h-3.5') }}</a>{% endif %}
+  </article>
+{%- endmacro %}
+
+{# Sort link for a table header. #}
+{% macro sort(label, s) %}
+  <a href="{{ s.url }}" class="kd-sort{{ s.active ? ' is-active' : '' }}"{% if s.active %} aria-sort="{{ s.dir == 'asc' ? 'ascending' : 'descending' }}"{% endif %}>
+    {{ label }}
+    {{ kmfri_icon(s.active ? (s.dir == 'asc' ? 'chevron-up' : 'chevron-down') : 'chevrons-up-down', 'w-3.5 h-3.5') }}
+  </a>
+{%- endmacro %}
+
+{# Empty state. #}
+{% macro empty(title, text, icon) %}
+  <div class="kd-empty">
+    {{ kmfri_icon(icon|default('inbox'), 'w-9 h-9') }}
+    <p class="font-heading font-semibold text-navy-800">{{ title }}</p>
+    {% if text %}<p class="text-sm text-muted max-w-sm mx-auto">{{ text }}</p>{% endif %}
+  </div>
+{%- endmacro %}

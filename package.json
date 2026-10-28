@@ -11,7 +11,8 @@
     "lint": "tsc --noEmit",
     "server": "tsx server/index.ts",
     "start": "tsx server/index.ts",
-    "db:setup": "tsx server/setup.ts"
+    "db:setup": "tsx server/setup.ts",
+    "drupal:build": "node drupal/build/build.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

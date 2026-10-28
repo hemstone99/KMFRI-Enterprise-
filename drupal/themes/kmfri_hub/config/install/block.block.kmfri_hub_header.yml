@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - kmfri_enterprise
+  theme:
+    - kmfri_hub
+id: kmfri_hub_header
+theme: kmfri_hub
+region: header
+weight: 0
+provider: null
+plugin: kmfri_enterprise_header
+settings:
+  id: kmfri_enterprise_header
+  label: 'KMFRI hub header and main navigation'
+  label_display: '0'
+  provider: kmfri_enterprise
+visibility: {}

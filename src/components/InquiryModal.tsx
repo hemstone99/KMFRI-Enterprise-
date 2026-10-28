@@ -1,17 +1,21 @@
 import React, { useState, useId, useEffect, useRef } from 'react';
 import { X, ShieldCheck, CheckCircle2, Calculator, Printer, AlertTriangle, Loader2 } from 'lucide-react';
 import { useHubData, submitInquiry, InquiryError, type InquiryReceipt } from '../data/HubData';
+import { findStation } from '../data/stationServices';
 
 interface InquiryModalProps {
   isOpen: boolean;
   onClose: () => void;
   preselectedSlug?: string;
+  /** Station id or web address slug to preselect as the preferred centre */
+  preselectedStation?: string;
 }
 
 export const InquiryModal: React.FC<InquiryModalProps> = ({
   isOpen,
   onClose,
-  preselectedSlug
+  preselectedSlug,
+  preselectedStation
 }) => {
   const { services, stations, live } = useHubData();
   const [selectedServiceSlug, setSelectedServiceSlug] = useState<string>(
@@ -48,6 +52,13 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
       setSelectedTierIndex(0);
     }
   }, [isOpen, preselectedSlug, services]);
+
+  // Booking from a station page: that station is the preferred centre
+  useEffect(() => {
+    if (!isOpen) return;
+    const station = findStation(stations, preselectedStation);
+    if (station) setPreferredStation(station.id);
+  }, [isOpen, preselectedStation, stations]);
 
   // Keep the station selection valid when the catalogue reloads from the database
   useEffect(() => {

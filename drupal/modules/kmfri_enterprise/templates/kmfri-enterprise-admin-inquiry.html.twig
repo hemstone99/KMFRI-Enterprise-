@@ -1,0 +1,95 @@
+{#
+/**
+ * @file
+ * Inquiry detail: workflow progress, request and client particulars, audit trail, status update form.
+ */
+#}
+{% import '@kmfri_enterprise/partials/admin.html.twig' as kd %}
+<p class="mb-5"><a href="{{ back_url }}" class="k-link text-sm">{{ kmfri_icon('arrow-left', 'w-4 h-4') }} {{ 'All inquiries'|t }}</a></p>
+
+<section class="kd-card mb-6" aria-label="{{ 'Workflow progress'|t }}">
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+    <div class="flex items-center gap-3">
+      {{ kd.status(inquiry.status, inquiry.status_label) }}
+      <span class="text-sm text-muted">{{ 'Last updated @date'|t({'@date': inquiry.updated}) }}</span>
+    </div>
+    <span class="k-num">{{ inquiry.value > 0 ? 'KES ' ~ inquiry.value|kes : 'Issued on quotation'|t }}</span>
+  </div>
+  {% if cancelled %}
+    <p class="k-alert k-alert--note">{{ kmfri_icon('info') }}<span>{{ 'This request was cancelled. See the audit trail for the reason.'|t }}</span></p>
+  {% else %}
+    <ol class="kd-steps">
+      {% for s in steps %}
+        <li class="kd-steps__item is-{{ s.state }}"{% if s.state == 'current' %} aria-current="step"{% endif %}>
+          <span class="kd-steps__dot" aria-hidden="true">{% if s.state == 'done' %}{{ kmfri_icon('check', 'w-3.5 h-3.5') }}{% else %}{{ loop.index }}{% endif %}</span>
+          <span class="kd-steps__label">{{ s.label }}{% if s.state == 'done' %}<span class="sr-only"> ({{ 'completed'|t }})</span>{% endif %}</span>
+        </li>
+      {% endfor %}
+    </ol>
+  {% endif %}
+</section>
+
+<div class="kd-grid kd-grid--detail">
+  <div class="space-y-6 min-w-0">
+    <section class="kd-card" aria-labelledby="kd-req-heading">
+      <h2 id="kd-req-heading" class="kd-card__title mb-4">{{ 'Request'|t }}</h2>
+      <dl class="kd-dl">
+        <div><dt>{{ 'Service'|t }}</dt><dd><a href="{{ inquiry.service_url }}" class="text-navy-600 hover:underline">{{ inquiry.service }}</a> <span class="font-mono text-xs text-subtle">{{ inquiry.service_code }}</span></dd></div>
+        <div><dt>{{ 'Tariff option'|t }}</dt><dd>{{ inquiry.tier ?: 'To be quoted'|t }}{% if inquiry.tier_cost_kes is not null %} <span class="text-muted">(KES {{ inquiry.tier_cost_kes|kes }} {{ inquiry.unit }})</span>{% endif %}</dd></div>
+        <div><dt>{{ 'Quantity'|t }}</dt><dd>{{ inquiry.quantity }}</dd></div>
+        <div><dt>{{ 'Indicative fee'|t }}</dt><dd class="k-num">{{ inquiry.value > 0 ? 'KES ' ~ inquiry.value|kes : 'On quotation'|t }}</dd></div>
+        <div><dt>{{ 'Preferred centre'|t }}</dt><dd>{{ inquiry.station ?: '—' }}</dd></div>
+        <div><dt>{{ 'Submitted'|t }}</dt><dd>{{ inquiry.created_full }} <span class="text-muted">({{ inquiry.created_ago }} ago)</span></dd></div>
+      </dl>
+      {% if inquiry.notes %}
+        <h3 class="k-tag mt-6 mb-2">{{ 'Scope details from the client'|t }}</h3>
+        <p class="text-[0.95rem] text-ink leading-relaxed whitespace-pre-line rounded-xl bg-canvas border border-line p-4">{{ inquiry.notes }}</p>
+      {% endif %}
+    </section>
+
+    <section class="kd-card" aria-labelledby="kd-trail-heading">
+      <h2 id="kd-trail-heading" class="kd-card__title mb-4">{{ 'Audit trail'|t }}</h2>
+      {% if history %}
+        <ol class="kd-feed kd-feed--timeline">
+          {% for h in history %}
+            <li>
+              <span class="kd-feed__dot kd-status--{{ h.to_key }}" aria-hidden="true"></span>
+              <p class="text-sm text-ink">{% if h.from %}<span class="text-muted">{{ h.from }}</span> → {% endif %}<strong class="font-semibold">{{ h.to }}</strong></p>
+              <p class="text-xs text-muted">{{ h.by }} · <time>{{ h.time }}</time></p>
+              {% if h.remarks %}<p class="text-sm text-muted mt-1">{{ h.remarks }}</p>{% endif %}
+            </li>
+          {% endfor %}
+        </ol>
+      {% else %}
+        <p class="text-sm text-muted">{{ 'No status changes recorded yet.'|t }}</p>
+      {% endif %}
+    </section>
+  </div>
+
+  <aside class="space-y-6" aria-label="{{ 'Client and actions'|t }}">
+    <section class="kd-card" aria-labelledby="kd-client-heading">
+      <h2 id="kd-client-heading" class="kd-card__title mb-4">{{ 'Client'|t }}</h2>
+      <div class="flex items-center gap-3 mb-4">
+        <span class="kd-avatar kd-avatar--lg" aria-hidden="true">{{ inquiry.client|slice(0, 2)|upper }}</span>
+        <div class="min-w-0">
+          <p class="font-semibold text-navy-800">{{ inquiry.client }}</p>
+          <p class="text-sm text-muted">{{ inquiry.organization }}</p>
+        </div>
+      </div>
+      <dl class="kd-dl kd-dl--stack">
+        <div><dt>{{ 'Category'|t }}</dt><dd>{{ inquiry.client_type }}</dd></div>
+        <div><dt>{{ 'Email'|t }}</dt><dd><a href="mailto:{{ inquiry.email }}?subject={{ ('KMFRI quotation ' ~ inquiry.reference)|url_encode }}" class="text-navy-600 hover:underline break-all">{{ inquiry.email }}</a></dd></div>
+        <div><dt>{{ 'Phone'|t }}</dt><dd><a href="tel:{{ inquiry.phone|replace({' ': ''}) }}" class="text-navy-600 hover:underline">{{ inquiry.phone }}</a></dd></div>
+        <div><dt>{{ 'KRA PIN'|t }}</dt><dd class="font-mono">{{ inquiry.kra_pin ?: '—' }}</dd></div>
+      </dl>
+      <a href="mailto:{{ inquiry.email }}?subject={{ ('KMFRI quotation ' ~ inquiry.reference)|url_encode }}" class="btn btn-outline btn-sm btn-block mt-5">{{ kmfri_icon('mail') }} {{ 'Email client'|t }}</a>
+    </section>
+
+    {% if status_form %}
+      <section class="kd-card" aria-labelledby="kd-update-heading">
+        <h2 id="kd-update-heading" class="kd-card__title mb-4">{{ 'Update status'|t }}</h2>
+        {{ status_form }}
+      </section>
+    {% endif %}
+  </aside>
+</div>

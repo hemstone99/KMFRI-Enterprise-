@@ -1,0 +1,129 @@
+# Editorial content for the Enterprise Services Hub pages.
+# The service catalogue itself lives in data/catalogue.json (generated — see drupal/build/catalogue.mjs).
+# Service slides open their catalogue division and take its tagline as subtitle when none is set here.
+hero_slides:
+  -
+    id: hub
+    eyebrow: 'State Corporation Mandate · Commercial & Enterprise Services'
+    title: ['A Centre of Excellence', 'in Aquatic Research', '& Blue Economy']
+    subtitle: 'Laboratory testing, quality fish seed and feeds, research vessel charter, museum and aquarium visits, conference venues and marine data — with official tariffs and online applications.'
+    image: images/vessel-aerial.webp
+    alt: 'KMFRI research vessel operating off the Kenyan coast'
+    position: '62% center'
+  -
+    id: lab
+    eyebrow: 'ISO 9001:2015 Certified · NEMA Designated'
+    title: ['Laboratory', 'Analytical', 'Services']
+    image: images/analytical-lab.webp
+    alt: 'KMFRI analyst running laboratory analytical tests'
+    position: '70% center'
+    slug: laboratory-analytical-services
+  -
+    id: aquaculture
+    eyebrow: 'Certified Seed Stock · Kegati & Sangoro Hatcheries'
+    title: ['Fish &', 'Aquaculture', 'Services']
+    image: images/aquaculture-hatchery.webp
+    alt: 'Fingerlings being sampled at a KMFRI aquaculture hatchery'
+    position: '65% center'
+    slug: fish-and-aquaculture-services
+  -
+    id: vessel
+    eyebrow: 'RV Mtafiti · 200nm EEZ Coverage'
+    title: ['Research', 'Vessel Hire', 'Services']
+    image: images/vessel-port.webp
+    alt: 'Research vessel RV Mtafiti berthed at port'
+    position: '58% center'
+    slug: research-vessel-hire-services
+  -
+    id: visits
+    eyebrow: 'Museum · Aquarium · Laboratories · Hatchery'
+    title: ['Museum &', 'Educational', 'Visits']
+    image: images/kmfri/museum-exhibition-hall.webp
+    alt: 'Exhibition hall of the KMFRI marine museum'
+    position: 'center 55%'
+    slug: educational-visits
+  -
+    id: conference
+    eyebrow: 'Halls · Boardrooms · Grounds'
+    title: ['Conference', '& Meeting', 'Facilities']
+    image: images/kmfri/hq-harbour-view.webp
+    alt: 'KMFRI Mombasa campus overlooking the harbour'
+    position: 'center 60%'
+    slug: conference-and-meeting-facilities
+  -
+    id: laboratories
+    eyebrow: 'NEMA Designated · ISO 9001:2015 Certified'
+    title: ['KMFRI', 'Laboratory', 'Services']
+    subtitle: 'A national network of specialized laboratories providing scientific testing, research and analytical services for fisheries, aquaculture, food safety, environmental stewardship and climate resilience.'
+    image: images/labs/lab-banner.webp
+    alt: 'Dhow sailing on the Kenyan coast beneath a coastal tree'
+    position: 'center 62%'
+    route: kmfri_enterprise.laboratories
+    route_label: 'Explore Laboratory Services'
+    quote_slug: laboratory-analytical-services
+
+hero_stats:
+  - { icon: microscope, value: '45+', label: 'Years of Research' }
+  - { icon: map-pin, value: '13', label: 'Stations Nationwide' }
+  - { icon: users, value: '200+', label: 'Scientists' }
+
+# Homepage "Find services for:" shortcuts — client type → catalogue division path.
+audiences:
+  - { label: 'Fish farmers', division: aquaculture, icon: fish }
+  - { label: 'Processors & exporters', division: laboratory, icon: store }
+  - { label: 'Consultants & counties', division: laboratory, icon: briefcase }
+  - { label: 'Researchers', division: maritime, icon: microscope }
+  - { label: 'Schools & families', division: visits, icon: users }
+  - { label: 'Event organisers', division: conference, icon: building-2 }
+  - { label: 'Students', division: attachment, icon: graduation-cap }
+
+# Homepage "How it works" strip.
+steps:
+  - { title: 'Find your service', text: 'Every service shows its official tariff.', icon: search }
+  - { title: 'Apply or get a quote', text: 'Online on eCitizen, or by quotation.', icon: file-text }
+  - { title: 'Pay electronically', text: 'Official channels and KMFRI receipts.', icon: shield-check }
+  - { title: 'Receive your service', text: 'Products, results, visits or events.', icon: circle-check }
+
+# Homepage trust marks (next to the KEBS ISO 9001 seal).
+trust:
+  - 'ISO 9001:2015 certified'
+  - 'NEMA designated laboratories'
+  - 'Published government tariffs'
+  - 'State corporation mandate'
+
+charter_principles:
+  - { title: 'Strict Turnaround Timelines', text: 'Standard laboratory analysis delivered within 5–7 business days; express 48h emergency testing available for critical export shipments.', icon: clock }
+  - { title: 'ISO/IEC 17025 Accreditation', text: 'All analytical testing adheres to internationally recognized quality standards and calibrated instrumentation with traceability.', icon: award }
+  - { title: 'Transparent Public Tariffs', text: 'Standardized gazetted rates applicable across all 8 research centres with official Government of Kenya revenue receipts.', icon: file-check }
+
+client_types:
+  government: 'National Government Ministry / Parastatal'
+  county: 'County Government'
+  private: 'Private Sector / Commercial Enterprise'
+  researcher: 'Independent Researcher / Postgrad'
+  university: 'University / Academic Institution'
+  sme: 'SME / Fish Cooperative / BMU'
+  individual: 'Individual Farmer / Citizen'
+
+contact:
+  hotline: '+254 (0) 41 475151'
+  hotline_tel: '+25441475151'
+  postal: 'P.O. Box 81651 - 80100, Mombasa, KENYA'
+  phone_main: '+254 (20) 8021561'
+  phone_main_tel: '+254208021561'
+  phone_mobile: '712003853'
+  phone_mobile_tel: '+254712003853'
+  email: director@kmfri.go.ke
+
+main_site: 'https://kmfri.go.ke'
+social:
+  - { label: Facebook, href: 'https://www.facebook.com/Kmfri1979', color: '#1877f2', icon: brand-facebook }
+  - { label: 'X (Twitter)', href: 'https://x.com/KmfriResearch', color: '#000000', icon: brand-x }
+  - { label: YouTube, href: 'https://www.youtube.com/@KMFRITV', color: '#ff0000', icon: brand-youtube }
+  - { label: WhatsApp, href: 'https://wa.me/254712003853', color: '#25d366', icon: brand-whatsapp }
+  - { label: LinkedIn, href: 'https://www.linkedin.com/company/kenya-marine-and-fisheries-research-institute-kmfri/', color: '#0a66c2', icon: brand-linkedin }
+topbar_links:
+  - { label: Tenders, href: 'https://kmfri.go.ke/resources/tenders', icon: file-text, show: 'hidden lg:inline-flex' }
+  - { label: 'Staff Portal', href: 'https://staff.kmfri.go.ke/', icon: user-cog, show: 'hidden lg:inline-flex' }
+  - { label: News, href: 'https://kmfri.go.ke/news', icon: newspaper, show: 'hidden md:inline-flex' }
+  - { label: 'eCitizen Services', href: 'https://kmfri.ecitizen.go.ke/', icon: id-card, show: 'hidden sm:inline-flex' }

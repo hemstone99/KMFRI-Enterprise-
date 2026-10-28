@@ -1,0 +1,26 @@
+services:
+  logger.channel.kmfri_enterprise:
+    parent: logger.channel_base
+    arguments: ['kmfri_enterprise']
+  kmfri_enterprise.content:
+    class: Drupal\kmfri_enterprise\Repository\HubContent
+    arguments: ['@extension.list.module']
+  kmfri_enterprise.catalogue:
+    class: Drupal\kmfri_enterprise\Repository\Catalogue
+    arguments: ['@extension.list.module']
+  kmfri_enterprise.repository:
+    class: Drupal\kmfri_enterprise\Repository\HubRepository
+    arguments: ['@config.factory', '@cache.default', '@kmfri_enterprise.content', '@logger.channel.kmfri_enterprise', '@kmfri_enterprise.catalogue']
+  kmfri_enterprise.admin_repository:
+    class: Drupal\kmfri_enterprise\Repository\AdminRepository
+    arguments: ['@kmfri_enterprise.repository']
+  kmfri_enterprise.dashboard_login_redirect:
+    class: Drupal\kmfri_enterprise\EventSubscriber\DashboardLoginRedirect
+    arguments: ['@current_user', '@current_route_match']
+    tags:
+      - { name: event_subscriber }
+  kmfri_enterprise.twig_extension:
+    class: Drupal\kmfri_enterprise\Twig\HubTwigExtension
+    arguments: ['@extension.list.module', '@file_url_generator', '@kmfri_enterprise.catalogue']
+    tags:
+      - { name: twig.extension }

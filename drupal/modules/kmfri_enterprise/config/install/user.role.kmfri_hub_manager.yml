@@ -1,0 +1,12 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - kmfri_enterprise
+id: kmfri_hub_manager
+label: 'Hub manager'
+weight: 3
+is_admin: false
+permissions:
+  - 'access kmfri dashboard'
+  - 'manage kmfri inquiries'

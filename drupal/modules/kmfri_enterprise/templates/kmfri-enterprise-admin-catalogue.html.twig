@@ -1,0 +1,288 @@
+{#
+/**
+ * @file
+ * Catalogue & tariffs: sync status (website catalogue vs kmfri_services_db), service
+ * areas, every catalogue service with its tariff and demand, standard rates,
+ * service portfolios and research stations.
+ *
+ * Variables:
+ * - live: kmfri_services_db reachable.
+ * - sync: AdminRepository::catalogueSync() (NULL when offline).
+ * - summary: {services, priced, rates, online, divisions}.
+ * - divisions: [{id, title, services, priced, online, min, max, rates, inquiries, url, tariffs_url}].
+ * - tariffs: [{no, name, division, division_id, group, fee, fee_label, availability, tier_id, requests, issue, url, text}].
+ * - rates: portfolio pricing tiers not in the catalogue, plus portfolio and requests.
+ * - services: portfolio rows; stations: station records plus catalogue_services and url.
+ * - charter_url, catalogue_url, stations_url.
+ *
+ * The tariff table is filtered in the browser (js/hub.js kmfriAdminFilter).
+ */
+#}
+{% import '@kmfri_enterprise/partials/admin.html.twig' as kd %}
+{% set availability = {online: 'eCitizen', partial: 'Being digitised', office: 'By quotation', planned: 'Coming soon'} %}
+{% if not live %}
+  <p class="k-alert k-alert--note mb-6">{{ kmfri_icon('triangle-alert') }}<span>{{ 'kmfri_services_db is unreachable: this is the bundled read-only catalogue; the database check and inquiry counts are unavailable.'|t }}</span></p>
+{% endif %}
+
+<section aria-labelledby="kd-cat-kpis">
+  <h2 id="kd-cat-kpis" class="sr-only">{{ 'Catalogue figures'|t }}</h2>
+  <div class="kd-grid kd-grid--kpis">
+    {{ kd.kpi('Catalogue services'|t, summary.services, 'layers', summary.divisions ~ ' service areas', catalogue_url) }}
+    {{ kd.kpi('Published tariffs'|t, summary.priced, 'receipt', 'Catalogue services with a price', charter_url) }}
+    {{ kd.kpi('Standard rates'|t, summary.rates, 'briefcase', 'Vessels, halls, datasets, consultancy …', charter_url) }}
+    {{ kd.kpi('Apply online'|t, summary.online, 'external-link', 'Services on eCitizen') }}
+    {% if sync %}
+      {% if sync.error %}
+        {{ kd.kpi('Database sync'|t, 'Not set up'|t, 'database', sync.error, null, 'attention') }}
+      {% else %}
+        {{ kd.kpi('Database sync'|t, sync.ok ? 'In sync'|t : sync.issues|length ~ ' issues', sync.ok ? 'badge-check' : 'triangle-alert',
+          sync.db_items ~ ' services · ' ~ sync.db_tiers ~ ' quotable tariffs in kmfri_services_db', sync.ok ? null : '#kd-sync', sync.ok ? null : 'attention') }}
+      {% endif %}
+    {% endif %}
+    {{ kd.kpi('Research stations'|t, stations|length, 'map-pin', 'Centres offering hub services', stations_url) }}
+  </div>
+</section>
+
+{% if sync and not sync.error and sync.issues %}
+  <section id="kd-sync" class="kd-card mt-6" aria-labelledby="kd-sync-heading">
+    <header class="kd-card__head">
+      <div>
+        <h2 id="kd-sync-heading" class="kd-card__title">{{ 'Website and database differ'|t }}</h2>
+        <p class="kd-card__sub">{{ 'The website publishes data/catalogue.json. Rebuild kmfri_services_db from it with drush kmfri:db-setup (resets inquiries) or by running sql/004 and sql/005, then reload.'|t }}</p>
+      </div>
+    </header>
+    <ul class="divide-y divide-line text-sm">
+      {% for i in sync.issues %}
+        <li class="py-2 flex flex-wrap gap-x-3"><span class="font-mono text-subtle">#{{ i.no }}</span><span class="font-medium text-ink">{{ i.name }}</span><span class="text-gold-700">{{ i.issue }}</span></li>
+      {% endfor %}
+    </ul>
+  </section>
+{% endif %}
+
+{# Service areas #}
+<section class="kd-card kd-card--flush mt-6" aria-labelledby="kd-div-heading">
+  <header class="kd-card__head">
+    <div>
+      <h2 id="kd-div-heading" class="kd-card__title">{{ 'Service areas'|t }}</h2>
+      <p class="kd-card__sub">{{ 'Catalogue divisions with their tariffs and demand'|t }}</p>
+    </div>
+    <a href="{{ charter_url }}" class="k-link text-sm" target="_blank" rel="noopener">{{ 'Tariffs & Charter'|t }}</a>
+  </header>
+  <div class="kd-table-wrap">
+    <table class="kd-table">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'Service area'|t }}</th>
+          <th scope="col" class="text-right">{{ 'Services'|t }}</th>
+          <th scope="col" class="text-right">{{ 'Tariffs'|t }}</th>
+          <th scope="col" class="text-right hidden md:table-cell">{{ 'Online'|t }}</th>
+          <th scope="col" class="text-right hidden sm:table-cell">{{ 'Range (KES)'|t }}</th>
+          <th scope="col" class="text-right hidden lg:table-cell">{{ 'Standard rates'|t }}</th>
+          <th scope="col" class="text-right">{{ 'Inquiries'|t }}</th>
+          <th scope="col" class="text-right"><span class="sr-only">{{ 'Links'|t }}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in divisions %}
+          <tr>
+            <td class="font-medium text-ink">{{ d.title }}</td>
+            <td class="text-right text-sm">{{ d.services }}</td>
+            <td class="text-right text-sm">{{ d.priced ?: '—' }}</td>
+            <td class="text-right text-sm hidden md:table-cell">{{ d.online ?: '—' }}</td>
+            <td class="text-right k-num text-sm! hidden sm:table-cell">{% if d.min is not null %}{{ d.min|kes }}{% if d.max > d.min %} – {{ d.max|kes }}{% endif %}{% else %}—{% endif %}</td>
+            <td class="text-right text-sm hidden lg:table-cell">{{ d.rates ?: '—' }}</td>
+            <td class="text-right text-sm">{{ d.inquiries }}</td>
+            <td class="text-right whitespace-nowrap">
+              <a href="{{ d.tariffs_url }}" class="btn btn-outline btn-sm" target="_blank" rel="noopener" aria-label="{{ d.title }} tariffs on the public hub (new tab)">{{ kmfri_icon('receipt') }}</a>
+              <a href="{{ d.url }}" class="btn btn-outline btn-sm" target="_blank" rel="noopener" aria-label="{{ d.title }} in the catalogue (new tab)">{{ kmfri_icon('external-link') }}</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{# Every catalogue service and tariff #}
+<section class="kd-card kd-card--flush mt-6" aria-labelledby="kd-tariffs-heading" data-kmfri-admin-filter>
+  <header class="kd-card__head">
+    <div>
+      <h2 id="kd-tariffs-heading" class="kd-card__title">{{ 'Service catalogue & tariffs'|t }}</h2>
+      <p class="kd-card__sub">{{ tariffs|length }} {{ 'services from the KMFRI services register'|t }}</p>
+    </div>
+  </header>
+  <div class="kd-filters">
+    <div class="kd-filters__field kd-filters__field--grow">
+      <label for="kd-t-q" class="kd-filters__label">{{ 'Search'|t }}</label>
+      <input id="kd-t-q" type="search" class="k-input" data-kmfri-admin-filter-q placeholder="{{ 'Register no., service, group'|t }}">
+    </div>
+    <div class="kd-filters__field">
+      <label for="kd-t-div" class="kd-filters__label">{{ 'Service area'|t }}</label>
+      <select id="kd-t-div" class="k-input" data-kmfri-admin-filter-select="division">
+        <option value="">{{ 'All areas'|t }}</option>
+        {% for d in divisions %}<option value="{{ d.id }}">{{ d.title }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="kd-filters__field">
+      <label for="kd-t-av" class="kd-filters__label">{{ 'Tariff'|t }}</label>
+      <select id="kd-t-av" class="k-input" data-kmfri-admin-filter-select="kind">
+        <option value="">{{ 'All services'|t }}</option>
+        <option value="priced">{{ 'Published tariff'|t }}</option>
+        <option value="quote">{{ 'On quotation'|t }}</option>
+        <option value="online">{{ 'On eCitizen'|t }}</option>
+        {% if sync %}<option value="issue">{{ 'Needs attention'|t }}</option>{% endif %}
+      </select>
+    </div>
+  </div>
+  <div class="kd-tablebar">
+    <p class="text-sm text-muted" aria-live="polite"><strong class="text-navy-800" data-kmfri-admin-filter-count>{{ tariffs|length }}</strong> {{ 'services'|t }}</p>
+  </div>
+  <div class="kd-table-wrap max-h-[36rem] overflow-y-auto">
+    <table class="kd-table">
+      <thead class="sticky top-0 z-1 bg-white">
+        <tr>
+          <th scope="col">{{ 'No.'|t }}</th>
+          <th scope="col">{{ 'Service'|t }}</th>
+          <th scope="col" class="text-right">{{ 'Tariff (KES)'|t }}</th>
+          <th scope="col" class="hidden md:table-cell">{{ 'Obtained'|t }}</th>
+          <th scope="col" class="text-right hidden sm:table-cell">{{ 'Requests'|t }}</th>
+          {% if sync %}<th scope="col">{{ 'Database'|t }}</th>{% endif %}
+          <th scope="col" class="text-right"><span class="sr-only">{{ 'Links'|t }}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in tariffs %}
+          {% set kinds = [t.fee is not null ? 'priced' : 'quote', t.availability == 'online' ? 'online' : '', t.issue ? 'issue' : '']|filter(v => v)|join(' ') %}
+          <tr data-kmfri-admin-filter-row data-text="{{ t.text }}" data-division="{{ t.division_id }}" data-kind="{{ kinds }}">
+            <td class="font-mono text-xs text-subtle">{{ t.no }}</td>
+            <td><span class="block font-medium text-ink">{{ t.name }}</span><span class="block text-xs text-subtle">{{ t.division }}{% if t.group %} › {{ t.group }}{% endif %}</span></td>
+            <td class="text-right whitespace-nowrap">{% if t.fee is not null %}<span class="k-num text-sm!">{{ t.fee|kes }}</span>{% endif %}<span class="block text-xs text-muted">{{ t.fee_label }}</span></td>
+            <td class="hidden md:table-cell text-sm text-muted">{{ availability[t.availability] }}</td>
+            <td class="text-right text-sm hidden sm:table-cell">{{ t.requests ?: '—' }}</td>
+            {% if sync %}
+              <td class="text-sm">
+                {% if t.issue %}{{ kd.status('pending', t.issue) }}{% elseif t.tier_id %}{{ kd.status('fulfilled', 'Tier #' ~ t.tier_id) }}{% else %}<span class="text-subtle">{{ 'Listed'|t }}</span>{% endif %}
+              </td>
+            {% endif %}
+            <td class="text-right"><a href="{{ t.url }}" class="btn btn-outline btn-sm" target="_blank" rel="noopener" aria-label="View {{ t.name }} on the public hub (new tab)">{{ kmfri_icon('external-link') }}</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div data-kmfri-admin-filter-empty hidden>{{ kd.empty('No services match'|t, 'Change the search or filters.'|t, 'search') }}</div>
+  </div>
+</section>
+
+{# Standard rates #}
+<section class="kd-card kd-card--flush mt-6" aria-labelledby="kd-rates-heading">
+  <header class="kd-card__head">
+    <div>
+      <h2 id="kd-rates-heading" class="kd-card__title">{{ 'Standard rates'|t }}</h2>
+      <p class="kd-card__sub">{{ 'Portfolio pricing tiers for services the catalogue does not price'|t }}{% if sync and sync.retired %} · {{ sync.retired }} {{ 'superseded rates retired'|t }}{% endif %}</p>
+    </div>
+  </header>
+  <div class="kd-table-wrap">
+    <table class="kd-table">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'Rate'|t }}</th>
+          <th scope="col" class="hidden md:table-cell">{{ 'Portfolio'|t }}</th>
+          <th scope="col" class="text-right">{{ 'KES'|t }}</th>
+          <th scope="col" class="hidden lg:table-cell">{{ 'Unit'|t }}</th>
+          <th scope="col" class="text-right hidden sm:table-cell">{{ 'Requests'|t }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rates %}
+          <tr>
+            <td class="font-medium text-ink">{{ r.name }}</td>
+            <td class="hidden md:table-cell text-sm text-muted">{{ r.portfolio }}</td>
+            <td class="text-right k-num text-sm!">{{ r.cost_kes|kes }}</td>
+            <td class="hidden lg:table-cell text-sm text-muted">{{ r.unit }}</td>
+            <td class="text-right text-sm hidden sm:table-cell">{{ r.requests ?: '—' }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{# Service portfolios #}
+<section class="kd-card kd-card--flush mt-6" aria-labelledby="kd-svc-heading">
+  <header class="kd-card__head">
+    <div>
+      <h2 id="kd-svc-heading" class="kd-card__title">{{ 'Service portfolios'|t }}</h2>
+      <p class="kd-card__sub">{{ services|length }} {{ 'portfolios carrying the quotation workflow'|t }}</p>
+    </div>
+  </header>
+  <div class="kd-table-wrap">
+    <table class="kd-table">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'Portfolio'|t }}</th>
+          <th scope="col" class="hidden md:table-cell">{{ 'Category'|t }}</th>
+          <th scope="col" class="text-right">{{ 'Tariffs'|t }}</th>
+          <th scope="col" class="text-right hidden sm:table-cell">{{ 'From (KES)'|t }}</th>
+          <th scope="col" class="hidden xl:table-cell">{{ 'Turnaround'|t }}</th>
+          <th scope="col" class="text-right">{{ 'Inquiries'|t }}</th>
+          <th scope="col">{{ 'Status'|t }}</th>
+          <th scope="col" class="text-right"><span class="sr-only">{{ 'Links'|t }}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in services %}
+          <tr>
+            <td><span class="block font-medium text-ink">{{ s.title }}</span><span class="block font-mono text-xs text-subtle">{{ s.code }}</span></td>
+            <td class="hidden md:table-cell text-sm text-muted">{{ s.category }}</td>
+            <td class="text-right text-sm">{{ s.tiers ?: '—' }}</td>
+            <td class="text-right k-num text-sm! hidden sm:table-cell">{{ s.from_kes is not null ? s.from_kes|kes : 'On quote'|t }}</td>
+            <td class="hidden xl:table-cell text-sm text-muted">{{ s.turnaround }}</td>
+            <td class="text-right text-sm">
+              {% if s.inquiries_url and s.inquiries %}<a href="{{ s.inquiries_url }}" class="text-navy-600 font-semibold hover:underline">{{ s.inquiries }}</a>{% else %}{{ s.inquiries }}{% endif %}
+            </td>
+            <td><span class="kd-status kd-status--{{ s.status == 'active' ? 'fulfilled' : 'pending' }}">{{ s.status == 'active' ? 'Live'|t : s.status|replace({'_': ' '})|capitalize }}</span></td>
+            <td class="text-right"><a href="{{ s.url }}" class="btn btn-outline btn-sm" target="_blank" rel="noopener" aria-label="View {{ s.title }} on the public hub (new tab)">{{ kmfri_icon('external-link') }}</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="kd-card kd-card--flush mt-6" aria-labelledby="kd-st-heading">
+  <header class="kd-card__head">
+    <div>
+      <h2 id="kd-st-heading" class="kd-card__title">{{ 'Research stations'|t }}</h2>
+      <p class="kd-card__sub">{{ stations|length }} {{ 'centres offering hub services'|t }}</p>
+    </div>
+    <a href="{{ stations_url }}" class="k-link text-sm" target="_blank" rel="noopener">{{ 'Public page'|t }}</a>
+  </header>
+  <div class="kd-table-wrap">
+    <table class="kd-table">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'Station'|t }}</th>
+          <th scope="col" class="hidden md:table-cell">{{ 'County'|t }}</th>
+          <th scope="col" class="text-right">{{ 'Facilities'|t }}</th>
+          <th scope="col" class="text-right">{{ 'Catalogue services'|t }}</th>
+          <th scope="col" class="hidden lg:table-cell">{{ 'Head of station'|t }}</th>
+          <th scope="col" class="hidden sm:table-cell">{{ 'Contact'|t }}</th>
+          <th scope="col" class="text-right"><span class="sr-only">{{ 'Links'|t }}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for st in stations %}
+          <tr>
+            <td><span class="block font-medium text-ink">{{ st.name }}</span><span class="block font-mono text-xs text-subtle">{{ st.code }}</span></td>
+            <td class="hidden md:table-cell text-sm text-muted">{{ st.county }}</td>
+            <td class="text-right text-sm">{{ st.primary_focus|length }}</td>
+            <td class="text-right text-sm">{{ st.catalogue_services }}</td>
+            <td class="hidden lg:table-cell text-sm text-muted">{{ st.head_of_station }}</td>
+            <td class="hidden sm:table-cell text-sm"><a href="mailto:{{ st.contact_email }}" class="text-navy-600 hover:underline">{{ st.contact_email }}</a></td>
+            <td class="text-right"><a href="{{ st.url }}" class="btn btn-outline btn-sm" target="_blank" rel="noopener" aria-label="View {{ st.name }} on the public hub (new tab)">{{ kmfri_icon('external-link') }}</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>

@@ -1,0 +1,34 @@
+{#
+/**
+ * @file
+ * KMFRI Hub page layout.
+ *
+ * Regions: header (hub header block: strip, main navigation, drawer, search),
+ * highlighted (messages, local tasks), content, footer (hub footer block).
+ *
+ * The skip link to #main-content is printed by html.html.twig.
+ */
+#}
+{% if is_dashboard %}
+  {# Dashboard layout (sidebar, top bar, messages) is rendered by the page content. #}
+  {{ page.content }}
+{% else %}
+{{ page.header }}
+
+<main id="main-content" tabindex="-1" class="flex-1 w-full focus:outline-none">
+  {% if page.highlighted %}
+    <div class="k-container k-page-notices">{{ page.highlighted }}</div>
+  {% endif %}
+  {% if page.help %}
+    <div class="k-container">{{ page.help }}</div>
+  {% endif %}
+
+  {% if is_hub_page %}
+    {{ page.content }}
+  {% else %}
+    <div class="k-container k-page-generic">{{ page.content }}</div>
+  {% endif %}
+</main>
+
+{{ page.footer }}
+{% endif %}

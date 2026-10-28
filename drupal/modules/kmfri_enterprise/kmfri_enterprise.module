@@ -1,0 +1,229 @@
+<?php
+
+/**
+ * @file
+ * KMFRI Commercial & Enterprise Services Hub.
+ */
+
+declare(strict_types=1);
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function kmfri_enterprise_help(string $route_name, RouteMatchInterface $route_match): ?string {
+  if ($route_name === 'help.page.kmfri_enterprise') {
+    return '<p>' . t('The Enterprise Services Hub publishes the KMFRI commercial service catalogue, tariffs, research stations and laboratory services under <a href=":url">/enterprise</a>, and records quotation requests in kmfri_services_db.', [':url' => '/enterprise']) . '</p>';
+  }
+  return NULL;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function kmfri_enterprise_theme(): array {
+  $page = ['live' => TRUE];
+  return [
+    'kmfri_enterprise_home' => [
+      'variables' => $page + [
+        'slides' => [],
+        'stats' => [],
+        'divisions' => [],
+        'featured' => [],
+        'audiences' => [],
+        'steps' => [],
+        'trust' => [],
+        'total' => 0,
+        'online_total' => 0,
+        'ecitizen_url' => NULL,
+      ],
+    ],
+    'kmfri_enterprise_catalogue' => [
+      'variables' => $page + [
+        'divisions' => [],
+        'trail' => [],
+        'selected' => NULL,
+        'division' => NULL,
+        'is_division' => FALSE,
+        'portfolio' => NULL,
+        'stations_here' => [],
+        'packages' => [],
+        'related' => [],
+        'sections' => [],
+        'crumbs' => [],
+        'filters' => [],
+        'channels' => [],
+        'shown' => 0,
+        'scope_count' => 0,
+        'total' => 0,
+        'online_total' => 0,
+        'ecitizen_url' => NULL,
+        'action_url' => NULL,
+      ],
+    ],
+    'kmfri_enterprise_laboratories' => [
+      'variables' => $page + ['labs' => [], 'active_group' => 0, 'quote_slug' => NULL],
+    ],
+    'kmfri_enterprise_stations' => [
+      'variables' => $page + ['stations' => []],
+    ],
+    'kmfri_enterprise_station' => [
+      'variables' => $page + [
+        'station' => [],
+        'offer' => [],
+        'others' => [],
+        'quote_query' => [],
+        'quote_url' => NULL,
+        'ecitizen_url' => NULL,
+      ],
+    ],
+    'kmfri_enterprise_charter' => [
+      'variables' => $page + ['principles' => [], 'charter' => [], 'schedule' => [], 'q' => '', 'shown' => 0, 'ecitizen_url' => NULL],
+    ],
+    'kmfri_enterprise_receipt' => [
+      'variables' => $page + ['receipt' => []],
+    ],
+    'kmfri_enterprise_quote_form' => [
+      'render element' => 'form',
+    ],
+    'kmfri_enterprise_estimate' => [
+      'variables' => ['amount' => NULL],
+    ],
+    'kmfri_enterprise_header' => [
+      'variables' => [
+        'menu' => [],
+        'topbar_links' => [],
+        'social' => [],
+        'contact' => [],
+        'search_groups' => [],
+        'total' => 0,
+        'stations' => [],
+      ],
+    ],
+    // Administration dashboard.
+    'kmfri_enterprise_admin' => [
+      'variables' => [
+        'section' => NULL,
+        'page_title' => NULL,
+        'subtitle' => NULL,
+        'actions' => [],
+        'content' => NULL,
+        'messages' => NULL,
+        'nav' => [],
+        'pending' => NULL,
+        'user' => [],
+        'search_url' => NULL,
+        'site_url' => NULL,
+        'drupal_admin_url' => NULL,
+        'pending_url' => NULL,
+        'live' => TRUE,
+      ],
+    ],
+    'kmfri_enterprise_admin_dashboard' => [
+      'variables' => [
+        'kpis' => [],
+        'monthly' => [],
+        'monthly_max' => 1,
+        'statuses' => [],
+        'status_max' => 1,
+        'top_services' => [],
+        'top_max' => 1,
+        'recent' => [],
+        'activity' => [],
+        'catalogue' => [],
+        'links' => [],
+      ],
+    ],
+    'kmfri_enterprise_admin_inquiries' => [
+      'variables' => [
+        'rows' => [],
+        'filters' => [],
+        'statuses' => [],
+        'services' => [],
+        'sorts' => [],
+        'total' => 0,
+        'pager' => NULL,
+        'reset_url' => NULL,
+        'action_url' => NULL,
+      ],
+    ],
+    'kmfri_enterprise_admin_inquiry' => [
+      'variables' => [
+        'inquiry' => [],
+        'steps' => [],
+        'cancelled' => FALSE,
+        'history' => [],
+        'status_form' => NULL,
+        'back_url' => NULL,
+      ],
+    ],
+    'kmfri_enterprise_admin_catalogue' => [
+      'variables' => [
+        'services' => [],
+        'stations' => [],
+        'live' => TRUE,
+        'stations_url' => NULL,
+        'sync' => NULL,
+        'summary' => [],
+        'divisions' => [],
+        'tariffs' => [],
+        'rates' => [],
+        'charter_url' => NULL,
+        'catalogue_url' => NULL,
+      ],
+    ],
+    'kmfri_enterprise_admin_users' => [
+      'variables' => [
+        'filters' => [],
+        'roles' => [],
+        'total' => 0,
+        'summary' => [],
+        'form' => NULL,
+        'pager' => NULL,
+        'action_url' => NULL,
+      ],
+    ],
+    'kmfri_enterprise_admin_activity' => [
+      'variables' => [
+        'tab' => 'workflow',
+        'rows' => [],
+        'filters' => [],
+        'statuses' => [],
+        'severities' => [],
+        'total' => 0,
+        'pager' => NULL,
+        'live' => TRUE,
+        'has_dblog' => FALSE,
+        'tabs' => [],
+        'action_url' => NULL,
+      ],
+    ],
+    'kmfri_enterprise_admin_settings' => [
+      'variables' => ['form' => NULL, 'links' => []],
+    ],
+    'kmfri_enterprise_admin_offline' => [
+      'variables' => ['settings_url' => NULL],
+    ],
+    'kmfri_enterprise_footer' => [
+      'variables' => [
+        'divisions' => [],
+        'quick_links' => [],
+        'social' => [],
+        'contact' => [],
+        'main_site' => NULL,
+        'year' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_menu_links_discovered_alter().
+ *
+ * The hub's Home link (kmfri_enterprise.home) replaces the Standard install
+ * profile's front-page link, which would otherwise appear twice in Main navigation.
+ */
+function kmfri_enterprise_menu_links_discovered_alter(array &$links): void {
+  unset($links['standard.front_page']);
+}

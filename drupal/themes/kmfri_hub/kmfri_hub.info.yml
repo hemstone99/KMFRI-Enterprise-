@@ -1,0 +1,27 @@
+name: 'KMFRI Hub'
+type: theme
+description: 'kmfri.go.ke design for the KMFRI Commercial & Enterprise Services Hub (header, main navigation, footer and page layout).'
+package: KMFRI
+core_version_requirement: ^10.3 || ^11
+base theme: stable9
+dependencies:
+  - kmfri_enterprise:kmfri_enterprise
+logo: logo.png
+libraries:
+  - kmfri_enterprise/fonts
+  - kmfri_enterprise/hub
+  - kmfri_hub/global
+libraries-override:
+  system/base:
+    css:
+      component:
+        # stable9 already replaces this file, so the override targets its copy.
+        /core/themes/stable9/css/system/components/hidden.module.css: css/hidden.css
+regions:
+  header: Header
+  highlighted: Highlighted
+  help: Help
+  content: Content
+  footer: Footer
+  page_top: 'Page top'
+  page_bottom: 'Page bottom'

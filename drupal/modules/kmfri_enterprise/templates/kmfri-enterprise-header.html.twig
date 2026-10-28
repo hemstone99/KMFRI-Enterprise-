@@ -1,0 +1,240 @@
+{#
+/**
+ * @file
+ * Hub header: announcement strip, main navigation, mobile drawer and the search dialog.
+ *
+ * Variables:
+ * - menu: main menu items {id, title, description, url, external, active, icon, below}.
+ *   Order and labels come from the Drupal "main" menu (Home, Service Catalogue,
+ *   Laboratory Services, Research Stations, Tariffs & Charter).
+ * - topbar_links, social, contact: from data/hub.yml.
+ * - search_groups (HubHeaderBlock::searchGroups()), total, stations: for the search dialog.
+ */
+#}
+{% import '@kmfri_enterprise/partials/macros.html.twig' as k %}
+<div class="k-header-wrap sticky top-0 z-1000" data-kmfri-header>
+  {# 1. Government announcement strip #}
+  <div class="k-topbar">
+    <div class="k-topbar__inner">
+      <div class="flex items-center min-w-0">
+        <span class="k-topbar__item hidden sm:inline-flex" title="{{ 'Site language'|t }}">
+          {{ kmfri_icon('globe') }}
+          <span class="font-semibold text-white">English</span>
+        </span>
+        <span class="k-topbar__sep hidden md:block" aria-hidden="true"></span>
+        <ul class="k-social hidden md:flex items-center gap-0.5" aria-label="{{ 'KMFRI on social media'|t }}">
+          {% for s in social %}
+            <li><a href="{{ s.href }}" target="_blank" rel="noopener noreferrer" aria-label="{{ s.label }} (opens in a new tab)">{{ kmfri_icon(s.icon) }}</a></li>
+          {% endfor %}
+        </ul>
+        <a href="tel:{{ contact.hotline_tel }}" class="sm:hidden" aria-label="Client Inquiries Desk: {{ contact.hotline }}">{{ kmfri_icon('phone') }}<span>{{ contact.hotline }}</span></a>
+      </div>
+      <div class="flex items-center min-w-0">
+        <a href="tel:{{ contact.hotline_tel }}" class="hidden sm:inline-flex xl:inline-flex" title="{{ 'Client Inquiries Desk'|t }}">
+          {{ kmfri_icon('phone') }}
+          <span class="hidden xl:inline">{{ 'Client Inquiries:'|t }}</span>
+          <span>{{ contact.hotline }}</span>
+        </a>
+        {% for l in topbar_links %}
+          <a href="{{ l.href }}" target="_blank" rel="noopener noreferrer" class="{{ l.show }}">{{ kmfri_icon(l.icon) }}<span>{{ l.label }}</span></a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {# 2. Primary navigation #}
+  <header class="k-header">
+    <div class="k-header__inner">
+      <a href="{{ path('kmfri_enterprise.home') }}" class="k-brand" aria-label="KMFRI Commercial &amp; Enterprise Services Hub — home">
+        <img src="{{ kmfri_asset('images/brand/kmfri-logo.png') }}" alt="Kenya Marine and Fisheries Research Institute (KMFRI)" class="k-brand__logo" width="199" height="48">
+        <span class="k-brand__hub hidden md:flex">
+          <small>{{ 'Enterprise Portal'|t }}</small>
+          <span>{{ 'Services Hub'|t }}</span>
+        </span>
+      </a>
+
+      <nav class="hidden xl:block" aria-label="{{ 'Main navigation'|t }}" data-kmfri-nav>
+        <ul class="k-nav">
+          {% for item in menu %}
+            {% if item.below %}
+              <li class="k-nav__item" data-kmfri-menu>
+                <div class="k-nav__link p-0!{{ item.active ? ' is-current' : '' }}">
+                  <a href="{{ item.url }}" class="py-[0.55rem] pl-(--nav-px) pr-1"{% if item.active %} aria-current="page"{% endif %}>{{ item.title }}</a>
+                  <button type="button" class="k-nav__toggle grid place-items-center h-8 w-6 mr-[calc(var(--nav-px)-0.35rem)] rounded-md" aria-expanded="false" aria-controls="menu-{{ item.id }}" aria-label="{{ item.title }} menu">
+                    {{ kmfri_icon('chevron-down', 'chev') }}
+                  </button>
+                </div>
+                <div id="menu-{{ item.id }}" class="k-dropdown" style="width: min({{ item.below|length > 6 ? '680px' : '620px' }}, calc(100vw - 2rem))">
+                  <a href="{{ item.url }}" class="k-dropdown__overview">
+                    <span>{{ item.description ?: item.title }}</span>
+                    <small>{{ 'Overview'|t }} {{ kmfri_icon('arrow-right', 'w-3.5 h-3.5') }}</small>
+                  </a>
+                  <ul class="k-dropdown__grid">
+                    {% for child in item.below %}
+                      <li>
+                        <a href="{{ child.url }}" class="k-dropdown__link"{% if child.external %} target="_blank" rel="noopener noreferrer"{% endif %}{% if child.active %} aria-current="page"{% endif %}>
+                          <span class="ico">
+                            {% if child.icon starts with 'category-' %}
+                              {{ k.service_icon(child.icon|slice(9)) }}
+                            {% else %}
+                              {{ kmfri_icon(child.icon ?: 'arrow-right') }}
+                            {% endif %}
+                          </span>
+                          <span class="min-w-0">
+                            {{ child.title }}
+                            {% if child.description %}<small{% if child.icon starts with 'category-' %} class="font-mono"{% endif %}>{{ child.description }}</small>{% endif %}
+                            {% if child.external %}<span class="sr-only">(opens in a new tab)</span>{% endif %}
+                          </span>
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </li>
+            {% else %}
+              <li class="k-nav__item">
+                <a href="{{ item.url }}" class="k-nav__link{{ item.active ? ' is-current' : '' }}"{% if item.active %} aria-current="page"{% endif %}>
+                  {% if loop.first %}{{ kmfri_icon('house', 'w-4 h-4') }}{% endif %}
+                  <span>{{ item.title }}</span>
+                </a>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </nav>
+
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button type="button" class="k-icon-btn" data-kmfri-search-open aria-label="{{ 'Open Search Hub (Ctrl+K)'|t }}" title="{{ 'Search Hub (Ctrl+K)'|t }}">{{ kmfri_icon('search') }}</button>
+        <a href="{{ path('kmfri_enterprise.quote') }}" class="k-header-action">
+          {{ kmfri_icon('file-pen-line') }}
+          <span class="hidden sm:inline">{{ 'Request Quote'|t }}</span>
+          <span class="sm:hidden max-[400px]:sr-only">{{ 'Quote'|t }}</span>
+        </a>
+        <button type="button" class="k-icon-btn xl:hidden" data-kmfri-drawer-open aria-expanded="false" aria-controls="mobile-nav" aria-label="{{ 'Open menu'|t }}">{{ kmfri_icon('menu', 'w-6! h-6!') }}</button>
+      </div>
+    </div>
+  </header>
+</div>
+
+{# 3. Mobile / tablet off-canvas navigation #}
+<div class="k-drawer-overlay" data-kmfri-drawer-overlay aria-hidden="true"></div>
+<aside id="mobile-nav" class="k-drawer" aria-label="{{ 'Mobile navigation'|t }}" aria-hidden="true" inert data-kmfri-drawer>
+  <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-line">
+    <img src="{{ kmfri_asset('images/brand/kmfri-logo.png') }}" alt="KMFRI" class="h-9 w-auto">
+    <button type="button" class="k-icon-btn" data-kmfri-drawer-close aria-label="{{ 'Close menu'|t }}">{{ kmfri_icon('x') }}</button>
+  </div>
+  <div class="flex-1 overflow-y-auto px-3 py-4">
+    <button type="button" data-kmfri-search-open class="k-input flex items-center gap-2 text-left text-subtle mb-4">
+      {{ kmfri_icon('search', 'w-4 h-4 text-navy-600') }}
+      <span>{{ 'Search services, stations, tariffs…'|t }}</span>
+    </button>
+    <ul class="space-y-1">
+      {% for item in menu %}
+        <li>
+          {% if item.below %}
+            <div class="flex items-center gap-1">
+              <a href="{{ item.url }}" class="k-drawer__link flex-1"{% if item.active %} aria-current="page"{% endif %}><span>{{ item.title }}</span></a>
+              <button type="button" class="k-icon-btn shrink-0" aria-expanded="false" aria-controls="drawer-{{ item.id }}" aria-label="Show {{ item.title }}" data-kmfri-drawer-section>
+                {{ kmfri_icon('chevron-down', 'transition-transform') }}
+              </button>
+            </div>
+            <ul id="drawer-{{ item.id }}" class="k-drawer__sub" hidden>
+              {% for child in item.below %}
+                <li>
+                  <a href="{{ child.url }}"{% if child.external %} target="_blank" rel="noopener noreferrer"{% endif %}>
+                    {{ child.title }}{% if child.description and child.icon == 'map-pin' %} <span class="text-subtle text-xs">· {{ child.description }}</span>{% endif %}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <a href="{{ item.url }}" class="k-drawer__link"{% if item.active %} aria-current="page"{% endif %}>
+              <span class="flex items-center gap-2">{% if loop.first %}{{ kmfri_icon('house', 'w-4 h-4') }}{% endif %} {{ item.title }}</span>
+              {{ kmfri_icon('chevron-right', 'w-4 h-4 text-subtle') }}
+            </a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="border-t border-line p-4 space-y-3 bg-canvas">
+    <a href="{{ path('kmfri_enterprise.quote') }}" class="btn btn-primary btn-block">{{ kmfri_icon('file-pen-line') }} {{ 'Request Quotation'|t }}</a>
+    <a href="tel:{{ contact.hotline_tel }}" class="flex items-center justify-center gap-2 text-sm font-semibold text-navy-800">{{ kmfri_icon('phone', 'w-4 h-4 text-teal-700') }} Client Inquiries: {{ contact.hotline }}</a>
+    <ul class="flex justify-center gap-1" aria-label="{{ 'KMFRI on social media'|t }}">
+      {% for s in social %}
+        <li><a href="{{ s.href }}" target="_blank" rel="noopener noreferrer" aria-label="{{ s.label }} (opens in a new tab)" class="k-icon-btn w-10! h-10! text-navy-800">{{ kmfri_icon(s.icon, 'w-4 h-4') }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</aside>
+
+{# 4. Search dialog (filtered in the browser; every result is a plain link) #}
+<div class="k-modal-backdrop items-start!" data-kmfri-search hidden>
+  <div class="k-modal max-w-3xl my-4! sm:my-10!" role="dialog" aria-modal="true" aria-label="{{ 'Search Hub'|t }}">
+    <div class="p-4 sm:p-5 border-b border-line flex items-center gap-3">
+      {{ kmfri_icon('search', 'w-5 h-5 text-teal-700 shrink-0') }}
+      <input type="search" data-kmfri-search-input placeholder="Search KMFRI services, RV Mtafiti vessel, water analysis, fingerlings, stations, tours..." class="w-full min-w-0 text-base sm:text-lg text-ink placeholder:text-subtle focus:outline-none bg-transparent font-medium" aria-label="{{ 'Search the Enterprise Services Hub'|t }}" aria-controls="search-results">
+      <button type="button" data-kmfri-search-clear class="k-icon-btn w-9! h-9! text-subtle!" aria-label="{{ 'Clear search'|t }}" hidden>{{ kmfri_icon('x', 'w-4! h-4!') }}</button>
+      <button type="button" data-kmfri-search-close class="shrink-0 px-2.5 py-1 rounded-md border border-line bg-canvas text-xs font-semibold text-muted hover:text-navy-800">ESC</button>
+    </div>
+    <div class="px-4 sm:px-5 py-3 bg-canvas border-b border-line flex flex-wrap items-center justify-between gap-3">
+      <div class="k-tabs gap-1.5!" role="group" aria-label="{{ 'Filter results'|t }}">
+        <button type="button" class="k-tab min-h-8.5! py-1! px-3! text-[0.8125rem]!" aria-pressed="true" data-kmfri-search-filter="all">{{ 'All Hub Results'|t }}</button>
+        <button type="button" class="k-tab min-h-8.5! py-1! px-3! text-[0.8125rem]!" aria-pressed="false" data-kmfri-search-filter="services">{{ 'Services & Tariffs'|t }} ({{ total }})</button>
+        <button type="button" class="k-tab min-h-8.5! py-1! px-3! text-[0.8125rem]!" aria-pressed="false" data-kmfri-search-filter="labs">{{ 'Laboratories'|t }}</button>
+        <button type="button" class="k-tab min-h-8.5! py-1! px-3! text-[0.8125rem]!" aria-pressed="false" data-kmfri-search-filter="stations">Research Stations ({{ stations|length }})</button>
+        <button type="button" class="k-tab min-h-8.5! py-1! px-3! text-[0.8125rem]!" aria-pressed="false" data-kmfri-search-filter="education">{{ 'Education & Tours'|t }}</button>
+      </div>
+      <span class="text-xs font-medium text-muted" aria-live="polite" data-kmfri-search-status>{{ 'Suggested Searches'|t }}</span>
+    </div>
+    {# Results: every group is filtered in the browser (js/hub.js kmfriSearch); data-limit caps long groups #}
+    <div id="search-results" class="max-h-[58vh] overflow-y-auto p-3 sm:p-4">
+      <div class="py-12 text-center space-y-2" data-kmfri-search-empty hidden>
+        {{ kmfri_icon('search', 'w-10 h-10 mx-auto text-line-strong') }}
+        <p class="font-heading font-semibold text-navy-800">No matches found for "<span data-kmfri-search-term></span>"</p>
+        <p class="text-sm text-muted max-w-sm mx-auto">Try searching for keywords like "water testing", "RV Mtafiti", "tilapia", "Kisumu", or "attachment".</p>
+      </div>
+      {% set tones = {
+        teal: 'bg-teal-50 text-teal-700 border border-[#bfe8ec] rounded-xl',
+        navy: 'bg-navy-50 text-navy-600 border border-[#cfdcef] rounded-xl',
+        solid: 'bg-navy-600 text-white rounded-full',
+      } %}
+      {% for g in search_groups %}
+        <div class="mt-4 pt-4 border-t border-line" data-kmfri-search-group="{{ g.key }}"{% if g.limit %} data-limit="{{ g.limit }}"{% endif %}>
+          <p class="flex items-center justify-between px-2 mb-2 k-tag"><span>{{ g.label }}</span><span class="text-subtle"><span data-kmfri-search-count></span> {{ g.unit }}</span></p>
+          <ul class="space-y-1">
+            {% for e in g.items %}
+              <li data-kmfri-search-item data-type="{{ e.type }}" data-education="{{ e.education ? '1' : '0' }}" data-default="{{ e.default ? '1' : '0' }}" data-title="{{ e.title|lower }}" data-text="{{ e.text }}"{% if not e.default %} hidden{% endif %}>
+                <a href="{{ e.url }}" class="k-search-result group w-full flex items-start gap-3.5 p-3.5 rounded-xl border border-transparent text-left transition-colors hover:bg-canvas hover:border-line"{% if e.url starts with 'http' %} target="_blank" rel="noopener noreferrer"{% endif %}>
+                  <span class="grid place-items-center w-10 h-10 shrink-0 {{ tones[e.tone] }}">
+                    {% if e.division_icon %}{{ k.division_icon(e.division_icon, 'w-4.5 h-4.5') }}{% else %}{{ kmfri_icon(e.icon, 'w-4.5 h-4.5') }}{% endif %}
+                  </span>
+                  <span class="flex-1 min-w-0">
+                    {% if e.kicker %}<span class="block text-xs font-semibold text-teal-800 truncate">{{ e.kicker }}</span>{% endif %}
+                    <span class="block font-heading font-semibold text-navy-800 truncate">{{ e.title }}</span>
+                    {% if e.sub %}<span class="block text-sm text-muted line-clamp-1">{{ e.sub }}</span>{% endif %}
+                    {% if e.meta %}<span class="block mt-0.5 text-xs text-subtle">{{ e.meta }}</span>{% endif %}
+                  </span>
+                  {{ kmfri_icon('arrow-right', 'w-4 h-4 shrink-0 self-center text-subtle group-hover:text-navy-600') }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+          {% if g.more %}
+            <a href="{{ g.more }}" class="k-link text-sm mt-2 ml-2" data-kmfri-search-more data-label="{{ g.more_label }}" hidden></a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+    <div class="px-4 sm:px-5 py-3 bg-canvas border-t border-line flex flex-wrap items-center justify-between gap-3 text-xs text-muted">
+      <div class="hidden sm:flex items-center gap-3">
+        <span class="inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded border border-line-strong bg-white font-mono text-[0.68rem]">↑↓</kbd> navigate</span>
+        <span class="inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded border border-line-strong bg-white font-mono text-[0.68rem]">↵</kbd> open</span>
+        <span><kbd class="px-1.5 py-0.5 rounded border border-line-strong bg-white font-mono text-[0.68rem]">ESC</kbd> to exit</span>
+        <span aria-hidden="true">&bull;</span>
+        <span>Search every KMFRI service, price, laboratory and station</span>
+      </div>
+      <a href="{{ kmfri_catalogue_url() }}" class="k-link text-sm">{{ 'Open Service Catalogue'|t }} {{ kmfri_icon('arrow-right', 'w-4 h-4') }}</a>
+    </div>
+  </div>
+</div>

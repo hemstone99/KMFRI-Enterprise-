@@ -7,26 +7,79 @@ import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomeView } from './components/HomeView';
-import { ServicesDirectory } from './components/ServicesDirectory';
-import { ServiceDetailView } from './components/ServiceDetailView';
 import { StationsView } from './components/StationsView';
+import { StationDetailView } from './components/StationDetailView';
 import { CharterView } from './components/CharterView';
+import { LaboratoriesView } from './components/LaboratoriesView';
+import { ServiceCatalogueView } from './components/ServiceCatalogueView';
 import { HeroIntegrationDemo } from './components/HeroIntegrationDemo';
 import { ArchitectureHub } from './components/ArchitectureHub';
 import { InquiryModal } from './components/InquiryModal';
 import { GlobalSearchModal } from './components/GlobalSearchModal';
+import { findCataloguePath } from './data/serviceCatalogue';
 import { useHubData } from './data/HubData';
+import { findStation, stationSlug } from './data/stationServices';
+import { hrefFor, resolveRoute, routeFromLocation, type Route, type View } from './router';
+
+const VIEW_TITLES: Record<View, string> = {
+  home: 'KMFRI Commercial & Enterprise Services Hub',
+  catalogue: 'Service Catalogue',
+  stations: 'Research Stations',
+  station: 'Research Station',
+  laboratories: 'Laboratory Services',
+  charter: 'Tariffs & Service Charter',
+};
 
 export default function App() {
-  const { services } = useHubData();
+  const { stations } = useHubData();
+  const [initial] = useState(routeFromLocation);
   const [activeMode, setActiveMode] = useState<'subsite' | 'hero_preview' | 'architecture'>('subsite');
-  const [currentView, setCurrentView] = useState<'home' | 'services' | 'service_detail' | 'stations' | 'charter'>('home');
-  const [selectedSlug, setSelectedSlug] = useState<string>('laboratory-analytical-services');
+  const [currentView, setCurrentView] = useState<View>(initial.view);
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
   const [inquiryPrefillSlug, setInquiryPrefillSlug] = useState<string | undefined>(undefined);
+  const [inquiryStation, setInquiryStation] = useState<string | undefined>(undefined);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  // Station anchor requested from the header dropdown / search (scrolled into view by StationsView)
-  const [focusStationId, setFocusStationId] = useState<string | undefined>(undefined);
+  // Station page to show (id or web address slug)
+  const [stationKey, setStationKey] = useState<string | undefined>(initial.view === 'station' ? initial.slug : undefined);
+  // Catalogue division / group to open (undefined = catalogue overview)
+  const [catalogueNode, setCatalogueNode] = useState<string | undefined>(initial.view === 'catalogue' ? initial.slug : undefined);
+
+  // Station pages are addressed by slug (/stations/mombasa) whatever id the caller passed.
+  const canonical = (route: Route): Route => {
+    const station = route.view === 'station' ? findStation(stations, route.slug) : undefined;
+    return station ? { view: 'station', slug: stationSlug(station) } : route;
+  };
+
+  const applyRoute = ({ view, slug }: Route) => {
+    if (view === 'station') setStationKey(slug);
+    if (view === 'catalogue') setCatalogueNode(slug);
+    setCurrentView(view);
+    setActiveMode('subsite');
+  };
+
+  // Every view has its own web address: normalise legacy addresses, follow Back/Forward.
+  useEffect(() => {
+    const canonical = hrefFor(initial);
+    if (canonical !== window.location.pathname + window.location.hash) window.history.replaceState(null, '', canonical);
+    const onPop = () => applyRoute(routeFromLocation());
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
+  // Station ids in old links resolve to the station slug once the stations are known.
+  useEffect(() => {
+    if (currentView !== 'station') return;
+    const href = hrefFor(canonical({ view: 'station', slug: stationKey }));
+    if (href !== window.location.pathname) window.history.replaceState(null, '', href);
+  }, [stations, currentView, stationKey]);
+
+  useEffect(() => {
+    const node = currentView === 'catalogue' ? findCataloguePath(catalogueNode).at(-1) : undefined;
+    const station = currentView === 'station' ? findStation(stations, stationKey) : undefined;
+    document.title = node
+      ? `${node.title} | KMFRI Service Catalogue`
+      : station ? `${station.name} | KMFRI` : `${VIEW_TITLES[currentView]} | KMFRI`;
+  }, [currentView, catalogueNode, stationKey, stations]);
 
   // Global Keyboard Shortcuts (⌘K / Ctrl+K for real-time search)
   useEffect(() => {
@@ -44,30 +97,23 @@ export default function App() {
   useEffect(() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
-  }, [currentView, activeMode, selectedSlug]);
+  }, [currentView, activeMode, stationKey]);
 
+  // The catalogue is the single home of every service: the former directory
+  // ('services') and portfolio pages ('service_detail') open its divisions.
   const handleNavigate = (view: string, slug?: string) => {
-    setFocusStationId(view === 'stations' ? slug : undefined);
-    if (view === 'service_detail' && slug) {
-      setSelectedSlug(slug);
-      setCurrentView('service_detail');
-    } else if (
-      view === 'home' ||
-      view === 'services' ||
-      view === 'stations' ||
-      view === 'charter'
-    ) {
-      setCurrentView(view as any);
-    }
-    setActiveMode('subsite');
+    const route = canonical(resolveRoute(view, slug));
+    const href = hrefFor(route);
+    if (href !== window.location.pathname + window.location.hash) window.history.pushState(null, '', href);
+    applyRoute(route);
   };
 
-  const handleOpenInquiry = (slug?: string) => {
-    setInquiryPrefillSlug(slug || selectedSlug);
+  /** Opens the quotation form for a service portfolio, optionally at a given station. */
+  const handleOpenInquiry = (slug?: string, station?: string) => {
+    setInquiryPrefillSlug(slug);
+    setInquiryStation(station);
     setIsInquiryOpen(true);
   };
-
-  const currentServiceItem = services.find(s => s.slug === selectedSlug) || services[0];
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -114,26 +160,33 @@ export default function App() {
               />
             )}
 
-            {currentView === 'services' && (
-              <ServicesDirectory
-                onNavigate={handleNavigate}
-                onOpenInquiry={handleOpenInquiry}
-              />
-            )}
-
-            {currentView === 'service_detail' && (
-              <ServiceDetailView
-                service={currentServiceItem}
-                onNavigate={handleNavigate}
-                onOpenInquiry={handleOpenInquiry}
-              />
-            )}
-
             {currentView === 'stations' && (
               <StationsView
                 onNavigate={handleNavigate}
                 onOpenInquiry={handleOpenInquiry}
-                focusStationId={focusStationId}
+              />
+            )}
+
+            {currentView === 'station' && (
+              <StationDetailView
+                stationKey={stationKey}
+                onNavigate={handleNavigate}
+                onOpenInquiry={handleOpenInquiry}
+              />
+            )}
+
+            {currentView === 'catalogue' && (
+              <ServiceCatalogueView
+                nodeId={catalogueNode}
+                onNavigate={handleNavigate}
+                onOpenInquiry={handleOpenInquiry}
+              />
+            )}
+
+            {currentView === 'laboratories' && (
+              <LaboratoriesView
+                onNavigate={handleNavigate}
+                onOpenInquiry={handleOpenInquiry}
               />
             )}
 
@@ -158,6 +211,7 @@ export default function App() {
         isOpen={isInquiryOpen}
         onClose={() => setIsInquiryOpen(false)}
         preselectedSlug={inquiryPrefillSlug}
+        preselectedStation={inquiryStation}
       />
 
       {/* 5. Real-Time Global Search Modal */}
@@ -165,6 +219,7 @@ export default function App() {
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         onNavigate={handleNavigate}
+        onOpenInquiry={handleOpenInquiry}
       />
     </div>
   );

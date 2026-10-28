@@ -1,6 +1,8 @@
 export interface PricingTier {
   /** pricing_tiers.id when loaded from the database */
   id?: number;
+  /** Register row of the catalogue service this tariff publishes (absent = portfolio rate) */
+  registerNo?: number;
   name: string;
   unit: string;
   costKES: number;

@@ -1,0 +1,467 @@
+# KMFRI Laboratory Services, transcribed from https://kmfri.go.ke/infrastructure/laboratories (+ /ocean-coastal, /freshwater, /aquaculture, /faq).
+source_url: 'https://kmfri.go.ke/infrastructure/laboratories'
+sample_form_url: 'https://kmfri.go.ke/themes/custom/kmfri_theme/pdf/forms/kmfri-sample-submission-form.pdf'
+overview:
+  title: 'KMFRI Laboratory Services'
+  intro: "KMFRI Laboratories are a national centre of excellence providing scientific testing, research, and analytical services that support Kenya's Blue Economy. Through a network of specialized laboratories across the country, KMFRI generates reliable data and evidence that underpin sustainable fisheries, aquaculture development, environmental stewardship, food safety, biodiversity conservation, and climate resilience."
+  quality: 'The KMFRI Main Laboratory in Mombasa is NEMA-designated, ISO 9001:2015-certified, and finalizing its ISO/IEC 17025:2017 accreditation — reflecting our commitment to technical competence, quality assurance, and internationally recognized laboratory standards.'
+accreditations:
+  -
+    standard: 'ISO/IEC 17025:2017'
+    body: KENAS
+    text: 'Testing & calibration laboratory competence — accreditation being finalized at the Mombasa Main Laboratory.'
+    status: in-progress
+  -
+    standard: 'ISO 9001:2015'
+    body: KEBS
+    text: 'Certified Quality Management System across our laboratory network.'
+    status: certified
+  -
+    standard: 'NEMA Designated'
+    body: NEMA
+    text: 'Designated for environmental testing and services nationwide.'
+    status: designated
+groups:
+  -
+    id: ocean-coastal
+    name: 'Ocean & Coastal Systems Laboratories (OCS Labs)'
+    short_name: 'Ocean & Coastal Systems'
+    summary: 'Chemistry, microbiology, molecular biology, fisheries, post-harvest, oceanography, soil, radioisotopes & calibration.'
+    intro: 'The KMFRI Ocean and Coastal Systems (OCS) Laboratories offer specialized, high-precision analytical services in chemistry, microbiology, molecular biology, fisheries, post-harvest, and biological oceanography to support marine research and the Blue Economy. These integrated laboratories provide critical, technology-driven data for environmental surveillance, sustainable aquaculture, and aquatic resource management.'
+    source_url: 'https://kmfri.go.ke/infrastructure/laboratories/ocean-coastal'
+    units:
+      -
+        name: 'Chemistry Laboratory'
+        services:
+          - 'Nutrient profiling (nitrates, nitrites, ammonia, silicates, orthophosphates)'
+          - 'Trace & heavy metals (Pb, Cd, Cr, As, Hg, Cu, Zn, Fe)'
+          - 'Elemental analysis (CHNSO) in sediments & organic matter'
+          - 'Physicochemical parameters (pH, EC, TDS, salinity, DO, BOD, COD)'
+          - 'Organic pollutants & pesticide residue analysis'
+      -
+        name: 'Microbiology Laboratory'
+        services:
+          - 'Total & faecal coliforms, E. coli'
+          - 'Salmonella, Vibrio species, Listeria monocytogenes'
+          - 'Total Viable Count (TVC), Staphylococcus aureus'
+          - 'Yeasts and moulds'
+          - 'Feed, food, seafood & water quality monitoring'
+      -
+        name: 'Molecular Biology Laboratory'
+        services:
+          - 'DNA & RNA extraction, PCR and qPCR'
+          - 'Species authentication & genetic diversity analysis'
+          - 'Environmental DNA (eDNA) monitoring'
+          - 'Population genetics & molecular pathogen detection'
+          - 'Sterile Pre-PCR / Post-PCR workflow segregation'
+      -
+        name: 'Fisheries Laboratory'
+        services:
+          - 'Biological assessments of fish, crustaceans & cephalopods'
+          - 'Stock evaluation & population dynamics'
+          - 'Scientific evidence for management, policy & conservation'
+          - 'Training & mentorship in fisheries science'
+      -
+        name: 'Post-Harvest Laboratory'
+        services:
+          - 'Fish freshness assessment (sensory, TMA, TVB)'
+          - 'Macronutrient analysis (proteins, fats, carbohydrates, fibre, energy)'
+          - 'Shelf-life and stability testing'
+          - 'Value addition & product development'
+          - 'Post-harvest loss assessment'
+      -
+        name: 'Biological Oceanography Laboratory'
+        services:
+          - 'Phyto- & zooplankton identification; HAB monitoring'
+          - 'Ichthyoplankton (fish larvae & egg surveys)'
+          - 'Benthic biodiversity, macro- & meiofauna analysis'
+          - 'Seagrass, mangrove & habitat mapping'
+          - 'Biodiversity surveys & long-term ecological monitoring'
+      -
+        name: 'Soil & Sediment Laboratory'
+        services:
+          - 'Particle size distribution (Mastersizer 3000)'
+          - 'Clay–silt–sand fraction analysis'
+          - 'Grain-size statistics (D10, D50, D90, sorting, skewness)'
+          - 'Fine & cohesive sediment characterization'
+          - 'Marine geology & blue carbon research support'
+      -
+        name: 'Radioisotopes Laboratory Unit'
+        services:
+          - 'Gamma detection of natural (NORM) & anthropogenic radionuclides'
+          - 'Pb-210 alpha spectrometry & sediment dating (CF-CS/CIC/CRS)'
+          - 'Ocean acidification & carbonate-system monitoring'
+          - 'Micro-, meso- & macroplastics quantification (ALDFG)'
+          - 'Mercury (DMA-80) & trace-metal contaminant analysis'
+      -
+        name: 'Instrumentation & Calibration Laboratory'
+        services:
+          - 'Preventive & corrective maintenance of lab and oceanographic equipment'
+          - 'Calibration of Non-Automatic Weighing Instruments (NAWI)'
+          - 'Equipment management systems, SOPs & registers'
+          - 'Support for marine sensors, sondes, data loggers & telemetry'
+          - 'ISO/IEC 17025 compliance & technical training'
+    applications_title: Applications
+    applications:
+      -
+        title: 'Environmental Monitoring & Mapping'
+        text: 'National and regional surveillance of marine, estuarine and freshwater bodies, pairing analytical data with GIS to track pollution plumes and hotspots.'
+      -
+        title: 'Climate Change & Blue Carbon'
+        text: 'Sediment-core and organic-matter analysis to quantify blue carbon stocks and evaluate ocean acidification trends.'
+      -
+        title: 'Food & Seafood Safety'
+        text: 'Microbiological and nutritional testing safeguarding public health across fisheries and aquaculture value chains.'
+      -
+        title: 'Biodiversity & Conservation'
+        text: 'eDNA, taxonomy and ecological assessments supporting stock identification, invasive-species monitoring and habitat restoration.'
+      -
+        title: 'Fisheries Management & Policy'
+        text: 'Biological intelligence and stock assessment informing sustainable harvesting frameworks and regulation.'
+      -
+        title: 'EIA & Regulatory Compliance'
+        text: 'Baseline surveys and expert data interpretation for Environmental Impact Assessments, policy formulation and litigation.'
+    why_title: 'Why Choose Us'
+    why:
+      -
+        title: 'Accurate & Reliable'
+        text: 'Standardized testing methods delivering accurate, legally defensible results.'
+      -
+        title: 'Wide Scope'
+        text: 'A comprehensive range of tests and services across multiple scientific disciplines.'
+      -
+        title: 'Fast Turnaround'
+        text: 'Efficient, timely delivery of results with competitive testing rates.'
+      -
+        title: 'Experienced Team'
+        text: 'Trusted by government, academia and development partners nationwide.'
+    contact:
+      location_label: Location
+      location: 'KMFRI Headquarters, Mkomani, Mombasa'
+      postal: 'P.O. Box 81651–80100, Mombasa, Kenya'
+      phone: '+254 (20) 8021561 / +254 712 003853'
+      email: director@kmfri.go.ke
+  -
+    id: freshwater
+    name: 'Freshwater Systems (FWS) Laboratories & Services'
+    short_name: 'Freshwater Systems'
+    summary: 'Water quality, aquatic ecology, fisheries biology, food safety, AMR & One Health, molecular genetics and emergency response.'
+    intro: 'Advancing science for sustainable fisheries, aquaculture, environmental health and freshwater resource management. The KMFRI Freshwater Systems Laboratories provide multidisciplinary analytical, diagnostic, research, monitoring, training, and consultancy services supporting the sustainable management of freshwater ecosystems and aquatic resources in Kenya.'
+    note: 'The laboratories are strategically located at the Kisumu, Naivasha, Turkana, and Baringo Research Centres, with additional onboard laboratory facilities aboard the Research Vessel (RV) Uvumbuzi. The FWS Laboratories are ISO 9001:2015 certified and are preparing for ISO/IEC 17025:2017 accreditation and NEMA approval.'
+    source_url: 'https://kmfri.go.ke/infrastructure/laboratories/freshwater'
+    units:
+      -
+        name: 'Environmental Monitoring & Water Quality'
+        services:
+          - 'Nutrient profiling (nitrate, nitrite, ammonium, SRP, TP, silicates, sulphates)'
+          - 'Physicochemical parameters (pH, DO, alkalinity, hardness, TSS, TDS, turbidity)'
+          - 'Chlorophyll-a & Biological Oxygen Demand (BOD)'
+          - 'Pollution mapping & long-term surveillance of lakes and rivers'
+      -
+        name: 'Aquatic Ecology & Biodiversity'
+        services:
+          - 'Phyto- & zooplankton identification and quantification'
+          - 'Benthic macroinvertebrate & macrophyte assessment'
+          - 'Habitat assessment & biodiversity surveys'
+          - 'Reference collections via museum & herbarium services'
+      -
+        name: 'Fisheries Biology & Stock Assessment'
+        services:
+          - 'Fish stock assessment & monitoring'
+          - 'Taxonomy, species identification & histology'
+          - 'Reproductive biology, fecundity & population dynamics'
+          - 'Fisheries observer programmes (nearshore & offshore)'
+      -
+        name: 'Microbiology, Food Safety & Fish Quality'
+        services:
+          - 'Total & faecal coliforms, E. coli, total plate count'
+          - 'Isolation of fish-associated bacterial pathogens'
+          - 'Proximate & biochemical profiling; bioactive compounds'
+          - 'Fish quality, post-harvest loss & value addition'
+      -
+        name: 'Antimicrobial Resistance (AMR) & One Health'
+        services:
+          - 'Antimicrobial susceptibility testing (AST) & MIC determination'
+          - 'Detection of antimicrobial-resistant bacteria'
+          - 'Molecular characterization of resistance determinants'
+          - 'Screening of aquatic natural products for antimicrobial activity'
+      -
+        name: 'Molecular Genetics, Genomics & Bioinformatics'
+        services:
+          - 'DNA extraction, PCR amplification & gel documentation'
+          - 'DNA sequencing & phylogenetic analysis'
+          - 'Fish barcoding & species authentication'
+          - 'Population genetics & genetic diversity assessment'
+      -
+        name: 'Fish Health Surveillance & Emergency Response'
+        services:
+          - 'Investigation of fish mortality (fish-kill) incidents'
+          - 'Rapid emergency environmental sampling'
+          - 'Harmful algal bloom monitoring & evaluation'
+          - 'Technical advisory to national and county governments'
+      -
+        name: 'Aquaculture, Aquarium & Fish Farming Support'
+        services:
+          - 'Cage culture technology & pond design advisory'
+          - 'Aquaculture systems management & consultancy'
+          - 'Aquarium design, fabrication & installation'
+          - 'Fingerling sourcing & disease-prevention training'
+      -
+        name: 'Educational Visits, Training & Outreach'
+        services:
+          - 'Guided laboratory tours for schools, colleges & universities'
+          - 'Research mentorship, attachments & internships'
+          - 'Technical training workshops & demonstrations'
+          - 'Community awareness & stakeholder engagement'
+    applications_title: 'Knowledge Products & Information Services'
+    applications:
+      -
+        title: 'Fish Recipe Book'
+        text: 'Practical recipes promoting fish consumption and nutrition.'
+      -
+        title: 'Fish Farmers Manual'
+        text: 'A hands-on guide for productive and sustainable fish farming.'
+      -
+        title: 'Cage Farming Best Practices'
+        text: 'Best management practices for cage fish farming in Lake Victoria.'
+      -
+        title: 'Good Aquaculture Practices'
+        text: 'Guidance for quality seed production and the status of aquaculture in Kenya.'
+    why_title: 'Why Choose the FWS Laboratories'
+    why:
+      -
+        title: 'National Leadership'
+        text: 'Premier authority in freshwater ecosystem monitoring and wild fisheries research across Kenya.'
+      -
+        title: 'Multidisciplinary Expertise'
+        text: 'Qualified analysts, technologists and senior researchers across many disciplines.'
+      -
+        title: 'Modern Infrastructure'
+        text: 'Advanced platforms, mobile field labs and lake research vessels, including RV Uvumbuzi.'
+      -
+        title: 'Emergency Response'
+        text: 'Rapid scientific deployment during fish kills, pollution shocks and algal-bloom hazards.'
+    contact:
+      location_label: Hubs
+      location: 'Kisumu, Naivasha, Turkana & Baringo Research Centres'
+      postal: 'P.O. Box 1881–40100, Kisumu, Kenya'
+      phone: '+254 (20) 8021561 / +254 735 102306'
+      email: director@kmfri.go.ke
+  -
+    id: aquaculture
+    name: 'KMFRI Aquaculture Services'
+    short_name: 'Aquaculture Services'
+    summary: 'Hatchery & seed production, water-quality diagnostics, proximate analysis, fish health and genetic research.'
+    intro: 'The KMFRI Aquaculture Services unit comprises premier research and development facilities — including the KMFRI Sagana Centre and the Kegati Aquaculture Centre — dedicated to advancing sustainable aquaculture through innovative scientific research, elite fish seed production, high-throughput laboratory analytics, and technology-driven capacity building.'
+    note: "Our centres maintain a diverse aquatic resource base spanning ornamental varieties (Goldfish, Swordtail), key cultured species (Nile Tilapia, African Catfish, Red Swamp Crayfish) and indigenous species (Labeo spp., Barbus spp.) — providing the ultimate platform for experimentation and commercial-scale aquaculture solutions that drive East Africa's Blue Economy."
+    source_url: 'https://kmfri.go.ke/infrastructure/laboratories/aquaculture'
+    units:
+      -
+        name: 'Elite Fish Hatchery & Seed Production'
+        services:
+          - 'Breeding, propagation & bulk supply of fast-growing fingerlings'
+          - 'Premium broodstock multiplication'
+          - 'Advisory management for hatchery operations'
+      -
+        name: 'Water Quality & BOD Diagnostics'
+        services:
+          - 'In-situ & colorimetric testing of nitrates, nitrites, phosphates, ammonia'
+          - 'Chlorophyll-a, temperature & dissolved oxygen (DO)'
+          - 'pH, electrical conductivity (EC) & total dissolved solids (TDS)'
+          - 'Biochemical Oxygen Demand (BOD) for organic-pollution & compliance monitoring'
+      -
+        name: 'Advanced Proximate Analysis'
+        services:
+          - 'Nutritional profiling of fish feeds & biological samples'
+          - 'Crude protein, crude fat, crude fibre'
+          - 'Moisture & ash content determination'
+      -
+        name: 'Fish Health & Disease Management'
+        services:
+          - 'Specialized field investigations'
+          - 'Clinical disease diagnostics'
+          - 'Customized treatment recommendations'
+      -
+        name: 'Biological & Microscopy Profiling'
+        services:
+          - 'Zooplankton & phytoplankton identification'
+          - 'Community tracking & baseline fertility assessment'
+          - 'Laboratory observation & enumeration'
+      -
+        name: 'Systems & Genetic Research'
+        services:
+          - 'Earthen, concrete-box, liner & greenhouse ponds'
+          - 'Recirculating Aquaculture Systems (RAS)'
+          - 'Multi-generational genetic lines (F8/F9 Tilapia)'
+          - 'Specialized crayfish & catfish propagation'
+    applications_title: 'Applications & Target Sectors'
+    applications:
+      -
+        title: 'Commercial Fish Farmers'
+        text: 'Fast-growing seed, customized technical support and tailored feed evaluation to maximize farm productivity.'
+      -
+        title: 'Feed Manufacturers & Processors'
+        text: 'Certified proximate analysis to verify nutritional labels and guarantee quality assurance.'
+      -
+        title: 'Environmental Consultants & Regulators'
+        text: 'Certified EIAs, long-term freshwater pollution monitoring and baseline biodiversity surveys.'
+      -
+        title: 'Academia, Researchers & Students'
+        text: 'Robust data infrastructure, hands-on mentorship and specialized training programmes.'
+      -
+        title: 'Ornamental Aquaculture Industry'
+        text: 'Premium stock propagation, system designs and maintenance advisory for ornamental species.'
+      -
+        title: 'Community Groups & Cooperatives'
+        text: 'Empowering youth groups, cooperatives and community fish farms with training, quality seed and practical outreach.'
+    why_title: 'Why Choose KMFRI Aquaculture Services'
+    why:
+      -
+        title: 'Quality-Assured Seed'
+        text: 'Healthy, certified fingerlings engineered for high survival and optimal grow-out performance.'
+      -
+        title: 'Accredited Expertise'
+        text: 'A world-class team of experienced researchers, scientists and technical specialists.'
+      -
+        title: 'Modern Infrastructure'
+        text: 'UV-Vis spectrophotometers, automated crude-feed analyzers and high-resolution microscopy.'
+      -
+        title: 'Data Integrity'
+        text: 'Fast turnaround with accurate, reliable and legally defensible analytical results.'
+    contact:
+      location_label: Centres
+      location: 'KMFRI Sagana Centre & Kegati Aquaculture Centre'
+      phone: '+254 (20) 8021561'
+      email: director@kmfri.go.ke
+mariculture:
+  name: 'Mariculture & Aquarium'
+  summary: 'Marine systems, hatcheries, sustainable feeds and land-based aquaculture advisory services.'
+  url: 'https://kmfri.go.ke/infrastructure/other/aquarium'
+equipment:
+  -
+    name: 'ICP-OES Spectrometer'
+    image: /images/labs/icp-oes-spectrometer.webp
+    alt: 'ICP-OES spectrometer for trace-metal analysis'
+  -
+    name: 'Inverted Microscope'
+    image: /images/labs/inverted-microscope.webp
+    alt: 'Inverted microscope station'
+  -
+    name: 'Stereo Microscopy'
+    image: /images/labs/stereo-microscopy-bench.webp
+    alt: 'Stereo microscopy bench'
+  -
+    name: 'Underwater ROV'
+    image: /images/labs/rov-deep-trekker.webp
+    alt: 'Remotely operated underwater vehicle'
+  -
+    name: 'Nitrogen Analyzer'
+    image: /images/labs/kjeldahl-nitrogen-analyzer.webp
+    alt: 'Kjeldahl nitrogen analyzer'
+  -
+    name: 'Rotary Evaporator'
+    image: /images/labs/rotary-evaporator.webp
+    alt: 'Rotary evaporator for solvent recovery'
+clients:
+  -
+    group: 'Government & Regulators'
+    members:
+      - 'National ministries, departments & agencies'
+      - 'County governments'
+      - 'Environmental & engineering consultants'
+      - 'Water utilities & resource managers'
+  -
+    group: 'Research & Development'
+    members:
+      - 'Local & international universities and research institutions'
+      - 'Regional and global scientific networks'
+      - 'Development partners & donor-funded programmes'
+      - 'NGOs and community-based organizations (CBOs)'
+  -
+    group: 'Industry & Communities'
+    members:
+      - 'Fisheries, mariculture & aquaculture enterprises'
+      - 'Fish processors & seafood exporters'
+      - 'Manufacturing & industrial companies'
+      - 'Individual fish farmers, fisherfolk & local communities'
+faq:
+  -
+    q: 'What laboratory services does KMFRI provide?'
+    a: 'KMFRI provides scientific laboratory testing and analytical services in two main areas: Fish and Fisheries Product Testing and Environmental Testing. Our services support research, regulatory compliance, environmental monitoring, food safety, aquaculture, fisheries management, and the Blue Economy.'
+  -
+    q: 'What types of fish and fisheries products can be tested?'
+    a: 'The laboratory analyzes a wide range of aquatic samples, including fresh fish, frozen fish, processed fish products, shellfish and crustaceans, aquaculture products, fish feeds, and fish tissues and organs.'
+  -
+    q: 'What environmental samples does KMFRI test?'
+    a: 'Environmental samples include marine water, freshwater, wastewater, sediments, soil, effluents, sludge, biological samples, and other environmental matrices within the approved scope.'
+  -
+    q: 'Is the KMFRI laboratory recognized by NEMA?'
+    a: 'Yes. The KMFRI Mombasa Laboratory has been gazetted by the National Environment Management Authority (NEMA) as an approved environmental laboratory authorized to undertake environmental testing within its approved scope.'
+  -
+    q: 'What environmental analyses are available?'
+    a: 'Depending on the sample type and approved scope, analyses include physico-chemical parameters, nutrient analysis, water quality assessment, heavy metals, organic pollution indicators, sediment characterization, and other environmental quality parameters in accordance with approved methods. Please contact the laboratory to confirm the specific tests available.'
+  -
+    q: 'Does KMFRI perform food safety testing?'
+    a: 'Yes. The laboratory supports food safety through testing of fish and fisheries products for quality and safety parameters within its approved scope.'
+  -
+    q: 'Is the laboratory ISO certified?'
+    a: 'Yes. KMFRI operates a Quality Management System certified to ISO 9001:2015, demonstrating our commitment to quality service delivery and continual improvement.'
+  -
+    q: 'Is the laboratory accredited?'
+    a: 'The laboratory is currently awaiting an accreditation decision from the Kenya Accreditation Service (KENAS) for compliance with ISO/IEC 17025:2017, the international standard for the competence of testing and calibration laboratories.'
+  -
+    q: 'What is the difference between ISO 9001 and ISO/IEC 17025?'
+    a: 'ISO 9001:2015 focuses on quality management systems, ensuring consistent service delivery and customer satisfaction. ISO/IEC 17025:2017 demonstrates technical competence, confirming that laboratory results are technically valid, reliable, and internationally recognized.'
+  -
+    q: 'Who can use KMFRI laboratory services?'
+    a: 'Our services are available to government agencies, county governments, environmental consultants, industries, research institutions, universities, NGOs, aquaculture farms, fisheries-sector stakeholders, private companies, development partners, and individual clients.'
+  -
+    q: 'How do I submit samples?'
+    a: 'Clients should contact the laboratory before sample collection, obtain guidance on sampling requirements, complete the Laboratory Sample Submission Form, and deliver samples under appropriate preservation and transportation conditions.'
+  -
+    q: 'Can the laboratory assist with sampling?'
+    a: 'Yes. Subject to availability and the nature of the project, KMFRI can provide professional sampling services or technical guidance on correct sampling procedures.'
+  -
+    q: 'How long does testing take?'
+    a: 'Turnaround times depend on the type of analysis, number of samples, analytical complexity, and instrument availability. Estimated turnaround times are communicated upon sample receipt.'
+  -
+    q: 'Are laboratory results confidential?'
+    a: 'Yes. All customer information, analytical data, and reports are treated as confidential and released only to authorized persons unless disclosure is required by law.'
+  -
+    q: 'How is the quality of laboratory results assured?'
+    a: 'Quality is maintained through standardized analytical methods, qualified and competent personnel, equipment calibration and maintenance, internal quality control, participation in proficiency testing, internal audits, management reviews, and continuous improvement under the ISO 9001 Quality Management System.'
+  -
+    q: 'Are laboratory reports acceptable for regulatory purposes?'
+    a: "Yes. Reports issued for tests within the laboratory's approved scope can support regulatory submissions, environmental monitoring, research, compliance, and decision-making, subject to the requirements of the receiving authority."
+  -
+    q: 'Can KMFRI undertake customized analytical projects?'
+    a: 'Yes. The laboratory works with clients to develop analytical solutions for research, environmental monitoring, fisheries, aquaculture, coastal management, and Blue Economy projects.'
+  -
+    q: 'How much do laboratory services cost?'
+    a: 'Testing charges depend on the type of analysis, number of parameters, sample matrix, and number of samples. Please request a quotation from the laboratory before submitting samples.'
+  -
+    q: 'Where is the laboratory located?'
+    a: 'Kenya Marine and Fisheries Research Institute (KMFRI), Mombasa Headquarters, Mombasa, Kenya. Satellite laboratories are also available in selected KMFRI research centres across the country for specific services.'
+  -
+    q: 'How can I contact the laboratory?'
+    a: 'Deputy Director, Laboratory Services, Kenya Marine and Fisheries Research Institute (KMFRI). Email: wogara@kmfri.go.ke.'
+commitments:
+  -
+    title: 'Reliable Results'
+    text: 'Scientifically valid results delivered with technical competence.'
+  -
+    title: 'Professional Service'
+    text: 'Responsive customer service with confidentiality and impartiality.'
+  -
+    title: 'Continuous Improvement'
+    text: 'Ongoing quality improvement under our ISO 9001 Quality Management System.'
+  -
+    title: 'Blue Economy Support'
+    text: 'Backing sustainable fisheries, aquaculture and environmental protection.'
+hq_contact:
+  location_label: Headquarters
+  location: 'Mkomani, Mombasa, Kenya'
+  postal: 'P.O. Box 81651–80100, Mombasa, Kenya'
+  phone: '+254 (20) 8021561 / +254 712 003853'
+  email: director@kmfri.go.ke
+  deputy_director_email: wogara@kmfri.go.ke

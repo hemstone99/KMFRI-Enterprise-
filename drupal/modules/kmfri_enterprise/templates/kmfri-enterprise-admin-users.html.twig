@@ -1,0 +1,45 @@
+{#
+/**
+ * @file
+ * User management: summary, GET filters, bulk-action table (UserAdminForm), pager.
+ */
+#}
+{% set filtered = filters.q or filters.role or filters.status %}
+<div class="kd-grid kd-grid--mini mb-6">
+  <a href="{{ action_url }}" class="kd-mini{{ not filters.status ? ' is-active' : '' }}"><span class="kd-mini__value">{{ summary.all }}</span><span class="kd-mini__label">{{ 'All accounts'|t }}</span></a>
+  <a href="{{ action_url }}?status=active" class="kd-mini{{ filters.status == 'active' ? ' is-active' : '' }}"><span class="kd-mini__value">{{ summary.active }}</span><span class="kd-mini__label">{{ 'Active'|t }}</span></a>
+  <a href="{{ action_url }}?status=blocked" class="kd-mini{{ filters.status == 'blocked' ? ' is-active' : '' }}"><span class="kd-mini__value">{{ summary.blocked }}</span><span class="kd-mini__label">{{ 'Blocked'|t }}</span></a>
+</div>
+
+<section class="kd-card kd-card--flush">
+  <form class="kd-filters" method="get" action="{{ action_url }}" aria-label="{{ 'Filter users'|t }}">
+    <div class="kd-filters__field kd-filters__field--grow">
+      <label for="u-q" class="kd-filters__label">{{ 'Search'|t }}</label>
+      <input id="u-q" type="search" name="q" value="{{ filters.q }}" class="k-input" placeholder="{{ 'Username or email'|t }}">
+    </div>
+    <div class="kd-filters__field">
+      <label for="u-role" class="kd-filters__label">{{ 'Role'|t }}</label>
+      <select id="u-role" name="role" class="k-input">
+        <option value="">{{ 'Any role'|t }}</option>
+        {% for rid, label in roles %}<option value="{{ rid }}"{% if filters.role == rid %} selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="kd-filters__field">
+      <label for="u-status" class="kd-filters__label">{{ 'Status'|t }}</label>
+      <select id="u-status" name="status" class="k-input">
+        <option value="">{{ 'Any status'|t }}</option>
+        <option value="active"{% if filters.status == 'active' %} selected{% endif %}>{{ 'Active'|t }}</option>
+        <option value="blocked"{% if filters.status == 'blocked' %} selected{% endif %}>{{ 'Blocked'|t }}</option>
+      </select>
+    </div>
+    <div class="kd-filters__actions">
+      <button type="submit" class="btn btn-primary btn-sm">{{ kmfri_icon('funnel') }} {{ 'Apply'|t }}</button>
+      {% if filtered %}<a href="{{ action_url }}" class="btn btn-outline btn-sm">{{ 'Reset'|t }}</a>{% endif %}
+    </div>
+  </form>
+  <div class="kd-tablebar">
+    <p class="text-sm text-muted" aria-live="polite"><strong class="text-navy-800">{{ total }}</strong> {{ total == 1 ? 'account'|t : 'accounts'|t }}</p>
+  </div>
+  <div class="kd-userform">{{ form }}</div>
+  <div class="kd-pager">{{ pager }}</div>
+</section>

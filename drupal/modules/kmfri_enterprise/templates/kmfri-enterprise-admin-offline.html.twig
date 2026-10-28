@@ -1,0 +1,14 @@
+{#
+/**
+ * @file
+ * Shown on database-backed dashboard pages while kmfri_services_db is unreachable.
+ */
+#}
+<section class="kd-card">
+  <div class="kd-empty">
+    {{ kmfri_icon('triangle-alert', 'w-9 h-9') }}
+    <p class="font-heading font-semibold text-navy-800">{{ 'The services database is unreachable'|t }}</p>
+    <p class="text-sm text-muted max-w-md mx-auto">{{ 'Inquiry data and KPIs need kmfri_services_db. The public hub is serving its bundled catalogue and has paused online quotation requests.'|t }}</p>
+    <a href="{{ settings_url }}" class="btn btn-primary btn-sm mt-3">{{ 'Check the connection'|t }}</a>
+  </div>
+</section>

@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - kmfri_enterprise
+id: kmfri_hub_viewer
+label: 'Hub viewer'
+weight: 4
+is_admin: false
+permissions:
+  - 'access kmfri dashboard'

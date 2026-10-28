@@ -1,0 +1,50 @@
+{#
+/**
+ * @file
+ * Internal page banner: photo, navy wash, breadcrumb, title, wave into the next band.
+ *
+ * Variables:
+ * - crumbs: list of {label, url}; the last one is the current page.
+ * - title, subtitle: strings or markup (title may contain <em>).
+ * - image: module-relative image path; image_alt, image_position.
+ * - next: background colour of the following band (wave fill).
+ * - extra: markup rendered under the subtitle.
+ */
+#}
+<section class="k-banner">
+  <div class="k-banner__bg">
+    <img src="{{ kmfri_asset(image) }}"{% if kmfri_srcset(image) %} srcset="{{ kmfri_srcset(image) }}" sizes="100vw"{% endif %} alt="{{ image_alt|default('') }}"{% if image_position %} style="--pos: {{ image_position }}"{% endif %} fetchpriority="high">
+  </div>
+  <div class="k-banner__inner k-container">
+    <nav aria-label="{{ 'Breadcrumb'|t }}">
+      <ol class="k-crumbs">
+        {% for crumb in crumbs %}
+          <li class="flex items-center gap-2">
+            {% if crumb.url and not loop.last %}
+              <a href="{{ crumb.url }}">{{ crumb.label }}</a>
+            {% else %}
+              <span{% if loop.last %} aria-current="page"{% endif %}>{{ crumb.label }}</span>
+            {% endif %}
+            {% if not loop.last %}<span class="sep" aria-hidden="true">/</span>{% endif %}
+          </li>
+        {% endfor %}
+      </ol>
+    </nav>
+    <h1 class="k-banner__title">{{ title }}</h1>
+    {% if subtitle %}<p class="k-banner__subtitle">{{ subtitle }}</p>{% endif %}
+    {{ extra }}
+  </div>
+  <div class="k-banner__wave" aria-hidden="true">
+    <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
+      <path d="M0 40 C 260 78 520 98 760 94 S 1220 62 1440 20 L 1440 100 L 0 100 Z" fill="url(#k-banner-accent)" />
+      <path d="M0 48 C 260 84 520 100 760 98 S 1220 70 1440 30 L 1440 100 L 0 100 Z" fill="{{ next|default('#E4F4F6') }}" />
+      <defs>
+        <linearGradient id="k-banner-accent" x1="0" x2="1">
+          <stop offset="0" stop-color="#0A8FC4" />
+          <stop offset="0.5" stop-color="#5BD1D7" />
+          <stop offset="1" stop-color="#0A8FC4" />
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+</section>

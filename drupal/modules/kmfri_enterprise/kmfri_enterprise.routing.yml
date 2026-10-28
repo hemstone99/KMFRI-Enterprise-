@@ -1,0 +1,248 @@
+kmfri_enterprise.home:
+  path: '/enterprise'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\HubController::home'
+    _title: 'KMFRI Commercial & Enterprise Services Hub'
+  requirements:
+    _permission: 'access content'
+
+# Service Catalogue: every level has its own web address.
+#   /enterprise/catalogue
+#   /enterprise/catalogue/{division}                     e.g. /enterprise/catalogue/laboratory
+#   /enterprise/catalogue/{division}/{group}             e.g. /enterprise/catalogue/laboratory/water
+#   /enterprise/catalogue/{division}/{group}/{subgroup}  e.g. /enterprise/catalogue/laboratory/biota/proximate
+kmfri_enterprise.catalogue:
+  path: '/enterprise/catalogue/{division}/{group}/{subgroup}'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\HubController::catalogue'
+    _title_callback: '\Drupal\kmfri_enterprise\Controller\HubController::catalogueTitle'
+    division: ''
+    group: ''
+    subgroup: ''
+  requirements:
+    _permission: 'access content'
+    division: '[a-z0-9-]*'
+    group: '[a-z0-9-]*'
+    subgroup: '[a-z0-9-]*'
+
+# Former directory and portfolio pages: permanent redirects into the catalogue.
+kmfri_enterprise.services:
+  path: '/enterprise/services'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\HubController::services'
+  requirements:
+    _permission: 'access content'
+
+kmfri_enterprise.service:
+  path: '/enterprise/services/{slug}'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\HubController::service'
+  requirements:
+    _permission: 'access content'
+    slug: '[a-z0-9-]+'
+
+kmfri_enterprise.laboratories:
+  path: '/enterprise/laboratories'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\HubController::laboratories'
+    _title: 'Laboratory Services'
+  requirements:
+    _permission: 'access content'
+
+kmfri_enterprise.laboratory_group:
+  path: '/enterprise/laboratories/{group}'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\HubController::laboratories'
+    _title_callback: '\Drupal\kmfri_enterprise\Controller\HubController::laboratoryTitle'
+  requirements:
+    _permission: 'access content'
+    group: '[a-z0-9-]+'
+
+kmfri_enterprise.stations:
+  path: '/enterprise/stations'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\HubController::stations'
+    _title: 'Research Stations'
+  requirements:
+    _permission: 'access content'
+
+# One research station: overview, every catalogue service offered there, booking.
+#   /enterprise/stations/{station}   e.g. /enterprise/stations/mombasa (a station id redirects to its slug)
+kmfri_enterprise.station:
+  path: '/enterprise/stations/{station}'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\HubController::station'
+    _title_callback: '\Drupal\kmfri_enterprise\Controller\HubController::stationTitle'
+  requirements:
+    _permission: 'access content'
+    station: '[a-z0-9-]+'
+
+kmfri_enterprise.charter:
+  path: '/enterprise/charter'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\HubController::charter'
+    _title: 'Tariffs & Service Charter'
+  requirements:
+    _permission: 'access content'
+
+kmfri_enterprise.quote:
+  path: '/enterprise/request-quote'
+  defaults:
+    _form: '\Drupal\kmfri_enterprise\Form\QuoteRequestForm'
+    _title: 'Request a Quotation'
+  requirements:
+    _permission: 'submit kmfri quotation requests'
+
+kmfri_enterprise.quote_receipt:
+  path: '/enterprise/request-quote/confirmation'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\HubController::receipt'
+    _title: 'Inquiry Registered'
+  requirements:
+    _permission: 'submit kmfri quotation requests'
+  options:
+    no_cache: TRUE
+
+kmfri_enterprise.settings:
+  path: '/admin/config/services/kmfri-enterprise'
+  defaults:
+    _form: '\Drupal\kmfri_enterprise\Form\SettingsForm'
+    _title: 'KMFRI Enterprise Services Hub'
+  requirements:
+    _permission: 'administer kmfri enterprise hub'
+
+# Read-only JSON API (same payloads as the former Node API)
+kmfri_enterprise.api.health:
+  path: '/api/kmfri/health'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\ApiController::health'
+  methods: [GET]
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: TRUE
+
+kmfri_enterprise.api.services:
+  path: '/api/kmfri/services'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\ApiController::services'
+  methods: [GET]
+  requirements:
+    _permission: 'access content'
+
+kmfri_enterprise.api.service:
+  path: '/api/kmfri/services/{slug}'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\ApiController::service'
+  methods: [GET]
+  requirements:
+    _permission: 'access content'
+    slug: '[a-z0-9-]+'
+
+kmfri_enterprise.api.stations:
+  path: '/api/kmfri/stations'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\ApiController::stations'
+  methods: [GET]
+  requirements:
+    _permission: 'access content'
+
+kmfri_enterprise.api.charter:
+  path: '/api/kmfri/charter'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\ApiController::charter'
+  methods: [GET]
+  requirements:
+    _permission: 'access content'
+
+# Administration dashboard (rendered in the hub dashboard layout, not the admin theme)
+kmfri_enterprise.admin.dashboard:
+  path: '/admin/kmfri'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\AdminController::dashboard'
+    _title: 'Dashboard'
+  requirements:
+    _permission: 'access kmfri dashboard'
+  options:
+    _admin_route: FALSE
+
+kmfri_enterprise.admin.inquiries:
+  path: '/admin/kmfri/inquiries'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\AdminController::inquiries'
+    _title: 'Inquiries'
+  requirements:
+    _permission: 'access kmfri dashboard'
+  options:
+    _admin_route: FALSE
+
+kmfri_enterprise.admin.inquiries_export:
+  path: '/admin/kmfri/inquiries/export'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\AdminController::export'
+  requirements:
+    _permission: 'manage kmfri inquiries'
+  options:
+    _admin_route: FALSE
+    no_cache: TRUE
+
+kmfri_enterprise.admin.inquiry:
+  path: '/admin/kmfri/inquiries/{inquiry}'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\AdminController::inquiry'
+    _title: 'Inquiry'
+  requirements:
+    _permission: 'access kmfri dashboard'
+    inquiry: '\d+'
+  options:
+    _admin_route: FALSE
+
+kmfri_enterprise.admin.catalogue:
+  path: '/admin/kmfri/catalogue'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\AdminController::catalogue'
+    _title: 'Catalogue'
+  requirements:
+    _permission: 'access kmfri dashboard'
+  options:
+    _admin_route: FALSE
+
+kmfri_enterprise.admin.catalogue_refresh:
+  path: '/admin/kmfri/catalogue/refresh'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\AdminController::refreshCatalogue'
+  requirements:
+    _permission: 'administer kmfri enterprise hub'
+    _csrf_token: 'TRUE'
+  options:
+    _admin_route: FALSE
+
+kmfri_enterprise.admin.users:
+  path: '/admin/kmfri/users'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\AdminController::users'
+    _title: 'Users'
+  requirements:
+    _permission: 'administer users'
+  options:
+    _admin_route: FALSE
+
+kmfri_enterprise.admin.activity:
+  path: '/admin/kmfri/activity'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\AdminController::activity'
+    _title: 'Activity log'
+  requirements:
+    _permission: 'access kmfri dashboard'
+  options:
+    _admin_route: FALSE
+
+kmfri_enterprise.admin.settings:
+  path: '/admin/kmfri/settings'
+  defaults:
+    _controller: '\Drupal\kmfri_enterprise\Controller\AdminController::settings'
+    _title: 'Settings'
+  requirements:
+    _permission: 'administer kmfri enterprise hub'
+  options:
+    _admin_route: FALSE

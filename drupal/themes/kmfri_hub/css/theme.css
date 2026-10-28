@@ -1,0 +1,7 @@
+/* Page shell: header, main and footer stack to fill the viewport. */
+.dialog-off-canvas-main-canvas {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #fff;
+}

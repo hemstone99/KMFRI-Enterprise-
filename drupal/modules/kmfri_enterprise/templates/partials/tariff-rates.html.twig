@@ -1,0 +1,45 @@
+{#
+/**
+ * @file
+ * Standard rates of one service portfolio (pricing tiers the catalogue does not list).
+ *
+ * Variables:
+ * - portfolio: service record (HubRepository::services()).
+ * - rates: its pricing tiers, each with search_text and visible.
+ * - heading: sub-heading above the table.
+ */
+#}
+<div class="border-t border-line first:border-t-0" data-kmfri-tariffs-rates>
+  <p class="px-4 sm:px-5 pt-4 pb-2 flex flex-wrap items-baseline justify-between gap-2">
+    <span class="k-tag">{{ heading }}</span>
+    <span class="text-xs text-subtle">{{ portfolio.code }} · {{ portfolio.contact_officer.title }}</span>
+  </p>
+  <div class="k-table-wrap">
+    <table class="k-table sm:min-w-[760px]">
+      <caption class="sr-only">{{ portfolio.title }}: standard rates</caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'Rate'|t }}</th>
+          <th scope="col" class="text-right">{{ 'Tariff'|t }}</th>
+          <th scope="col" class="hidden md:table-cell">{{ 'Turnaround'|t }}</th>
+          <th scope="col" class="text-right"><span class="sr-only">{{ 'Action'|t }}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in rates %}
+          <tr data-kmfri-tariff-row data-text="{{ t.search_text }}"{% if not t.visible %} hidden{% endif %}>
+            <td class="font-semibold text-navy-800 max-w-[30rem]">{{ t.name }}</td>
+            <td class="text-right whitespace-nowrap">
+              <span class="k-num">Ksh {{ t.cost_kes|kes }}</span>
+              <small class="block text-xs text-muted">{{ t.unit }}{% if t.cost_usd %} · USD {{ t.cost_usd|kes }}{% endif %}</small>
+            </td>
+            <td class="text-sm text-muted hidden md:table-cell">{{ t.turnaround_time }}</td>
+            <td class="text-right">
+              <a href="{{ path('kmfri_enterprise.quote', {}, {'query': {'service': portfolio.slug}|merge(t.id ? {'tier': t.id} : {})}) }}" class="btn btn-outline btn-sm">{{ 'Get a quote'|t }}<span class="sr-only"> for {{ t.name }}</span></a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

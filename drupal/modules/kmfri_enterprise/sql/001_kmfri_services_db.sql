@@ -129,6 +129,7 @@ DROP TABLE IF EXISTS pricing_tiers;
 CREATE TABLE pricing_tiers (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   service_id INT UNSIGNED NOT NULL,
+  register_no SMALLINT UNSIGNED NULL COMMENT 'Register row (catalogue_items) this tariff publishes; NULL = portfolio rate',
   tier_name VARCHAR(200) NOT NULL,
   unit_description VARCHAR(100) NOT NULL COMMENT 'e.g. per sample, per 1000 fingerlings, per day, per dataset',
   cost_kes DECIMAL(12, 2) NOT NULL,
@@ -139,6 +140,7 @@ CREATE TABLE pricing_tiers (
   display_order INT DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE,
+  UNIQUE KEY uq_register_no (register_no),
   INDEX idx_service (service_id)
 ) ENGINE=InnoDB COMMENT='Approved public fee schedule in Kenya Shillings (KES) and USD';
 
@@ -565,6 +567,7 @@ SELECT
   s.code AS service_code,
   s.title AS service_title,
   sc.name AS category_name,
+  pt.register_no,
   pt.tier_name,
   pt.unit_description,
   pt.cost_kes,

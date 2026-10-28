@@ -1,0 +1,97 @@
+{#
+/**
+ * @file
+ * Inquiry list: GET filters, sortable columns, pager.
+ */
+#}
+{% import '@kmfri_enterprise/partials/admin.html.twig' as kd %}
+{% set filtered = filters.q or filters.status or filters.service or filters.from or filters.to %}
+
+<section class="kd-card kd-card--flush">
+  <form class="kd-filters" method="get" action="{{ action_url }}" aria-label="{{ 'Filter inquiries'|t }}">
+    <div class="kd-filters__field kd-filters__field--grow">
+      <label for="f-q" class="kd-filters__label">{{ 'Search'|t }}</label>
+      <input id="f-q" type="search" name="q" value="{{ filters.q }}" class="k-input" placeholder="{{ 'Reference, client, organization or email'|t }}">
+    </div>
+    <div class="kd-filters__field">
+      <label for="f-status" class="kd-filters__label">{{ 'Status'|t }}</label>
+      <select id="f-status" name="status" class="k-input">
+        <option value="">{{ 'All statuses'|t }}</option>
+        <option value="open"{% if filters.status == 'open' %} selected{% endif %}>{{ 'Open (needs action)'|t }}</option>
+        {% for key, label in statuses %}
+          <option value="{{ key }}"{% if filters.status == key %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="kd-filters__field">
+      <label for="f-service" class="kd-filters__label">{{ 'Service'|t }}</label>
+      <select id="f-service" name="service" class="k-input">
+        <option value="">{{ 'All services'|t }}</option>
+        {% for id, title in services %}
+          <option value="{{ id }}"{% if filters.service == id ~ '' %} selected{% endif %}>{{ title }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="kd-filters__field kd-filters__field--date">
+      <label for="f-from" class="kd-filters__label">{{ 'From'|t }}</label>
+      <input id="f-from" type="date" name="from" value="{{ filters.from }}" class="k-input">
+    </div>
+    <div class="kd-filters__field kd-filters__field--date">
+      <label for="f-to" class="kd-filters__label">{{ 'To'|t }}</label>
+      <input id="f-to" type="date" name="to" value="{{ filters.to }}" class="k-input">
+    </div>
+    <input type="hidden" name="sort" value="{{ filters.sort }}">
+    <input type="hidden" name="dir" value="{{ filters.dir }}">
+    <div class="kd-filters__actions">
+      <button type="submit" class="btn btn-primary btn-sm">{{ kmfri_icon('funnel') }} {{ 'Apply'|t }}</button>
+      {% if filtered %}<a href="{{ reset_url }}" class="btn btn-outline btn-sm">{{ 'Reset'|t }}</a>{% endif %}
+    </div>
+  </form>
+
+  <div class="kd-tablebar">
+    <p class="text-sm text-muted" aria-live="polite">
+      <strong class="text-navy-800">{{ total }}</strong> {{ total == 1 ? 'inquiry'|t : 'inquiries'|t }}{% if filtered %} {{ 'match these filters'|t }}{% endif %}
+    </p>
+  </div>
+
+  {% if rows %}
+    <div class="kd-table-wrap">
+      <table class="kd-table">
+        <caption class="sr-only">{{ 'Quotation requests'|t }}</caption>
+        <thead>
+          <tr>
+            <th scope="col">{{ kd.sort('Reference'|t, sorts.reference) }}</th>
+            <th scope="col">{{ kd.sort('Client'|t, sorts.client) }}</th>
+            <th scope="col" class="hidden lg:table-cell">{{ kd.sort('Service'|t, sorts.service) }}</th>
+            <th scope="col" class="text-right">{{ kd.sort('Value (KES)'|t, sorts.value) }}</th>
+            <th scope="col">{{ kd.sort('Status'|t, sorts.status) }}</th>
+            <th scope="col" class="hidden md:table-cell">{{ kd.sort('Submitted'|t, sorts.created) }}</th>
+            <th scope="col" class="text-right"><span class="sr-only">{{ 'Actions'|t }}</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+            <tr>
+              <td><a href="{{ r.url }}" class="kd-ref">{{ r.reference }}</a><span class="block text-xs text-subtle lg:hidden">{{ r.service_code }}</span></td>
+              <td>
+                <span class="block font-medium text-ink">{{ r.client }}</span>
+                <span class="block text-xs text-muted truncate max-w-[16rem]">{{ r.organization }}</span>
+              </td>
+              <td class="hidden lg:table-cell">
+                <span class="block text-sm text-ink">{{ r.service }}</span>
+                {% if r.tier %}<span class="block text-xs text-muted truncate max-w-[18rem]">{{ r.tier }}</span>{% endif %}
+              </td>
+              <td class="text-right k-num text-sm! whitespace-nowrap">{{ r.value > 0 ? r.value|kes : 'On quote'|t }}</td>
+              <td>{{ kd.status(r.status, r.status_label) }}</td>
+              <td class="hidden md:table-cell text-sm text-muted whitespace-nowrap"><time title="{{ r.created_full }}">{{ r.created }}</time></td>
+              <td class="text-right"><a href="{{ r.url }}" class="btn btn-outline btn-sm" aria-label="Open {{ r.reference }}">{{ 'Open'|t }}</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="kd-pager">{{ pager }}</div>
+  {% else %}
+    {{ kd.empty(filtered ? 'No inquiries match these filters'|t : 'No inquiries yet'|t, filtered ? 'Try a wider date range or clear the filters.'|t : 'Requests submitted on the public quotation form appear here.'|t) }}
+  {% endif %}
+</section>

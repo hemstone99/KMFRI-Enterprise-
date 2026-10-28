@@ -1,0 +1,127 @@
+{#
+/**
+ * @file
+ * Dashboard layout: sidebar navigation, top bar (search, notifications, user menu),
+ * page header with actions, status messages and the page content.
+ *
+ * Variables:
+ * - section: active sidebar key.
+ * - page_title, subtitle, actions ({label, url, icon, style}).
+ * - nav: sidebar items {key, label, icon, url, active, badge} (already access-checked).
+ * - user: {name, initials, role, account_url, edit_url, logout_url}.
+ * - pending: number of pending inquiries (NULL when the database is unreachable).
+ * - live: whether kmfri_services_db is reachable.
+ */
+#}
+<div class="kd-app" data-kmfri-dashboard>
+  <a href="#kd-main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[2000] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-white focus:text-navy-800 focus:font-semibold focus:shadow-lg">{{ 'Skip to content'|t }}</a>
+
+  {# Sidebar #}
+  <div class="kd-scrim" data-kd-scrim hidden></div>
+  <aside id="kd-sidebar" class="kd-sidebar" aria-label="{{ 'Dashboard navigation'|t }}" data-kd-sidebar>
+    <div class="kd-sidebar__brand">
+      <a href="{{ path('kmfri_enterprise.admin.dashboard') }}" class="flex items-center gap-3 min-w-0">
+        <span class="kd-sidebar__logo"><img src="{{ kmfri_asset('images/brand/kmfri-logo.png') }}" alt="KMFRI" width="96" height="23"></span>
+        <span class="kd-sidebar__label min-w-0">
+          <span class="block text-[0.625rem] font-semibold tracking-[0.12em] uppercase text-teal-400 whitespace-nowrap">{{ 'Enterprise Hub'|t }}</span>
+          <span class="block font-heading font-semibold text-white leading-tight">{{ 'Admin'|t }}</span>
+        </span>
+      </a>
+      <button type="button" class="kd-icon-btn kd-icon-btn--dark lg:hidden" data-kd-sidebar-close aria-label="{{ 'Close navigation'|t }}">{{ kmfri_icon('x') }}</button>
+    </div>
+
+    <nav class="kd-nav" aria-label="{{ 'Dashboard sections'|t }}">
+      <p class="kd-nav__heading">{{ 'Manage'|t }}</p>
+      <ul>
+        {% for item in nav %}
+          <li>
+            <a href="{{ item.url }}" class="kd-nav__link{{ item.active ? ' is-active' : '' }}"{% if item.active %} aria-current="page"{% endif %} title="{{ item.label }}">
+              {{ kmfri_icon(item.icon, 'w-5 h-5 shrink-0') }}
+              <span class="kd-sidebar__label flex-1">{{ item.label }}</span>
+              {% if item.badge %}<span class="kd-count" aria-label="{{ item.badge }} pending">{{ item.badge }}</span>{% endif %}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+      <p class="kd-nav__heading">{{ 'Shortcuts'|t }}</p>
+      <ul>
+        <li><a href="{{ site_url }}" class="kd-nav__link" title="{{ 'Public hub'|t }}">{{ kmfri_icon('globe', 'w-5 h-5 shrink-0') }}<span class="kd-sidebar__label flex-1">{{ 'Public hub'|t }}</span></a></li>
+        {% if drupal_admin_url %}
+          <li><a href="{{ drupal_admin_url }}" class="kd-nav__link" title="{{ 'Drupal administration'|t }}">{{ kmfri_icon('wrench', 'w-5 h-5 shrink-0') }}<span class="kd-sidebar__label flex-1">{{ 'Drupal administration'|t }}</span></a></li>
+        {% endif %}
+      </ul>
+    </nav>
+
+    <div class="kd-sidebar__foot">
+      <p class="kd-db {{ live ? 'is-live' : 'is-down' }}">
+        <span class="kd-db__dot" aria-hidden="true"></span>
+        <span class="kd-sidebar__label">{{ live ? 'Services database connected'|t : 'Services database unreachable'|t }}</span>
+      </p>
+      <button type="button" class="kd-collapse hidden lg:flex" data-kd-collapse aria-pressed="false" aria-label="{{ 'Collapse sidebar'|t }}">
+        {{ kmfri_icon('panel-left-close', 'w-4.5 h-4.5') }}<span class="kd-sidebar__label">{{ 'Collapse'|t }}</span>
+      </button>
+    </div>
+  </aside>
+
+  {# Main column #}
+  <div class="kd-main">
+    <header class="kd-topbar">
+      <button type="button" class="kd-icon-btn lg:hidden" data-kd-sidebar-open aria-controls="kd-sidebar" aria-expanded="false" aria-label="{{ 'Open navigation'|t }}">{{ kmfri_icon('menu') }}</button>
+
+      <form class="kd-search" role="search" method="get" action="{{ search_url }}">
+        <label for="kd-search" class="sr-only">{{ 'Search inquiries'|t }}</label>
+        {{ kmfri_icon('search', 'kd-search__icon w-4 h-4') }}
+        <input id="kd-search" type="search" name="q" placeholder="{{ 'Search inquiries by reference, client or email…'|t }}" autocomplete="off" data-kd-search>
+        <kbd class="kd-search__kbd hidden md:inline-flex" aria-hidden="true">/</kbd>
+      </form>
+
+      <div class="flex items-center gap-1.5 sm:gap-2 ml-auto">
+        {% if pending is not null %}
+          <a href="{{ pending_url }}" class="kd-icon-btn relative" aria-label="{{ pending ? pending ~ ' pending inquiries' : 'No pending inquiries' }}">
+            {{ kmfri_icon('bell') }}
+            {% if pending %}<span class="kd-dot-count" aria-hidden="true">{{ pending > 99 ? '99+' : pending }}</span>{% endif %}
+          </a>
+        {% endif %}
+        <div class="relative" data-kd-menu>
+          <button type="button" class="kd-user" aria-expanded="false" aria-controls="kd-user-menu" data-kd-menu-toggle>
+            <span class="kd-avatar" aria-hidden="true">{{ user.initials }}</span>
+            <span class="hidden md:block text-left min-w-0">
+              <span class="block text-sm font-semibold text-navy-800 truncate max-w-[10rem]">{{ user.name }}</span>
+              <span class="block text-xs text-muted truncate max-w-[10rem]">{{ user.role }}</span>
+            </span>
+            {{ kmfri_icon('chevron-down', 'w-4 h-4 text-subtle hidden md:block') }}
+          </button>
+          <div id="kd-user-menu" class="kd-menu" hidden>
+            <div class="px-4 py-3 border-b border-line">
+              <p class="text-sm font-semibold text-navy-800 truncate">{{ user.name }}</p>
+              <p class="text-xs text-muted truncate">{{ user.role }}</p>
+            </div>
+            <a href="{{ user.account_url }}">{{ kmfri_icon('user', 'w-4 h-4') }} {{ 'My account'|t }}</a>
+            <a href="{{ user.edit_url }}">{{ kmfri_icon('settings', 'w-4 h-4') }} {{ 'Edit profile'|t }}</a>
+            <a href="{{ site_url }}">{{ kmfri_icon('globe', 'w-4 h-4') }} {{ 'View public hub'|t }}</a>
+            <a href="{{ user.logout_url }}" class="border-t border-line text-[#b91c1c]!">{{ kmfri_icon('log-out', 'w-4 h-4') }} {{ 'Log out'|t }}</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="kd-main" class="kd-content" tabindex="-1">
+      <div class="kd-pagehead">
+        <div class="min-w-0">
+          <h1 class="kd-pagehead__title">{{ page_title }}</h1>
+          {% if subtitle %}<p class="kd-pagehead__sub">{{ subtitle }}</p>{% endif %}
+        </div>
+        {% if actions %}
+          <div class="flex flex-wrap gap-2">
+            {% for a in actions %}
+              <a href="{{ a.url }}" class="btn btn-sm {{ a.style }}">{{ kmfri_icon(a.icon) }} {{ a.label }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="kd-messages">{{ messages }}</div>
+      {{ content }}
+    </main>
+  </div>
+</div>

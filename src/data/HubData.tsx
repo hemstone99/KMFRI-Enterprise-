@@ -2,6 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { CharterEntry, ResearchStation, ServiceItem } from '../types';
 import { KMFRI_SERVICES } from './servicesData';
 import { KMFRI_STATIONS } from './stationsData';
+import { EXTERNAL_SERVICE_SLUGS } from './externalServices';
+import { withCatalogueTiers } from './tariffs';
 
 /**
  * Catalogue data for every view. Loaded from the API (kmfri_services_db);
@@ -17,9 +19,14 @@ interface HubData {
   loading: boolean;
 }
 
+// Bundled tariffs of portfolios the catalogue prices are the catalogue's own (as in sql/005).
+const EXTERNAL_SERVICES = KMFRI_SERVICES.filter((service) => EXTERNAL_SERVICE_SLUGS.includes(service.slug as typeof EXTERNAL_SERVICE_SLUGS[number])).map(withCatalogueTiers);
+const EXTERNAL_SERVICE_TITLES = new Set(EXTERNAL_SERVICES.map((service) => service.title));
+const EXTERNAL_STATIONS = KMFRI_STATIONS.map((station) => ({ ...station, servicesOffered: station.servicesOffered.filter((title) => EXTERNAL_SERVICE_TITLES.has(title)) }));
+
 const HubDataContext = createContext<HubData>({
-  services: KMFRI_SERVICES,
-  stations: KMFRI_STATIONS,
+  services: EXTERNAL_SERVICES,
+  stations: EXTERNAL_STATIONS,
   charter: null,
   live: false,
   loading: true,
@@ -33,8 +40,8 @@ async function getJson<T>(url: string, signal: AbortSignal): Promise<T> {
 
 export const HubDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [data, setData] = useState<HubData>({
-    services: KMFRI_SERVICES,
-    stations: KMFRI_STATIONS,
+    services: EXTERNAL_SERVICES,
+    stations: EXTERNAL_STATIONS,
     charter: null,
     live: false,
     loading: true,
@@ -49,7 +56,7 @@ export const HubDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     ])
       .then(([services, stations, charter]) => {
         if (!services.length || !stations.length) throw new Error('Empty catalogue returned');
-        setData({ services, stations, charter, live: true, loading: false });
+        setData({ services: services.filter((service) => EXTERNAL_SERVICE_SLUGS.includes(service.slug as typeof EXTERNAL_SERVICE_SLUGS[number])), stations, charter: charter.filter((entry) => EXTERNAL_SERVICE_SLUGS.includes(entry.serviceSlug as typeof EXTERNAL_SERVICE_SLUGS[number])), live: true, loading: false });
       })
       .catch((err) => {
         if (ctrl.signal.aborted) return;

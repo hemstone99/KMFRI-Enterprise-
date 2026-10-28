@@ -1,0 +1,70 @@
+{#
+/**
+ * @file
+ * Research stations directory: one card per station, each linking to the station's own page.
+ *
+ * Variables:
+ * - stations: station records plus url, image and offer {divisions, other, total, online}.
+ */
+#}
+{% import '@kmfri_enterprise/partials/macros.html.twig' as k %}
+{% set title %}KMFRI Research Centres &amp; <em>Stations</em>{% endset %}
+{% include '@kmfri_enterprise/partials/banner.html.twig' with {
+  crumbs: [{label: 'Home'|t, url: path('kmfri_enterprise.home')}, {label: 'Research Stations'|t}],
+  title: title,
+  subtitle: 'Find the KMFRI centre nearest you, see every service it offers, and book online or request a quotation.'|t,
+  image: 'images/vessel-aerial.webp',
+  image_position: 'center 55%',
+  next: '#E4F4F6',
+} only %}
+
+<section class="band-teal k-section pt-8!" aria-labelledby="stations-list-heading">
+  <div class="k-container">
+    <div class="mb-10 max-w-3xl">
+      <span class="k-eyebrow">{{ '@count Centres Nationwide'|t({'@count': stations|length}) }}</span>
+      <h2 id="stations-list-heading" class="k-h2">Choose a <em>station</em></h2>
+    </div>
+
+    <ul class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {% for st in stations %}
+        <li class="relative">
+          <article class="k-card k-card--hover h-full relative" aria-labelledby="{{ st.id }}-title">
+            <div class="k-card__figure">
+              <div class="k-card__media">
+                <img src="{{ kmfri_small(st.image) }}" alt="" loading="lazy">
+                <span class="absolute top-3.5 left-3.5 k-badge k-badge--solid k-badge--mono">{{ st.code }}</span>
+              </div>
+              <span class="k-card__icon" aria-hidden="true">{{ kmfri_icon('map-pin') }}</span>
+            </div>
+            <div class="k-card__body">
+              <h3 id="{{ st.id }}-title" class="k-h3"><a href="{{ st.url }}" class="hover:text-navy-500 after:absolute after:inset-0">{{ st.name }}</a></h3>
+              <p class="text-sm text-muted mt-1">{{ st.location }} · <strong class="text-ink font-semibold">{{ st.county }}</strong></p>
+              <p class="text-[0.95rem] text-muted mt-3 leading-relaxed line-clamp-3">{{ st.description }}</p>
+              {% if st.offer.divisions %}
+                <ul class="mt-4 flex flex-wrap gap-1.5" aria-label="{{ 'Services offered'|t }}">
+                  {% for d in st.offer.divisions %}
+                    <li class="k-chip inline-flex items-center gap-1.5">{{ k.division_icon(d.id, 'w-3.5 h-3.5 text-teal-700') }} {{ d.title }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+              <div class="mt-auto pt-5 flex items-center justify-between gap-3">
+                <span class="text-sm font-semibold text-teal-800">
+                  {{ st.offer.total }} {{ st.offer.total == 1 ? 'service' : 'services' }}{% if st.offer.online %} · {{ st.offer.online }} online{% endif %}
+                </span>
+                <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-navy-600">{{ 'View & book'|t }} {{ kmfri_icon('arrow-right', 'w-4 h-4') }}</span>
+              </div>
+            </div>
+          </article>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{% set title %}Book services at a <em>KMFRI centre</em>{% endset %}
+{% embed '@kmfri_enterprise/partials/cta.html.twig' with {eyebrow: 'Station Services'|t, title: title, text: 'Open a station to see its services, or send a quotation request and choose your preferred centre.'|t} %}
+  {% block actions %}
+    <a class="btn btn-teal" href="{{ path('kmfri_enterprise.quote') }}">{{ kmfri_icon('calendar-check') }} {{ 'Request Quotation'|t }}</a>
+    <a class="btn btn-ghost-light" href="{{ kmfri_catalogue_url() }}">{{ kmfri_icon('building-2') }} {{ 'Service Catalogue'|t }} {{ kmfri_icon('arrow-right') }}</a>
+  {% endblock %}
+{% endembed %}

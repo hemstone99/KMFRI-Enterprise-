@@ -1,0 +1,198 @@
+{#
+/**
+ * @file
+ * Hub homepage, brief by design: hero slider (tabs), service catalogue divisions,
+ * ready-to-order price list, how it works with trust marks, and the request banner.
+ */
+#}
+{% import '@kmfri_enterprise/partials/macros.html.twig' as k %}
+{% set quote_url = path('kmfri_enterprise.quote') %}
+<div class="w-full">
+
+  {# 1. HERO — slides with tab controls (js/hub.js: autoplay, keyboard, swipe) #}
+  <section class="k-hero" aria-roledescription="carousel" aria-label="{{ 'KMFRI Enterprise Services highlights'|t }}" data-kmfri-hero style="--seg: 7000ms">
+    {% for slide in slides %}
+      {% set active = loop.first %}
+      {% set label = slide.title|join(' ') %}
+      <div id="hero-slide-{{ slide.id }}" class="k-hero__slide{{ active ? ' is-active' : '' }}" role="group" aria-roledescription="slide" aria-label="{{ loop.index }} of {{ slides|length }}: {{ label }}"{% if not active %} aria-hidden="true" inert{% endif %}>
+        <div class="k-hero__bg">
+          <img src="{{ kmfri_asset(slide.image) }}"{% if kmfri_srcset(slide.image) %} srcset="{{ kmfri_srcset(slide.image) }}" sizes="100vw"{% endif %} alt="{{ slide.alt }}" style="--pos: {{ slide.position }}" loading="{{ active ? 'eager' : 'lazy' }}" fetchpriority="{{ active ? 'high' : 'auto' }}">
+        </div>
+        <div class="k-hero__overlay"></div>
+        <div class="k-hero__content">
+          <p class="k-hero__eyebrow k-hero__anim">{{ slide.eyebrow }}</p>
+          {% if active %}
+            <h1 class="k-hero__title k-hero__anim">
+              <span>{{ slide.title[0] }}</span>
+              <span><em>{{ slide.title[1] }}</em></span>
+              <span>{{ slide.title[2] }}</span>
+            </h1>
+          {% else %}
+            <p class="k-hero__title k-hero__anim" role="heading" aria-level="2">
+              <span>{{ slide.title[0] }}</span>
+              <span><em>{{ slide.title[1] }}</em></span>
+              <span>{{ slide.title[2] }}</span>
+            </p>
+          {% endif %}
+          <p class="k-hero__subtitle k-hero__anim">{{ slide.subtitle }}</p>
+          <div class="k-hero__actions k-hero__anim">
+            {% if slide.route_url %}
+              <a class="btn btn-teal" href="{{ slide.route_url }}">{{ slide.route_label }} {{ kmfri_icon('arrow-right') }}</a>
+              <a class="btn btn-ghost-light" href="{{ path('kmfri_enterprise.quote', {}, {'query': {'service': slide.quote_slug}}) }}">{{ kmfri_icon('shield-check') }} {{ 'Request Quotation'|t }}</a>
+            {% elseif slide.division_url %}
+              <a class="btn btn-teal" href="{{ slide.division_url }}">{{ 'Services & Prices'|t }} {{ kmfri_icon('arrow-right') }}</a>
+              <a class="btn btn-ghost-light" href="{{ path('kmfri_enterprise.quote', {}, {'query': {'service': slide.slug}}) }}">{{ kmfri_icon('shield-check') }} {{ 'Request Quotation'|t }}</a>
+            {% else %}
+              <a class="btn btn-teal" href="{{ kmfri_catalogue_url() }}">{{ 'Browse All @count Services'|t({'@count': total}) }} {{ kmfri_icon('arrow-right') }}</a>
+              <a class="btn btn-ghost-light" href="{{ quote_url }}">{{ kmfri_icon('shield-check') }} {{ 'Request Quotation'|t }}</a>
+              <a class="k-hero__link" href="{{ path('kmfri_enterprise.charter') }}">{{ 'Service Charter & Tariffs'|t }} {{ kmfri_icon('arrow-right', 'w-4 h-4') }}</a>
+              <button type="button" class="k-hero__link" data-kmfri-search-open>{{ kmfri_icon('search', 'w-4 h-4') }} {{ 'Search Hub'|t }}</button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+
+    <div class="k-hero__bar">
+      <div class="k-hero__controls">
+        <button type="button" class="k-hero__arrow k-hero__arrow--prev" data-kmfri-hero-prev aria-label="{{ 'Previous slide'|t }}">{{ kmfri_icon('arrow-left') }}</button>
+        <div class="k-hero__tabs" role="tablist" aria-label="{{ 'Choose slide'|t }}">
+          {% for slide in slides %}
+            <button type="button" role="tab" class="k-hero__tab" aria-selected="{{ loop.first ? 'true' : 'false' }}" aria-controls="hero-slide-{{ slide.id }}" aria-label="Slide {{ loop.index }}: {{ slide.title|join(' ') }}" tabindex="{{ loop.first ? '0' : '-1' }}"></button>
+          {% endfor %}
+        </div>
+        <button type="button" class="k-hero__arrow k-hero__arrow--next" data-kmfri-hero-next aria-label="{{ 'Next slide'|t }}">{{ kmfri_icon('arrow-right') }}</button>
+        <span class="k-hero__divider" aria-hidden="true"></span>
+        <button type="button" class="k-hero__pause" data-kmfri-hero-pause aria-pressed="false" aria-label="{{ 'Pause slideshow'|t }}">
+          <span data-icon-pause>{{ kmfri_icon('pause') }}</span>
+          <span data-icon-play hidden>{{ kmfri_icon('play') }}</span>
+        </button>
+        <span class="k-hero__counter" aria-live="polite" data-kmfri-hero-counter>01 / {{ '%02d'|format(slides|length) }}</span>
+      </div>
+
+      <ul class="k-hero__stats" aria-label="{{ 'KMFRI at a glance'|t }}">
+        {% for stat in stats %}
+          <li class="k-hero__stat">
+            {{ kmfri_icon(stat.icon) }}
+            <span>
+              <span class="k-hero__stat-value">{{ stat.value }}</span>
+              <span class="k-hero__stat-label">{{ stat.label }}</span>
+            </span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="k-hero__wave" aria-hidden="true">
+      <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
+        <path d="M0 64 C 320 28 640 96 960 70 S 1320 30 1440 44 L 1440 100 L 0 100 Z" fill="url(#k-hero-accent)" />
+        <path d="M0 74 C 320 38 640 104 960 80 S 1320 42 1440 56 L 1440 100 L 0 100 Z" fill="#E4F4F6" />
+        <defs>
+          <linearGradient id="k-hero-accent" x1="0" x2="1">
+            <stop offset="0" stop-color="#0A8FC4" />
+            <stop offset="0.5" stop-color="#5BD1D7" />
+            <stop offset="1" stop-color="#0A8FC4" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  </section>
+
+
+  {# 2. SERVICE CATALOGUE — the entry point to every service #}
+  <section class="band-teal k-section pt-10!" aria-labelledby="catalogue-heading">
+    <div class="k-container">
+      {% set title %}Everything KMFRI offers, <em>in one place</em>{% endset %}
+      {% set action %}
+        <div class="flex flex-wrap gap-3">
+          <a class="btn btn-primary" href="{{ kmfri_catalogue_url() }}">{{ 'Open the Catalogue'|t }} {{ kmfri_icon('arrow-right') }}</a>
+          <button type="button" class="btn btn-outline" data-kmfri-search-open>{{ kmfri_icon('search') }} {{ 'Search a service'|t }}</button>
+        </div>
+      {% endset %}
+      {{ k.section_header('Service Catalogue'|t, title, '@total services with official tariffs — @online of them available online today.'|t({'@total': total, '@online': online_total}), 'split', 'catalogue-heading', action) }}
+      <ul class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+        {% for d in divisions %}
+          <li class="relative">{% include '@kmfri_enterprise/partials/division-card.html.twig' with {d: d, show_groups: false} only %}</li>
+        {% endfor %}
+      </ul>
+      <div class="mt-8 flex flex-wrap items-center gap-2">
+        <span class="text-sm font-semibold text-navy-800 mr-1">{{ 'Find services for:'|t }}</span>
+        {% for a in audiences %}
+          <a href="{{ a.url }}" class="k-tab min-h-9! py-1! px-3.5! text-[0.8125rem]! bg-white!">{{ kmfri_icon(a.icon) }} {{ a.label }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {{ k.wave('#CDE9ED', '#FFFFFF') }}
+
+  {# 3. READY TO ORDER — a short price list, not a second catalogue #}
+  <section class="bg-white k-section pt-4!" aria-labelledby="popular-heading">
+    <div class="k-container">
+      <div class="k-panel overflow-hidden grid grid-cols-1 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,2fr)]">
+        <div class="p-6 sm:p-8 bg-navy-800 text-white flex flex-col">
+          <span class="k-eyebrow k-eyebrow--light">{{ 'Ready to Order'|t }}</span>
+          <h2 id="popular-heading" class="k-h2 k-h2--light text-[clamp(1.6rem,2.4vw,2.1rem)]!">Popular services <em>&amp; prices</em></h2>
+          <p class="mt-3 text-white/80 leading-relaxed">{{ 'Published government tariffs — no hidden costs.'|t }}</p>
+          <a class="btn btn-teal btn-sm mt-6 lg:mt-auto self-start" href="{{ kmfri_catalogue_url() }}">{{ 'All @count prices'|t({'@count': total}) }} {{ kmfri_icon('arrow-right') }}</a>
+        </div>
+        <ul class="min-w-0 grid grid-cols-1 sm:grid-cols-2 gap-px bg-line">
+          {% for f in featured %}
+            {% set group = f.trail|last %}
+            <li class="bg-white p-5 flex items-center gap-4">
+              <span class="grid place-items-center w-11 h-11 shrink-0 rounded-xl bg-teal-50 text-teal-700 border border-[#bfe8ec]">{{ k.division_icon(f.trail|first.id) }}</span>
+              <div class="min-w-0 flex-1">
+                <a href="{{ kmfri_catalogue_url(group.path) }}" class="block text-xs font-semibold text-teal-800 hover:text-navy-600 truncate">{{ group.title }}</a>
+                <h3 class="font-heading font-semibold text-navy-800 leading-snug line-clamp-2">{{ f.item.name }}</h3>
+                <p class="k-num mt-0.5">{{ f.item|kmfri_fee }}</p>
+              </div>
+              {% include '@kmfri_enterprise/partials/item-action.html.twig' with {item: f.item, ecitizen_url: ecitizen_url} only %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {# 4. HOW IT WORKS + TRUST — one slim band #}
+  <section class="bg-white pb-16 lg:pb-20" aria-labelledby="steps-heading">
+    <div class="k-container">
+      <h2 id="steps-heading" class="sr-only">{{ 'How it works'|t }}</h2>
+      <ol class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-5">
+        {% for step in steps %}
+          <li class="flex items-start gap-3">
+            <span class="relative grid place-items-center w-11 h-11 shrink-0 rounded-full bg-navy-50 text-navy-600">
+              {{ kmfri_icon(step.icon, 'w-5 h-5') }}
+              <span class="absolute -top-1 -right-1 grid place-items-center w-5 h-5 rounded-full bg-teal-600 text-white text-[0.65rem] font-semibold" aria-hidden="true">{{ loop.index }}</span>
+            </span>
+            <span class="min-w-0">
+              <span class="block font-heading font-semibold text-navy-800 leading-snug">{{ step.title }}</span>
+              <span class="block text-sm text-muted mt-0.5">{{ step.text }}</span>
+            </span>
+          </li>
+        {% endfor %}
+      </ol>
+      <div class="mt-10 pt-6 border-t border-line flex flex-wrap items-center justify-between gap-4">
+        <ul class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted" aria-label="{{ 'Quality and mandate'|t }}">
+          <li><img src="{{ kmfri_asset('images/brand/kebs-iso-9001.png') }}" alt="KEBS ISO 9001 registered" width="40" height="40" class="w-10 h-10 rounded-full" loading="lazy"></li>
+          {% for t in trust %}
+            <li class="inline-flex items-center gap-1.5">{{ kmfri_icon('circle-check', 'w-4 h-4 text-teal-700') }} {{ t }}</li>
+          {% endfor %}
+        </ul>
+        <div class="flex flex-wrap gap-2">
+          <a class="btn btn-outline btn-sm" href="{{ path('kmfri_enterprise.stations') }}">{{ kmfri_icon('map-pin') }} {{ 'Find a station'|t }}</a>
+          <a class="btn btn-outline btn-sm" href="{{ path('kmfri_enterprise.charter') }}">{{ 'Service Charter'|t }}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# 5. REQUEST BANNER #}
+  {% set title %}Planning a project, bulk order <em>or event?</em>{% endset %}
+  {% embed '@kmfri_enterprise/partials/cta.html.twig' with {eyebrow: 'Service Requests'|t, title: title, text: 'Send your sample list, quantities, cruise plan or event dates and receive an official KMFRI quotation.'} %}
+    {% block actions %}
+      <a class="btn btn-teal" href="{{ path('kmfri_enterprise.quote') }}">{{ kmfri_icon('file-text') }} {{ 'Request a Quotation'|t }}</a>
+      <a class="btn btn-ghost-light" href="{{ ecitizen_url }}" target="_blank" rel="noopener noreferrer">{{ 'Apply on eCitizen'|t }} {{ kmfri_icon('external-link') }}</a>
+    {% endblock %}
+  {% endembed %}
+</div>

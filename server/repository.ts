@@ -4,6 +4,7 @@
  */
 import type { RowDataPacket } from 'mysql2/promise';
 import { pool } from './db';
+import { EXTERNAL_SERVICE_SLUGS } from '../src/data/externalServices';
 import type { ServiceItem, ResearchStation, CharterEntry, VesselSpec, DatasetEntry } from '../src/types';
 
 // service_categories.slug -> site category key (drives icons & directory filters)
@@ -84,7 +85,7 @@ export async function listServices(): Promise<ServiceItem[]> {
   const reqsBy = groupBy(reqs, 'service_id');
   const stationsBy = groupBy(stations, 'service_id');
 
-  return services.map((s) => ({
+  return services.filter((s) => EXTERNAL_SERVICE_SLUGS.includes(s.slug)).map((s) => ({
     id: String(s.id),
     dbId: s.id,
     slug: s.slug,
@@ -105,6 +106,7 @@ export async function listServices(): Promise<ServiceItem[]> {
     turnaroundTime: s.turnaround_time,
     pricingTiers: (tiersBy.get(s.id) ?? []).map((t) => ({
       id: t.id,
+      registerNo: t.register_no ?? undefined,
       name: t.tier_name,
       unit: t.unit_description,
       costKES: Number(t.cost_kes),
@@ -125,7 +127,7 @@ export async function listStations(): Promise<ResearchStation[]> {
   const [stations] = await pool.query<RowDataPacket[]>(`SELECT * FROM research_stations ORDER BY id`);
   const [facilities] = await pool.query<RowDataPacket[]>(`SELECT * FROM station_facilities ORDER BY id`);
   const [offered] = await pool.query<RowDataPacket[]>(
-    `SELECT sm.station_id, s.title
+    `SELECT sm.station_id, s.slug, s.title
        FROM service_stations_map sm JOIN services s ON s.id = sm.service_id
       ORDER BY s.display_order`
   );
@@ -141,7 +143,7 @@ export async function listStations(): Promise<ResearchStation[]> {
     county: /county$/i.test(st.county) ? st.county : `${st.county} County`,
     description: st.description ?? '',
     primaryFocus: (facBy.get(st.id) ?? []).map((f) => f.facility_name),
-    servicesOffered: (offBy.get(st.id) ?? []).map((o) => o.title),
+    servicesOffered: (offBy.get(st.id) ?? []).filter((o) => EXTERNAL_SERVICE_SLUGS.includes(o.slug)).map((o) => o.title),
     contactEmail: st.contact_email,
     phone: st.contact_phone,
     headOfStation: st.head_title ? `${st.head_of_station} (${st.head_title})` : st.head_of_station,
@@ -155,7 +157,7 @@ export async function listCharter(): Promise<CharterEntry[]> {
        FROM service_charter ch JOIN services s ON s.id = ch.service_id
       ORDER BY s.display_order, ch.id`
   );
-  return rows.map((r) => ({
+  return rows.filter((r) => EXTERNAL_SERVICE_SLUGS.includes(r.slug)).map((r) => ({
     serviceSlug: r.slug,
     serviceCode: r.code,
     serviceName: r.service_name,

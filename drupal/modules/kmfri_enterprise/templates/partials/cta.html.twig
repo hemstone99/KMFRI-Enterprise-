@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Closing call-to-action band (blue). Ends every hub page so the footer wave meets the same colour.
+ *
+ * Use with {% embed %} and override the "actions" block.
+ * Variables: eyebrow, title (markup), text.
+ */
+#}
+<section class="band-blue k-section-sm pb-[calc(var(--wave-h)+2.5rem)]!">
+  <div class="k-container flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+    <div class="max-w-2xl">
+      {% if eyebrow %}<span class="k-eyebrow k-eyebrow--light">{{ eyebrow }}</span>{% endif %}
+      <h2 class="k-h2 k-h2--light">{{ title }}</h2>
+      {% if text %}<p class="mt-4 text-white/85 text-lg leading-relaxed">{{ text }}</p>{% endif %}
+    </div>
+    <div class="flex flex-col sm:flex-row flex-wrap gap-3 shrink-0">
+      {% block actions %}{% endblock %}
+    </div>
+  </div>
+</section>

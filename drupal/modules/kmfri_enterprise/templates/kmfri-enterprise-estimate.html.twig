@@ -1,0 +1,16 @@
+{#
+/**
+ * @file
+ * Indicative tariff for the selected tier × quantity (updated live by js/hub.js).
+ */
+#}
+<div class="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-navy-50 border border-[#cfdcef] sm:col-span-2" aria-live="polite">
+  <div class="flex items-center gap-2.5">
+    {{ kmfri_icon('calculator', 'w-5 h-5 text-navy-600') }}
+    <span class="font-semibold text-navy-800">{{ 'Estimated Indicative Tariff:'|t }}</span>
+  </div>
+  <div class="text-right">
+    <span class="k-num text-xl" data-kmfri-estimate-total>{{ amount is not null ? 'KES ' ~ amount|kes : 'On quotation'|t }}</span>
+    <span class="block text-xs text-muted">{{ 'Excluding VAT where applicable'|t }}</span>
+  </div>
+</div>

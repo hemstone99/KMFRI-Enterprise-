@@ -1,0 +1,93 @@
+{#
+/**
+ * @file
+ * Shared macros for hub templates.
+ *
+ * Usage: {% import '@kmfri_enterprise/partials/macros.html.twig' as k %}
+ */
+#}
+{% macro service_icon(category, class) %}
+  {%- set map = {
+    analytical: 'flask-conical',
+    consultancy: 'briefcase',
+    aquaculture: 'fish',
+    data: 'database',
+    vessel: 'ship',
+    value_addition: 'package-check',
+    education: 'users',
+    training: 'clock',
+    facilities: 'building-2',
+    internship: 'graduation-cap',
+  } -%}
+  {{ kmfri_icon(map[category]|default('flask-conical'), class|default('w-5 h-5')) }}
+{%- endmacro %}
+
+{# Icon of a catalogue division (same map as CatalogueMenuLinks::ICONS and the React app). #}
+{% macro division_icon(id, class) %}
+  {%- set map = {
+    laboratory: 'flask-conical',
+    aquaculture: 'fish',
+    maritime: 'ship',
+    visits: 'landmark',
+    conference: 'building-2',
+    attachment: 'graduation-cap',
+    research: 'database',
+    customer: 'headset',
+  } -%}
+  {{ kmfri_icon(map[id]|default('layers'), class|default('w-5 h-5')) }}
+{%- endmacro %}
+
+{# Section heading: eyebrow + title (may contain <em>) + optional lead/action. #}
+{% macro section_header(eyebrow, title, lead, layout, id, action, light) %}
+  {%- set eyebrow_cls = 'k-eyebrow' ~ (light ? ' k-eyebrow--light' : '') -%}
+  {%- set title_cls = 'k-h2' ~ (light ? ' k-h2--light' : '') -%}
+  {%- set lead_cls = 'k-lead' ~ (light ? ' text-white/85!' : '') -%}
+  {% if layout == 'split' %}
+    <div class="grid gap-6 lg:grid-cols-2 lg:gap-16 items-end mb-10 lg:mb-14">
+      <div>
+        <span class="{{ eyebrow_cls }}">{{ eyebrow }}</span>
+        <h2{% if id %} id="{{ id }}"{% endif %} class="{{ title_cls }}">{{ title }}</h2>
+      </div>
+      <div class="flex flex-col gap-5 lg:items-start">
+        {% if lead %}<p class="{{ lead_cls }}">{{ lead }}</p>{% endif %}
+        {{ action }}
+      </div>
+    </div>
+  {% else %}
+    <div class="mb-10 lg:mb-12 {{ layout == 'center' ? 'text-center mx-auto max-w-3xl flex flex-col items-center' : 'max-w-3xl' }}">
+      <span class="{{ eyebrow_cls }}">{{ eyebrow }}</span>
+      <h2{% if id %} id="{{ id }}"{% endif %} class="{{ title_cls }}">{{ title }}</h2>
+      {% if lead %}<p class="{{ lead_cls }} mt-4">{{ lead }}</p>{% endif %}
+      {% if action %}<div class="mt-6">{{ action }}</div>{% endif %}
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{# "Label (arrow)" link used for section actions. #}
+{% macro arrow_link(label, url, class) %}
+  <a href="{{ url }}" class="k-link {{ class }}">
+    {{ label }}
+    <span class="k-link__arrow">{{ kmfri_icon('arrow-right', 'w-4 h-4') }}</span>
+  </a>
+{% endmacro %}
+
+{# Wave separator between two background bands. #}
+{% macro wave(from, to, accent) %}
+  <div class="k-wave" style="background: {{ from }}" aria-hidden="true">
+    <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
+      {% if accent %}
+        <path d="M0 58 C 300 22 620 86 920 64 S 1300 26 1440 40 L 1440 100 L 0 100 Z" fill="url(#k-wave-accent)" />
+      {% endif %}
+      <path d="M0 64 C 300 28 620 92 920 70 S 1300 32 1440 46 L 1440 100 L 0 100 Z" fill="{{ to }}" />
+      {% if accent %}
+        <defs>
+          <linearGradient id="k-wave-accent" x1="0" x2="1">
+            <stop offset="0" stop-color="#0A8FC4" />
+            <stop offset="0.5" stop-color="#5BD1D7" />
+            <stop offset="1" stop-color="#0A8FC4" />
+          </linearGradient>
+        </defs>
+      {% endif %}
+    </svg>
+  </div>
+{% endmacro %}

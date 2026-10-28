@@ -1,0 +1,226 @@
+{#
+/**
+ * @file
+ * Laboratory Services (content from kmfri.go.ke/infrastructure/laboratories).
+ *
+ * Laboratory network tabs are links to /enterprise/laboratories/{group};
+ * js/hub.js switches them in place.
+ */
+#}
+{% import '@kmfri_enterprise/partials/macros.html.twig' as k %}
+{% set icons = {'ocean-coastal': 'waves', 'freshwater': 'droplets', 'aquaculture': 'fish'} %}
+{% set status_label = {'certified': 'Certified', 'designated': 'Designated', 'in-progress': 'In progress'} %}
+
+{% macro contact_list(contact) %}
+  <ul class="space-y-2.5 text-sm text-muted">
+    <li class="flex gap-2.5">{{ kmfri_icon('map-pin', 'w-4 h-4 mt-0.5 text-teal-700 shrink-0') }}<span><strong class="text-ink font-semibold">{{ contact.location_label }}:</strong> {{ contact.location }}</span></li>
+    {% if contact.postal %}
+      <li class="flex gap-2.5">{{ kmfri_icon('mail', 'w-4 h-4 mt-0.5 text-teal-700 shrink-0') }}<span><strong class="text-ink font-semibold">Postal:</strong> {{ contact.postal }}</span></li>
+    {% endif %}
+    <li class="flex gap-2.5">{{ kmfri_icon('phone', 'w-4 h-4 mt-0.5 text-teal-700 shrink-0') }}<a href="tel:{{ (contact.phone|split('/')|first)|replace({' ': '', '(': '', ')': ''}) }}" class="hover:text-navy-600">{{ contact.phone }}</a></li>
+    <li class="flex gap-2.5">{{ kmfri_icon('mail', 'w-4 h-4 mt-0.5 text-teal-700 shrink-0') }}<a href="mailto:{{ contact.email }}" class="text-navy-600 hover:underline">{{ contact.email }}</a></li>
+  </ul>
+{% endmacro %}
+{% import _self as lab %}
+
+{% set title %}KMFRI <em>Laboratory Services</em>{% endset %}
+{% include '@kmfri_enterprise/partials/banner.html.twig' with {
+  crumbs: [{label: 'Home'|t, url: path('kmfri_enterprise.home')}, {label: 'Laboratory Services'|t}],
+  title: title,
+  subtitle: labs.overview.intro,
+  image: 'images/labs/lab-banner.webp',
+  image_position: 'center 60%',
+  next: '#E4F4F6',
+} only %}
+
+{# Overview & accreditation #}
+<section class="band-teal k-section pt-8!" aria-labelledby="lab-quality-heading">
+  <div class="k-container">
+    {% set heading %}A national centre of <em>analytical excellence</em>{% endset %}
+    {{ k.section_header('Accreditation & Quality'|t, heading, labs.overview.quality, 'split', 'lab-quality-heading') }}
+    <ul class="grid gap-6 md:grid-cols-3">
+      {% for a in labs.accreditations %}
+        <li class="k-card p-6 sm:p-7">
+          <div class="flex items-center justify-between gap-3">
+            <span class="grid place-items-center w-12 h-12 rounded-full bg-navy-600 text-white">{{ kmfri_icon(a.status == 'in-progress' ? 'shield-check' : 'badge-check', 'w-5 h-5') }}</span>
+            <span class="k-badge {{ a.status == 'in-progress' ? 'k-badge--gold' : 'k-badge--teal' }}">{{ status_label[a.status] }}</span>
+          </div>
+          <h3 class="k-h3 mt-4">{{ a.standard }}</h3>
+          <p class="k-tag mt-1">{{ a.body }}</p>
+          <p class="text-[0.95rem] text-muted mt-3 leading-relaxed">{{ a.text }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# Specialized laboratories, tabbed by network #}
+<section class="k-section" id="lab-groups" aria-labelledby="lab-groups-heading" data-kmfri-lab-tabs>
+  <div class="k-container">
+    {% set heading %}Laboratories &amp; <em>services</em>{% endset %}
+    {{ k.section_header('Our Specialized Laboratories'|t, heading, 'Choose a laboratory network to see its units, the tests and services each one offers, and who to contact.'|t, 'stack', 'lab-groups-heading') }}
+
+    <div class="k-tabs mb-8" role="tablist" aria-label="{{ 'Laboratory networks'|t }}">
+      {% for g in labs.groups %}
+        <a href="{{ path('kmfri_enterprise.laboratory_group', {'group': g.id}) }}#lab-groups" role="tab" id="lab-tab-{{ g.id }}" class="k-tab" aria-selected="{{ loop.index0 == active_group ? 'true' : 'false' }}" aria-controls="lab-panel-{{ g.id }}" tabindex="{{ loop.index0 == active_group ? '0' : '-1' }}">
+          {{ kmfri_icon(icons[g.id]|default('flask-conical')) }} {{ g.short_name }}
+        </a>
+      {% endfor %}
+      <a href="{{ labs.mariculture.url }}" target="_blank" rel="noopener noreferrer" class="k-tab">
+        {{ kmfri_icon('anchor') }} {{ labs.mariculture.name }} {{ kmfri_icon('external-link') }}
+        <span class="sr-only">(opens kmfri.go.ke in a new tab)</span>
+      </a>
+    </div>
+
+    {% for group in labs.groups %}
+      <div id="lab-panel-{{ group.id }}" role="tabpanel" aria-labelledby="lab-tab-{{ group.id }}" tabindex="0" class="focus:outline-none"{% if loop.index0 != active_group %} hidden{% endif %}>
+        <div class="grid gap-8 lg:grid-cols-[1fr_340px] lg:gap-12 mb-10">
+          <div>
+            <h3 class="k-h3 text-2xl!">{{ group.name }}</h3>
+            <p class="k-lead mt-3">{{ group.intro }}</p>
+            {% if group.note %}<p class="text-[0.95rem] text-muted mt-4 leading-relaxed">{{ group.note }}</p>{% endif %}
+          </div>
+          <aside class="k-card p-6" aria-label="Contact the {{ group.short_name }} laboratories">
+            <h4 class="k-tag mb-3">{{ 'Contact'|t }}</h4>
+            {{ lab.contact_list(group.contact) }}
+            <a href="{{ group.source_url }}" target="_blank" rel="noopener noreferrer" class="k-link mt-5 text-sm">{{ 'View on kmfri.go.ke'|t }} {{ kmfri_icon('external-link', 'w-3.5 h-3.5') }}</a>
+          </aside>
+        </div>
+
+        <ul class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          {% for u in group.units %}
+            <li class="k-card p-6">
+              <h4 class="font-heading font-semibold text-lg text-navy-800 flex items-start gap-2.5">{{ kmfri_icon('flask-conical', 'w-5 h-5 mt-0.5 text-teal-700 shrink-0') }} {{ u.name }}</h4>
+              <ul class="mt-4 space-y-2 text-[0.925rem] text-muted">
+                {% for s in u.services %}
+                  <li class="flex gap-2">{{ kmfri_icon('circle-check', 'w-4 h-4 mt-0.5 text-teal-600 shrink-0') }}<span>{{ s }}</span></li>
+                {% endfor %}
+              </ul>
+            </li>
+          {% endfor %}
+        </ul>
+
+        <div class="grid gap-10 lg:grid-cols-2 mt-14">
+          <div>
+            <h4 class="k-h3">{{ group.applications_title }}</h4>
+            <dl class="mt-5 space-y-4">
+              {% for a in group.applications %}
+                <div class="border-l-4 border-teal-400 pl-4">
+                  <dt class="font-semibold text-navy-800">{{ a.title }}</dt>
+                  <dd class="text-[0.925rem] text-muted mt-1">{{ a.text }}</dd>
+                </div>
+              {% endfor %}
+            </dl>
+          </div>
+          <div>
+            <h4 class="k-h3">{{ group.why_title }}</h4>
+            <ul class="mt-5 grid gap-4 sm:grid-cols-2">
+              {% for w in group.why %}
+                <li class="rounded-[var(--radius-card)] bg-canvas p-5 border border-line">
+                  <p class="font-semibold text-navy-800">{{ w.title }}</p>
+                  <p class="text-sm text-muted mt-1.5">{{ w.text }}</p>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{# Equipment gallery #}
+<section class="band-mist k-section" aria-labelledby="lab-equipment-heading">
+  <div class="k-container">
+    {% set heading %}Analytical &amp; <em>field equipment</em>{% endset %}
+    {{ k.section_header('Our Laboratories'|t, heading, null, 'stack', 'lab-equipment-heading') }}
+    <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {% for eq in labs.equipment %}
+        <li>
+          <figure class="k-card k-card--hover h-full">
+            <div class="k-card__media aspect-[3/2]!">
+              <img src="{{ kmfri_asset(eq.image) }}" alt="{{ eq.alt }}" width="800" height="533" loading="lazy" decoding="async">
+            </div>
+            <figcaption class="px-5 py-4 font-heading font-semibold text-navy-800">{{ eq.name }}</figcaption>
+          </figure>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# Clients & commitments #}
+<section class="k-section" aria-labelledby="lab-clients-heading">
+  <div class="k-container">
+    {% set heading %}Clients &amp; <em>partners</em> we serve{% endset %}
+    {{ k.section_header('Who We Serve'|t, heading, null, 'stack', 'lab-clients-heading') }}
+    <div class="grid gap-6 md:grid-cols-3">
+      {% for c in labs.clients %}
+        <div class="k-card p-6">
+          <h3 class="k-h3">{{ c.group }}</h3>
+          <ul class="mt-4 space-y-2 text-[0.95rem] text-muted">
+            {% for m in c.members %}
+              <li class="flex gap-2">{{ kmfri_icon('arrow-right', 'w-4 h-4 mt-1 text-teal-700 shrink-0') }}<span>{{ m }}</span></li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endfor %}
+    </div>
+
+    <h3 class="k-tag mt-14 mb-5">{{ 'Our Commitment'|t }}</h3>
+    <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {% for c in labs.commitments %}
+        <li class="rounded-[var(--radius-card)] bg-canvas p-5 border border-line">
+          <p class="font-semibold text-navy-800">{{ c.title }}</p>
+          <p class="text-sm text-muted mt-1.5">{{ c.text }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# FAQ & resources #}
+<section class="band-teal k-section" id="lab-faq" aria-labelledby="lab-faq-heading">
+  <div class="k-container grid gap-10 lg:grid-cols-[1fr_360px] lg:gap-14">
+    <div>
+      {% set heading %}Frequently asked <em>questions</em>{% endset %}
+      {{ k.section_header('Laboratory Services'|t, heading, 'The tests on offer, how to submit samples, turnaround times, accreditation and confidentiality.'|t, 'stack', 'lab-faq-heading') }}
+      <div class="space-y-3">
+        {% for f in labs.faq %}
+          <details class="group k-card px-5 sm:px-6">
+            <summary class="flex cursor-pointer list-none items-start justify-between gap-4 py-4 font-semibold text-navy-800 [&::-webkit-details-marker]:hidden">
+              <span><span class="k-num text-teal-700 mr-2">{{ '%02d'|format(loop.index) }}</span>{{ f.q }}</span>
+              {{ kmfri_icon('chevron-down', 'w-5 h-5 mt-0.5 shrink-0 text-teal-700 transition-transform group-open:rotate-180') }}
+            </summary>
+            <p class="pb-5 text-[0.95rem] text-muted leading-relaxed">{{ f.a }}</p>
+          </details>
+        {% endfor %}
+      </div>
+    </div>
+
+    <aside class="space-y-6 lg:sticky lg:top-32 self-start">
+      <div class="k-card p-6">
+        <h3 class="k-h3">{{ 'Sample Submission Form'|t }}</h3>
+        <p class="text-sm text-muted mt-2">Download the KMFRI Sample Submission &amp; Contract Review Form (PDF) before delivering samples.</p>
+        <a href="{{ labs.sample_form_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm mt-4">{{ kmfri_icon('file-down') }} {{ 'Download Form (PDF)'|t }}</a>
+      </div>
+      <div class="k-card p-6">
+        <h3 class="k-h3">{{ 'Contact Laboratory Services'|t }}</h3>
+        <div class="mt-4">{{ lab.contact_list(labs.hq_contact) }}</div>
+        <p class="text-sm text-muted mt-4 pt-4 border-t border-line">
+          <strong class="text-ink font-semibold">Deputy Director, Laboratory Services:</strong>
+          <a href="mailto:{{ labs.hq_contact.deputy_director_email }}" class="text-navy-600 hover:underline">{{ labs.hq_contact.deputy_director_email }}</a>
+        </p>
+      </div>
+      <p class="text-xs text-subtle">Source: <a href="{{ labs.source_url }}" target="_blank" rel="noopener noreferrer" class="underline hover:text-navy-600">kmfri.go.ke/infrastructure/laboratories</a></p>
+    </aside>
+  </div>
+</section>
+
+{% set heading %}Request a <em>laboratory quotation</em>{% endset %}
+{% embed '@kmfri_enterprise/partials/cta.html.twig' with {eyebrow: 'Laboratory Services'|t, title: heading, text: 'Testing charges depend on the type of analysis, number of parameters, sample matrix, and number of samples. Request a quotation before submitting samples.'} %}
+  {% block actions %}
+    <a class="btn btn-teal" href="{{ path('kmfri_enterprise.quote', {}, {'query': {'service': quote_slug}}) }}">{{ kmfri_icon('shield-check') }} {{ 'Request Quotation'|t }}</a>
+    <a class="btn btn-ghost-light" href="{{ kmfri_service_url(quote_slug) }}">{{ 'View Lab Tariffs'|t }} {{ kmfri_icon('arrow-right') }}</a>
+  {% endblock %}
+{% endembed %}
